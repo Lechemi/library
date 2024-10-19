@@ -1,6 +1,6 @@
 CREATE TABLE credits
 (
-    author SERIAL REFERENCES author (id),
-    book   INT REFERENCES book (isbn),
+    author INT REFERENCES author (id),
+    book   CHAR(13) REFERENCES book (isbn),
     PRIMARY KEY (author, book)
 );
