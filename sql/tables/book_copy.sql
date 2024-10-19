@@ -1,6 +1,6 @@
 CREATE TABLE book_copy
 (
     id     SERIAL PRIMARY KEY,
-    branch SERIAL NOT NULL REFERENCES branch (id),
-    book   INT    NOT NULL REFERENCES book (isbn)
+    branch INT      NOT NULL REFERENCES branch (id),
+    book   CHAR(13) NOT NULL REFERENCES book (isbn)
 );
