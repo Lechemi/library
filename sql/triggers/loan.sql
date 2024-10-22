@@ -41,3 +41,90 @@ CREATE TRIGGER bi_loan_set_default_values
     ON loan
     FOR EACH ROW
 EXECUTE PROCEDURE set_default_loan_values();
+
+
+-- Check if a copy is available
+CREATE OR REPLACE FUNCTION check_copy_availability() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    PERFORM * FROM loan WHERE copy = new.copy AND returned IS NULL;
+    IF FOUND THEN
+        RAISE EXCEPTION 'Requested copy is already on loan.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bi_loan_check_copy_availability
+    BEFORE INSERT
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE check_copy_availability();
+
+
+-- Check that the user requesting the loan is a patron
+CREATE OR REPLACE FUNCTION check_user_is_patron() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    PERFORM * FROM patron WHERE new.patron = patron."user";
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Requesting user must be a patron.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bi_loan_check_user_is_patron
+    BEFORE INSERT
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE check_user_is_patron();
+
+-- Check if the patron would exceed the loan limit
+CREATE OR REPLACE FUNCTION check_patron_limit() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    _loaned SMALLINT;
+    _limit  SMALLINT;
+BEGIN
+    SELECT COUNT(*)
+    FROM loan
+    WHERE returned IS NULL
+      AND patron = new.patron
+    INTO _loaned;
+
+    SELECT pc.loan_limit
+    FROM patron p
+             INNER JOIN patron_category pc ON pc.name = p.category
+    WHERE p."user" = new.patron
+    INTO _limit;
+
+    IF _loaned = _limit THEN
+        RAISE EXCEPTION 'Requesting patron has reached the loan limit.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bi_loan_check_patron_limit
+    BEFORE INSERT
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE check_patron_limit();
+
+INSERT INTO loan (patron, copy)
+VALUES ('2e46520c-3af6-4883-887a-07cfcbd7e2e8', 7);
+
+UPDATE loan
+SET returned = NOW()
+WHERE patron = '2e46520c-3af6-4883-887a-07cfcbd7e2e8'
+  AND copy = 4;
