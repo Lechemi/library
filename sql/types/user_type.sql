@@ -1,1 +1,1 @@
-create type user_type as enum ('patron', 'librarian');
+CREATE TYPE USER_TYPE AS ENUM ('patron', 'librarian');
