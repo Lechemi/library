@@ -205,12 +205,14 @@ CREATE OR REPLACE FUNCTION enforce_due_policy() RETURNS TRIGGER
 AS
 $$
 BEGIN
-    IF new.due < old.due THEN
-        RAISE EXCEPTION 'Due can only be postponed.';
-    END IF;
+    IF new.due != old.due THEN
+        IF new.due < old.due THEN
+            RAISE EXCEPTION 'Due can only be postponed.';
+        END IF;
 
-    IF NOW() > old.due THEN
-        RAISE EXCEPTION 'Cannot postpone due because the loan has expired.';
+        IF NOW() > old.due THEN
+            RAISE EXCEPTION 'Cannot postpone due because the loan has expired.';
+        END IF;
     END IF;
 
     RETURN new;
@@ -234,7 +236,8 @@ DECLARE
     _precision INTERVAL;
 BEGIN
     _precision := INTERVAL '5 seconds';
-    IF new.returned NOT BETWEEN NOW() - _precision AND NOW() + _precision THEN
+    IF new.returned != old.returned AND
+       new.returned NOT BETWEEN NOW() - _precision AND NOW() + _precision THEN
         RAISE EXCEPTION 'Cannot return the book in a past or future date.';
     END IF;
 
@@ -256,11 +259,13 @@ CREATE OR REPLACE FUNCTION increment_patron_delay_counter() RETURNS TRIGGER
 AS
 $$
 BEGIN
-    IF new.returned != old.returned AND new.returned > old.due THEN
+    IF new.returned IS DISTINCT FROM old.returned AND new.returned > old.due THEN
         UPDATE patron
         SET n_delays = n_delays + 1
         WHERE "user" = old.patron;
     END IF;
+
+    RETURN new;
 END;
 $$;
 
