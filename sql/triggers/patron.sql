@@ -8,7 +8,7 @@ DECLARE
 BEGIN
     SELECT type FROM "user" WHERE new."user" = "user".id INTO u_type;
     IF u_type <> 'patron' THEN
-        RAISE EXCEPTION 'The referenced user is not a patron.';
+        RAISE EXCEPTION 'Referenced user is not a patron.';
     ELSE
         RETURN new;
     END IF;
