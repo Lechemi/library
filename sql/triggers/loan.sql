@@ -269,3 +269,20 @@ CREATE TRIGGER au_loan_increment_patron_delay_counter
     ON loan
     FOR EACH ROW
 EXECUTE PROCEDURE increment_patron_delay_counter();
+
+
+-- Deny deletion of records
+CREATE OR REPLACE FUNCTION deny_deletion() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    RAISE EXCEPTION 'Deletion is not allowed.';
+END;
+$$;
+
+CREATE TRIGGER bd_loan_deny_deletion
+    BEFORE DELETE
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE deny_deletion();
