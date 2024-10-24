@@ -222,3 +222,28 @@ CREATE TRIGGER bu_loan_enforce_due_policy
     ON loan
     FOR EACH ROW
 EXECUTE PROCEDURE enforce_due_policy();
+
+
+
+-- Cannot return the book in a past or future date.
+CREATE OR REPLACE FUNCTION check_return_timestamp() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    _precision INTERVAL;
+BEGIN
+    _precision := INTERVAL '5 seconds';
+    IF new.returned NOT BETWEEN NOW() - _precision AND NOW() + _precision THEN
+        RAISE EXCEPTION 'Cannot return the book in a past or future date.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bu_loan_check_return_timestamp
+    BEFORE UPDATE
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE check_return_timestamp();
