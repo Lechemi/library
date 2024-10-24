@@ -145,3 +145,80 @@ CREATE TRIGGER bi_loan_check_patron_removed_status
     FOR EACH ROW
 EXECUTE PROCEDURE check_patron_removed_status();
 
+
+
+-- Deny update if the loan is over
+CREATE OR REPLACE FUNCTION check_if_loan_is_over() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF old.returned IS NOT NULL THEN
+        RAISE EXCEPTION 'Cannot modify an ended loan.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bu_loan_check_if_loan_is_over
+    BEFORE UPDATE
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE check_if_loan_is_over();
+
+
+
+-- Deny modification of fields start, patron or copy
+CREATE OR REPLACE FUNCTION deny_unmodifiable_fields_update() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF new.start != old.start THEN
+        RAISE EXCEPTION 'Cannot modify start field.';
+    END IF;
+
+    IF new.patron != old.patron THEN
+        RAISE EXCEPTION 'Cannot modify patron field.';
+    END IF;
+
+    IF new.copy != old.copy THEN
+        RAISE EXCEPTION 'Cannot modify copy field.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bu_loan_deny_unmodifiable_fields_update
+    BEFORE UPDATE
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE deny_unmodifiable_fields_update();
+
+
+
+-- Allow postponement of due only if the loan is not expired
+CREATE OR REPLACE FUNCTION enforce_due_policy() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF new.due < old.due THEN
+        RAISE EXCEPTION 'Due can only be postponed.';
+    END IF;
+
+    IF NOW() > old.due THEN
+        RAISE EXCEPTION 'Cannot postpone due because the loan has expired.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bu_loan_enforce_due_policy
+    BEFORE UPDATE
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE enforce_due_policy();
