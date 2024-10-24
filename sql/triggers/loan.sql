@@ -247,3 +247,25 @@ CREATE TRIGGER bu_loan_check_return_timestamp
     ON loan
     FOR EACH ROW
 EXECUTE PROCEDURE check_return_timestamp();
+
+
+
+-- If the loan has expired, the patron's delay counter will be incremented after returning the book.
+CREATE OR REPLACE FUNCTION increment_patron_delay_counter() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF new.returned != old.returned AND new.returned > old.due THEN
+        UPDATE patron
+        SET n_delays = n_delays + 1
+        WHERE "user" = old.patron;
+    END IF;
+END;
+$$;
+
+CREATE TRIGGER au_loan_increment_patron_delay_counter
+    AFTER UPDATE
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE increment_patron_delay_counter();
