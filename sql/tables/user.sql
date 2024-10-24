@@ -1,9 +1,20 @@
 CREATE TABLE "user"
 (
-    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email      VARCHAR(100) NOT NULL UNIQUE CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
-    password   VARCHAR(100) NOT NULL CHECK (LENGTH(password) > 5),
-    first_name VARCHAR(100) NOT NULL CHECK (first_name ~* '^.+$'),
-    last_name  VARCHAR(100) NOT NULL CHECK (last_name ~* '^.+$'),
-    type       user_type    not null
+    id         UUID    DEFAULT gen_random_uuid() NOT NULL
+        PRIMARY KEY,
+    email      VARCHAR(100)                      NOT NULL
+        UNIQUE
+        CONSTRAINT user_email_check
+            CHECK ((email)::TEXT ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::TEXT),
+    password   VARCHAR(100)                      NOT NULL
+        CONSTRAINT user_password_check
+            CHECK (LENGTH((password)::TEXT) > 5),
+    first_name VARCHAR(100)                      NOT NULL
+        CONSTRAINT user_first_name_check
+            CHECK ((first_name)::TEXT ~* '^.+$'::TEXT),
+    last_name  VARCHAR(100)                      NOT NULL
+        CONSTRAINT user_last_name_check
+            CHECK ((last_name)::TEXT ~* '^.+$'::TEXT),
+    type       library.USER_TYPE                 NOT NULL,
+    removed    BOOLEAN DEFAULT FALSE
 );
