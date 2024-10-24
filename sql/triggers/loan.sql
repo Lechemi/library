@@ -121,10 +121,27 @@ CREATE TRIGGER bi_loan_check_patron_limit
     FOR EACH ROW
 EXECUTE PROCEDURE check_patron_limit();
 
-INSERT INTO loan (patron, copy)
-VALUES ('2e46520c-3af6-4883-887a-07cfcbd7e2e8', 7);
+-- Check if the patron is removed
+CREATE OR REPLACE FUNCTION check_patron_removed_status() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    _patron_is_removed BOOLEAN;
+BEGIN
+    SELECT removed FROM patron WHERE "user" = new.patron INTO _patron_is_removed;
 
-UPDATE loan
-SET returned = NOW()
-WHERE patron = '2e46520c-3af6-4883-887a-07cfcbd7e2e8'
-  AND copy = 4;
+    IF _patron_is_removed THEN
+        RAISE EXCEPTION 'Requesting patron has been removed.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bi_loan_check_patron_removed_status
+    BEFORE INSERT
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE check_patron_removed_status();
+
