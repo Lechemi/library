@@ -92,14 +92,14 @@ CREATE OR REPLACE FUNCTION check_patron_limit() RETURNS TRIGGER
 AS
 $$
 DECLARE
-    _loaned SMALLINT;
-    _limit  SMALLINT;
+    _borrowed SMALLINT;
+    _limit    SMALLINT;
 BEGIN
     SELECT COUNT(*)
     FROM loan
     WHERE returned IS NULL
       AND patron = new.patron
-    INTO _loaned;
+    INTO _borrowed;
 
     SELECT pc.loan_limit
     FROM patron p
@@ -107,7 +107,7 @@ BEGIN
     WHERE p."user" = new.patron
     INTO _limit;
 
-    IF _loaned = _limit THEN
+    IF _borrowed = _limit THEN
         RAISE EXCEPTION 'Requesting patron has reached the loan limit.';
     END IF;
 
