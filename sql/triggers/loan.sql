@@ -43,12 +43,19 @@ CREATE TRIGGER bi_loan_set_default_values
 EXECUTE PROCEDURE set_default_loan_values();
 
 
--- Check if a copy is available
+-- Check if a copy is available (and also not removed)
 CREATE OR REPLACE FUNCTION check_copy_availability() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
+DECLARE
+    _copy_is_removed BOOLEAN;
 BEGIN
+    SELECT removed FROM book_copy WHERE id = new.copy INTO _copy_is_removed;
+    IF _copy_is_removed THEN
+        RAISE EXCEPTION 'Requested copy has been removed from the catalogue.';
+    END IF;
+
     PERFORM * FROM loan WHERE copy = new.copy AND returned IS NULL;
     IF FOUND THEN
         RAISE EXCEPTION 'Requested copy is already on loan.';
