@@ -65,14 +65,23 @@ CREATE TRIGGER bi_patron_set_default_values
     FOR EACH ROW
 EXECUTE PROCEDURE set_default_patron_values();
 
--- 'removed' field can only go from FALSE to TRUE.
+/*
+    'removed' field can only go from FALSE to TRUE.
+    Also, only patrons with no active loans can be removed.
+ */
 CREATE OR REPLACE FUNCTION patron_enforce_removal_policy() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
 BEGIN
-    IF new.removed IS DISTINCT FROM old.removed AND new.removed IS FALSE THEN
-        RAISE EXCEPTION 'Removed patrons cannot be restored.';
+    IF new.removed IS DISTINCT FROM old.removed THEN
+        IF new.removed IS FALSE THEN
+            RAISE EXCEPTION 'Removed patrons cannot be restored.';
+        END IF;
+
+        IF old."user" IN (SELECT patron FROM loan WHERE returned IS NULL) THEN
+            RAISE EXCEPTION 'Only patrons with no active loans can be removed.';
+        END IF;
     END IF;
 
     RETURN new;
