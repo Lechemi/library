@@ -1,4 +1,4 @@
--- Check patron delays
+-- Patrons with more than 5 delays cannot loan books
 CREATE OR REPLACE FUNCTION check_patron_delays() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -72,26 +72,32 @@ CREATE TRIGGER bi_loan_check_copy_availability
 EXECUTE PROCEDURE check_copy_availability();
 
 
--- Check that the user requesting the loan is a patron
-CREATE OR REPLACE FUNCTION check_user_is_patron() RETURNS TRIGGER
+-- Check that the user requesting the loan is a patron and that it's not removed.
+CREATE OR REPLACE FUNCTION check_user_is_existing_patron() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
+DECLARE
+    _patron_is_removed BOOLEAN;
 BEGIN
-    PERFORM * FROM patron WHERE new.patron = patron."user";
+    SELECT removed FROM patron WHERE "user" = new.patron INTO _patron_is_removed;
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Requesting user must be a patron.';
+    END IF;
+
+    IF _patron_is_removed THEN
+        RAISE EXCEPTION 'Requesting patron has been removed.';
     END IF;
 
     RETURN new;
 END;
 $$;
 
-CREATE TRIGGER bi_loan_check_user_is_patron
+CREATE TRIGGER bi_loan_check_user_is_existing_patron
     BEFORE INSERT
     ON loan
     FOR EACH ROW
-EXECUTE PROCEDURE check_user_is_patron();
+EXECUTE PROCEDURE check_user_is_existing_patron();
 
 -- Check if the patron would exceed the loan limit
 CREATE OR REPLACE FUNCTION check_patron_limit() RETURNS TRIGGER
@@ -127,32 +133,6 @@ CREATE TRIGGER bi_loan_check_patron_limit
     ON loan
     FOR EACH ROW
 EXECUTE PROCEDURE check_patron_limit();
-
--- Check if the patron is removed
-CREATE OR REPLACE FUNCTION check_patron_removed_status() RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    _patron_is_removed BOOLEAN;
-BEGIN
-    SELECT removed FROM patron WHERE "user" = new.patron INTO _patron_is_removed;
-
-    IF _patron_is_removed THEN
-        RAISE EXCEPTION 'Requesting patron has been removed.';
-    END IF;
-
-    RETURN new;
-END;
-$$;
-
-CREATE TRIGGER bi_loan_check_patron_removed_status
-    BEFORE INSERT
-    ON loan
-    FOR EACH ROW
-EXECUTE PROCEDURE check_patron_removed_status();
-
-
 
 -- Deny update if the loan is over
 CREATE OR REPLACE FUNCTION check_if_loan_is_over() RETURNS TRIGGER
