@@ -13,6 +13,5 @@ CREATE TABLE patron
             CHECK ((tax_code)::TEXT ~ '^[A-Za-z0-9]{16}$'::TEXT),
     n_delays SMALLINT DEFAULT 0 NOT NULL,
     category VARCHAR(50)        NOT NULL
-        REFERENCES patron_category,
-    removed  BOOLEAN  DEFAULT FALSE
+        REFERENCES patron_category
 );

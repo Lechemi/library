@@ -1,4 +1,4 @@
--- Check that the user referenced is a patron
+-- Check that the user referenced is a patron.
 CREATE OR REPLACE FUNCTION check_user_type_patron() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -22,7 +22,7 @@ CREATE TRIGGER bi_patron_check_user_type
     FOR EACH ROW
 EXECUTE PROCEDURE check_user_type_patron();
 
--- Check that the user referenced is not removed
+-- Check that the user referenced is not removed.
 CREATE OR REPLACE FUNCTION check_user_is_not_removed() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -46,13 +46,12 @@ CREATE TRIGGER bi_patron_check_user_is_not_removed
     FOR EACH ROW
 EXECUTE PROCEDURE check_user_is_not_removed();
 
--- Set default values for columns 'removed' and 'n_delays'
+-- Set field 'n_delays' to 0 on insertion.
 CREATE OR REPLACE FUNCTION set_default_patron_values() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
 BEGIN
-    new.removed := FALSE;
     new.n_delays := 0;
 
     RETURN new;
@@ -64,56 +63,6 @@ CREATE TRIGGER bi_patron_set_default_values
     ON patron
     FOR EACH ROW
 EXECUTE PROCEDURE set_default_patron_values();
-
-/*
-    'removed' field can only go from FALSE to TRUE.
-    Also, only patrons with no active loans can be removed.
- */
-CREATE OR REPLACE FUNCTION patron_enforce_removal_policy() RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    IF new.removed IS DISTINCT FROM old.removed THEN
-        IF new.removed IS FALSE THEN
-            RAISE EXCEPTION 'Removed patrons cannot be restored.';
-        END IF;
-
-        IF old."user" IN (SELECT patron FROM loan WHERE returned IS NULL) THEN
-            RAISE EXCEPTION 'Only patrons with no active loans can be removed.';
-        END IF;
-    END IF;
-
-    RETURN new;
-END;
-$$;
-
-CREATE TRIGGER bu_patron_enforce_removal_policy
-    BEFORE UPDATE
-    ON patron
-    FOR EACH ROW
-EXECUTE PROCEDURE patron_enforce_removal_policy();
-
--- Removing a patron triggers removal of the corresponding 'user' record
-CREATE OR REPLACE FUNCTION remove_corresponding_user() RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    IF new.removed IS DISTINCT FROM old.removed THEN
-        UPDATE "user" SET removed = TRUE WHERE OLD."user" = id;
-    END IF;
-
-    RETURN new;
-END;
-$$;
-
-CREATE TRIGGER au_patron_remove_corresponding_user
-    AFTER UPDATE
-    ON patron
-    FOR EACH ROW
-EXECUTE PROCEDURE remove_corresponding_user();
-
 
 /*
     A patron's category can be changed only if they are borrowing no

@@ -16,26 +16,6 @@ CREATE TRIGGER bi_book_copy_set_default_values
     FOR EACH ROW
 EXECUTE PROCEDURE set_default_book_copy_values();
 
--- 'removed' field can only go from FALSE to TRUE.
-CREATE OR REPLACE FUNCTION book_copy_enforce_removal_policy() RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    IF new.removed IS DISTINCT FROM old.removed AND new.removed IS FALSE THEN
-        RAISE EXCEPTION 'Removed book copies cannot be restored.';
-    END IF;
-
-    RETURN new;
-END;
-$$;
-
-CREATE TRIGGER bu_book_copy_enforce_removal_policy
-    BEFORE UPDATE
-    ON book_copy
-    FOR EACH ROW
-EXECUTE PROCEDURE book_copy_enforce_removal_policy();
-
 -- A currently loaned copy cannot be updated in any way
 CREATE OR REPLACE FUNCTION deny_update_on_loan() RETURNS TRIGGER
     LANGUAGE plpgsql
