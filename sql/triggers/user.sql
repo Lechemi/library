@@ -48,33 +48,14 @@ EXECUTE PROCEDURE user_deny_unmodifiable_fields_update();
 
 
 
-/**
-  'removed' field can only go from FALSE to TRUE.
-  Before setting 'removed' field to TRUE for a patron, the corresponding patron
-  record must already be removed.
- */
+-- 'removed' field can only go from FALSE to TRUE.
 CREATE OR REPLACE FUNCTION user_enforce_removal_policy() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
-DECLARE
-    _patron_is_removed BOOLEAN;
 BEGIN
-    IF new.removed IS DISTINCT FROM old.removed THEN
-
-        IF new.removed IS FALSE THEN
-            RAISE EXCEPTION 'Removed users cannot be restored.';
-        END IF;
-
-        SELECT patron.removed
-        FROM patron
-        WHERE new.id = patron."user"
-        INTO _patron_is_removed;
-
-        IF NOT _patron_is_removed THEN
-            RAISE EXCEPTION 'Before removing a patron user, the corresponding patron record must already be removed.';
-        END IF;
-
+    IF new.removed IS DISTINCT FROM old.removed AND new.removed IS FALSE THEN
+        RAISE EXCEPTION 'Removed users cannot be restored.';
     END IF;
 
     RETURN new;
@@ -87,6 +68,29 @@ CREATE TRIGGER bu_user_enforce_removal_policy
     FOR EACH ROW
 EXECUTE PROCEDURE user_enforce_removal_policy();
 
+-- Removing a user of type patron triggers removal of the corresponding 'patron' record
+CREATE OR REPLACE FUNCTION remove_corresponding_patron() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF new.removed IS DISTINCT FROM old.removed THEN
+
+        IF (SELECT removed FROM patron p WHERE p."user" = old.id) IS FALSE THEN
+            UPDATE patron p SET removed = TRUE WHERE p."user" = old.id;
+        END IF;
+
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER au_user_remove_corresponding_patron
+    AFTER UPDATE
+    ON "user"
+    FOR EACH ROW
+EXECUTE PROCEDURE remove_corresponding_patron();
 
 
 -- Deny deletion of records
