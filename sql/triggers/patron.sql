@@ -85,25 +85,6 @@ CREATE TRIGGER bu_patron_enforce_removal_policy
     FOR EACH ROW
 EXECUTE PROCEDURE patron_enforce_removal_policy();
 
--- Deny modification of 'user' field
-CREATE OR REPLACE FUNCTION patron_deny_user_update() RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    IF new."user" != old."user" THEN
-        RAISE EXCEPTION 'Cannot modify ''user'' field.';
-    END IF;
-
-    RETURN new;
-END;
-$$;
-
-CREATE TRIGGER bu_patron_deny_user_update
-    BEFORE UPDATE
-    ON patron
-    FOR EACH ROW
-EXECUTE PROCEDURE patron_deny_user_update();
 
 /*
     A patron's category can be changed only if they are borrowing no
