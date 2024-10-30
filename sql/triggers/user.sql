@@ -18,16 +18,12 @@ EXECUTE PROCEDURE set_removed_to_false();
 
 
 
--- Deny modification of fields id, email or type
+-- Deny modification of fields 'email' and 'type'
 CREATE OR REPLACE FUNCTION user_deny_unmodifiable_fields_update() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
 BEGIN
-    IF new.id != old.id THEN
-        RAISE EXCEPTION 'Cannot modify id field.';
-    END IF;
-
     IF new.email != old.email THEN
         RAISE EXCEPTION 'Cannot modify email field.';
     END IF;
