@@ -94,6 +94,30 @@ CREATE TRIGGER bu_patron_enforce_removal_policy
     FOR EACH ROW
 EXECUTE PROCEDURE patron_enforce_removal_policy();
 
+-- Removing a patron triggers removal of the corresponding 'user' record
+CREATE OR REPLACE FUNCTION remove_corresponding_user() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF new.removed IS DISTINCT FROM old.removed THEN
+
+        IF (SELECT removed FROM "user" WHERE old."user" = id) IS FALSE THEN
+            UPDATE "user" SET removed = TRUE WHERE OLD."user" = id;
+        END IF;
+
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER au_patron_remove_corresponding_user
+    AFTER UPDATE
+    ON patron
+    FOR EACH ROW
+EXECUTE PROCEDURE remove_corresponding_user();
+
 
 /*
     A patron's category can be changed only if they are borrowing no
