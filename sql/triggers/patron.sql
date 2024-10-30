@@ -101,11 +101,7 @@ AS
 $$
 BEGIN
     IF new.removed IS DISTINCT FROM old.removed THEN
-
-        IF (SELECT removed FROM "user" WHERE old."user" = id) IS FALSE THEN
-            UPDATE "user" SET removed = TRUE WHERE OLD."user" = id;
-        END IF;
-
+        UPDATE "user" SET removed = TRUE WHERE OLD."user" = id;
     END IF;
 
     RETURN new;

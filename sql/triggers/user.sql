@@ -75,11 +75,7 @@ AS
 $$
 BEGIN
     IF new.removed IS DISTINCT FROM old.removed THEN
-
-        IF (SELECT removed FROM patron p WHERE p."user" = old.id) IS FALSE THEN
-            UPDATE patron p SET removed = TRUE WHERE p."user" = old.id;
-        END IF;
-
+        UPDATE patron p SET removed = TRUE WHERE p."user" = old.id;
     END IF;
 
     RETURN new;
