@@ -1,3 +1,4 @@
+-- Creates a user of type patron and a corresponding 'patron' record.
 CREATE PROCEDURE create_patron(
     _email "user".EMAIL%TYPE,
     _password "user".PASSWORD%TYPE,
