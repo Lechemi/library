@@ -1,4 +1,4 @@
--- Set 'removed' field to FALSE by default
+-- Set 'removed' field to FALSE by default.
 CREATE OR REPLACE FUNCTION set_default_book_copy_values() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -16,7 +16,7 @@ CREATE TRIGGER bi_book_copy_set_default_values
     FOR EACH ROW
 EXECUTE PROCEDURE set_default_book_copy_values();
 
--- A currently loaned copy cannot be updated in any way
+-- A currently loaned copy cannot be updated in any way.
 CREATE OR REPLACE FUNCTION deny_update_on_loan() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -36,7 +36,7 @@ CREATE TRIGGER bu_book_copy_deny_update_on_loan
     FOR EACH ROW
 EXECUTE PROCEDURE deny_update_on_loan();
 
--- Deny deletion of records
+-- Deny deletion of records.
 CREATE TRIGGER bd_book_copy_deny_deletion
     BEFORE DELETE
     ON book_copy
