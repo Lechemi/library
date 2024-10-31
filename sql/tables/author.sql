@@ -3,14 +3,11 @@ CREATE TABLE author
     id         SERIAL
         PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL
-        CONSTRAINT author_first_name_check
-            CHECK ((first_name)::TEXT ~* '^.+$'::TEXT),
+        CHECK ((first_name)::TEXT ~* '^.+$'::TEXT),
     last_name  VARCHAR(100) NOT NULL
-        CONSTRAINT author_last_name_check
-            CHECK ((last_name)::TEXT ~* '^.+$'::TEXT),
+        CHECK ((last_name)::TEXT ~* '^.+$'::TEXT),
     bio        TEXT         NOT NULL
-        CONSTRAINT author_bio_check
-            CHECK (bio ~* '^.+$'::TEXT),
+        CHECK (bio ~* '^.+$'::TEXT),
     birth_date DATE,
     death_date DATE,
     alive      BOOLEAN      NOT NULL,
