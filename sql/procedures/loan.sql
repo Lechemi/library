@@ -1,3 +1,9 @@
+/*
+    Registers a loan for the given patron with the given book.
+    The loaned copy is picked with no criteria.
+    If one or more preferred branches are specified, the copy has to belong
+    to one of those.
+ */
 CREATE OR REPLACE PROCEDURE make_loan(
     _book book.ISBN%TYPE,
     _patron patron.USER%TYPE,
