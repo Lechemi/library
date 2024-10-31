@@ -1,12 +1,20 @@
--- Check that the user referenced is a patron.
-CREATE OR REPLACE FUNCTION check_user_type_patron() RETURNS TRIGGER
+-- Check that the user referenced is not removed and is a patron.
+CREATE OR REPLACE FUNCTION check_referenced_user() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    _u_type USER_TYPE;
+    _u_type          USER_TYPE;
+    _user_is_removed BOOLEAN;
 BEGIN
-    SELECT type FROM "user" WHERE new."user" = "user".id INTO _u_type;
+    SELECT type, removed
+    INTO _u_type, _user_is_removed
+    FROM "user"
+    WHERE new."user" = id;
+
+    IF _user_is_removed THEN
+        RAISE EXCEPTION 'Referenced user no longer exists.';
+    END IF;
 
     IF _u_type <> 'patron' THEN
         RAISE EXCEPTION 'Referenced user is not a patron.';
@@ -16,35 +24,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER bi_patron_check_user_type
+CREATE TRIGGER bi_patron_check_referenced_user
     BEFORE INSERT
     ON patron
     FOR EACH ROW
-EXECUTE PROCEDURE check_user_type_patron();
-
--- Check that the user referenced is not removed.
-CREATE OR REPLACE FUNCTION check_user_is_not_removed() RETURNS TRIGGER
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    _user_is_removed BOOLEAN;
-BEGIN
-    SELECT removed FROM "user" WHERE new."user" = "user".id INTO _user_is_removed;
-
-    IF _user_is_removed THEN
-        RAISE EXCEPTION 'Referenced user no longer exists.';
-    END IF;
-
-    RETURN new;
-END;
-$$;
-
-CREATE TRIGGER bi_patron_check_user_is_not_removed
-    BEFORE INSERT
-    ON patron
-    FOR EACH ROW
-EXECUTE PROCEDURE check_user_is_not_removed();
+EXECUTE PROCEDURE check_referenced_user();
 
 -- Set field 'n_delays' to 0 on insertion.
 CREATE OR REPLACE FUNCTION set_default_patron_values() RETURNS TRIGGER
