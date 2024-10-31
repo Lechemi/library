@@ -38,16 +38,12 @@ CREATE TRIGGER bu_user_check_loans_before_removal
     FOR EACH ROW
 EXECUTE PROCEDURE check_loans_before_removal();
 
--- Deny modification of fields 'email' and 'type'.
+-- Deny modification of field 'type'.
 CREATE OR REPLACE FUNCTION user_deny_unmodifiable_fields_update() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
 BEGIN
-    IF new.email != old.email THEN
-        RAISE EXCEPTION 'Cannot modify email field.';
-    END IF;
-
     IF new.type != old.type THEN
         RAISE EXCEPTION 'Cannot modify type field.';
     END IF;
