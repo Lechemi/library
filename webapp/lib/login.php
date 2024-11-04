@@ -6,7 +6,7 @@ include_once ('redirect.php');
 session_start();
 
 /*
- * Retrieves user with email $usr and password $psw
+ * Retrieves id and type for the user with email $usr and password $psw.
  */
 function retrieve_user($usr, $psw): array
 {
@@ -50,7 +50,5 @@ if (isset($_POST)) {
         } else {
             redirect('../index.php');
         }
-    } else {
-        print('Fields cannot be empty.');
     }
 }

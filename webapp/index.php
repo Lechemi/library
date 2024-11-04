@@ -18,6 +18,19 @@ session_start();
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
+            <form class="p-4 border rounded bg-light" method="POST" action="lib/login.php">
+                <div class="mb-3">
+                    <label for="inputEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp"
+                           name="usr" required>
+                </div>
+                <div class="mb-3">
+                    <label for="inputPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="inputPassword" name="psw" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
             <?php
             if (isset($_SESSION['feedback'])) {
                 if (!$_SESSION['feedback']) {
@@ -32,19 +45,6 @@ session_start();
                 }
             }
             ?>
-
-            <form class="p-4 border rounded bg-light" method="POST" action="lib/login.php">
-                <div class="mb-3">
-                    <label for="inputEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp"
-                           name="usr">
-                </div>
-                <div class="mb-3">
-                    <label for="inputPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="inputPassword" name="psw">
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
         </div>
     </div>
 </div>
