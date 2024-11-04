@@ -1,8 +1,9 @@
 <?php
 ini_set("display_errors", "On");
 ini_set("error_reporting", E_ALL);
-include_once ('connection.php');
-include_once ('redirect.php');
+include_once('connection.php');
+include_once('redirect.php');
+
 session_start();
 
 /*
@@ -25,30 +26,26 @@ function retrieve_user($usr, $psw): array
     return ($user = pg_fetch_assoc($result)) ? array(true, $user) : array(false, null);
 }
 
-if (isset($_POST)) {
-    if (!empty($_POST['usr']) && !empty($_POST['psw'])) {
+if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
 
-        $email = $_POST['usr'];
-        $psw = $_POST['psw'];
+    $email = $_POST['usr'];
+    $psw = $_POST['psw'];
 
-        $result = retrieve_user($email, $psw);
-        $ok = $result[0];
-        $id = $result[1]['id'];
-        $user_type = $result[1]['type'];
-        if (!is_null($id)) $_SESSION['id'] = $id;
-        $_SESSION['feedback'] = $ok;
+    $result = retrieve_user($email, $psw);
+    $ok = $result[0];
+    $id = $result[1]['id'];
+    $user_type = $result[1]['type'];
+    if (!is_null($id)) $_SESSION['id'] = $id;
+    $_SESSION['feedback'] = $ok;
 
-        if ($ok) {
-            switch ($user_type) {
-                case 'librarian':
-                    redirect('../librarian/home.php');
-                case 'patron':
-                    redirect('../patron/home.php');
-                default:
-                    redirect('../index.php');
-            }
-        } else {
-            redirect('../index.php');
+    if ($ok) {
+        switch ($user_type) {
+            case 'librarian':
+                redirect('../librarian/home.php');
+            case 'patron':
+                redirect('../patron/home.php');
         }
     }
 }
+
+redirect('../index.php');
