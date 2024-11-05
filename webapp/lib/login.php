@@ -7,7 +7,7 @@ include_once('redirect.php');
 session_start();
 
 /*
- * Retrieves id and type for the user with email $usr and password $psw.
+ * Retrieves the user with email $usr and password $psw.
  */
 function retrieve_user($usr, $psw): array
 {
@@ -15,7 +15,7 @@ function retrieve_user($usr, $psw): array
 
     $params = array($usr, $psw);
     $sql =
-        "SELECT id, type FROM library.user
+        "SELECT * FROM library.user
          WHERE email = $1 AND password = $2";
 
     pg_prepare($db, 'login', $sql);
@@ -33,9 +33,9 @@ if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
 
     $result = retrieve_user($email, $psw);
     $ok = $result[0];
-    $id = $result[1]['id'];
-    $user_type = $result[1]['type'];
-    if (!is_null($id)) $_SESSION['id'] = $id;
+    $user = $result[1];
+    $user_type = $user['type'];
+    if (!is_null($user)) $_SESSION['user'] = $user;
     $_SESSION['feedback'] = $ok;
 
     if ($ok) {
