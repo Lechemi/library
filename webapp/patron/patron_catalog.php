@@ -23,6 +23,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             transition: color 0.2s ease-in-out;
             text-decoration: none; /* Ensure no underline by default */
         }
+
         .hover-lighten:hover {
             color: #555; /* Lighter shade on hover */
             text-decoration: none; /* Ensure no underline on hover */
@@ -58,17 +59,20 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
             ?>
             <div class="col">
-                <div class="card h-100">
+                <div class="card h-100 rounded-4">
                     <div class="card-body">
                         <h5 class="card-title">
                             <a class="link-opacity-100-hover hover-lighten" href=<?php echo $title_link; ?>>
                                 <?php echo htmlspecialchars($book['title']); ?>
                             </a>
                         </h5>
-                        <p class="card-text text-muted">
+                        <p class="card-text">
                             <a class="link-opacity-100-hover hover-lighten" href=<?php echo $author_link; ?>>
                                 <?php echo htmlspecialchars($book['first_name'] . ' ' . $book['last_name']); ?>
                             </a>
+                        </p>
+                        <p class="card-subtitle text-muted">
+                            <small><?php echo htmlspecialchars($book['isbn']); ?></small>
                         </p>
                     </div>
                 </div>
