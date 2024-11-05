@@ -56,6 +56,16 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 </div>
 
 <div class="container my-4">
+    <h2 class="text-center mb-4">Explore our catalog</h2>
+    <form class="d-flex justify-content-center">
+        <div class="input-group rounded-4" style="max-width: 400px;">
+            <input class="form-control rounded-4" type="search" placeholder="Enter a title or ISBN code" aria-label="Search">
+            <button class="btn rounded-4" type="submit">Search</button>
+        </div>
+    </form>
+</div>
+
+<div class="container my-4">
     <ul class="list-group list-group-flush rounded-4">
         <?php
         $catalog = get_catalog();
