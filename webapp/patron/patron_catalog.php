@@ -51,35 +51,42 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
+<!-- Navbar -->
 <div class="container mt-3">
     <?php include 'navbar.php'; ?>
 </div>
 
-<div class="container my-4">
+<!-- Search bar -->
+<div class="container my-3">
     <h2 class="text-center mb-4">Explore our catalog</h2>
-    <form class="d-flex justify-content-center">
+    <form class="d-flex justify-content-center" method="GET" action="">
         <div class="input-group rounded-4" style="max-width: 400px;">
-            <input class="form-control rounded-4" type="search" placeholder="Enter a title or ISBN code" aria-label="Search">
+            <input class="form-control rounded-4" type="search" placeholder="Enter a title or ISBN code"
+                   aria-label="Search" name="searchedBook">
             <button class="btn rounded-4" type="submit">Search</button>
         </div>
     </form>
 </div>
 
-<div class="container my-4">
+<!-- Displayed book(s) -->
+<div class="container">
     <ul class="list-group list-group-flush rounded-4">
         <?php
-        $catalog = get_catalog();
 
-        if ($catalog === false) {
+        if (!empty($_GET['searchedBook'])) {
+            $result = get_book($_GET['searchedBook']);
+        } else {
+            $result = get_catalog();
+        }
+
+        if ($result === false) {
             echo "Error in query execution.";
             exit;
         }
 
-        $num_rows = pg_num_rows($catalog);
+        if (pg_num_rows($result) == 0) echo 'No books found';
 
-        if ($num_rows == 0) echo 'No rows found';
-
-        foreach (pg_fetch_all($catalog) as $book):
+        foreach (pg_fetch_all($result) as $book):
             $title_link = '../catalog/book_page.php' . '?isbn=' . $book['isbn'];
             $author_link = '../catalog/author_page.php' . '?author=' . $book['author'];
 
