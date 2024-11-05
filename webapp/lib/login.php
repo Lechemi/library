@@ -41,9 +41,9 @@ if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
     if ($ok) {
         switch ($user_type) {
             case 'librarian':
-                redirect('../librarian/home.php');
+                redirect('../librarian/book_catalog.php');
             case 'patron':
-                redirect('../patron/home.php');
+                redirect('../patron/book_catalog.php');
         }
     }
 }
