@@ -218,7 +218,7 @@ EXECUTE PROCEDURE enforce_due_policy();
 
 
 
--- Cannot return the book in a past or future date.
+-- Cannot return the catalog in a past or future date.
 CREATE OR REPLACE FUNCTION check_return_timestamp() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -229,7 +229,7 @@ BEGIN
     _precision := INTERVAL '5 seconds';
     IF new.returned != old.returned AND
        new.returned NOT BETWEEN NOW() - _precision AND NOW() + _precision THEN
-        RAISE EXCEPTION 'Cannot return the book in a past or future date.';
+        RAISE EXCEPTION 'Cannot return the catalog in a past or future date.';
     END IF;
 
     RETURN new;
@@ -246,7 +246,7 @@ EXECUTE PROCEDURE check_return_timestamp();
 
 /*
     If the loan has expired, the patron's delay counter will be
-    incremented after returning the book.
+    incremented after returning the catalog.
 */
 CREATE OR REPLACE FUNCTION increment_patron_delay_counter() RETURNS TRIGGER
     LANGUAGE plpgsql

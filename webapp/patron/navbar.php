@@ -32,8 +32,8 @@ $current_page = basename($_SERVER['PHP_SELF']); // This will give you the name o
             <!-- Left-aligned links -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'book_catalog.php') ? 'active' : ''; ?>"
-                       href="book_catalog.php">Book catalog</a>
+                    <a class="nav-link <?php echo ($current_page == 'patron_catalog.php') ? 'active' : ''; ?>"
+                       href="patron_catalog.php">Book catalog</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'manage_loans.php') ? 'active' : ''; ?>"

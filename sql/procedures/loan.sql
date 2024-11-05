@@ -1,5 +1,5 @@
 /*
-    Registers a loan for the given patron with the given book.
+    Registers a loan for the given patron with the given catalog.
     The loaned copy is picked with no criteria.
     If one or more preferred branches are specified, the copy has to belong
     to one of those.
@@ -35,7 +35,7 @@ BEGIN
                          );
 
     IF ARRAY_LENGTH(_available_copies, 1) IS NULL THEN
-        RAISE EXCEPTION 'There are no copies available for book %.', _book;
+        RAISE EXCEPTION 'There are no copies available for catalog %.', _book;
     END IF;
 
     FOREACH _copy IN ARRAY _available_copies
@@ -53,7 +53,7 @@ BEGIN
 
         END LOOP;
 
-    RAISE EXCEPTION 'No copies available in branches % for book %.',
+    RAISE EXCEPTION 'No copies available in branches % for catalog %.',
         _preferred_branches, _book;
 END;
 $$;
