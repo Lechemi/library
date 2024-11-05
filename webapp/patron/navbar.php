@@ -1,5 +1,5 @@
 <?php
-$current_page = basename($_SERVER['PHP_SELF']); // This will give you the name of the current file
+$current_page = basename($_SERVER['PHP_SELF']); // Name of the current file
 ?>
 
 <head>
@@ -9,15 +9,9 @@ $current_page = basename($_SERVER['PHP_SELF']); // This will give you the name o
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        .navbar-custom {
-            border-radius: 15px;
-        }
-    </style>
 </head>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-custom">
+<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-custom rounded-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Library</a>
 
