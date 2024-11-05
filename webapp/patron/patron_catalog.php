@@ -28,6 +28,22 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             color: #555; /* Lighter shade on hover */
             text-decoration: none; /* Ensure no underline on hover */
         }
+
+        /* Custom styles for book list */
+        .book-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .book-isbn {
+            font-size: 0.8rem;
+            color: #888;
+        }
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -40,7 +56,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 </div>
 
 <div class="container my-4">
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <ul class="list-group list-group-flush rounded-4">
         <?php
         $catalog = get_catalog();
 
@@ -58,27 +74,28 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             $author_link = '../catalog/author_page.php' . '?author=' . $book['author'];
 
             ?>
-            <div class="col">
-                <div class="card h-100 rounded-4">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a class="link-opacity-100-hover hover-lighten" href=<?php echo $title_link; ?>>
-                                <?php echo htmlspecialchars($book['title']); ?>
-                            </a>
-                        </h5>
-                        <p class="card-text">
-                            <a class="link-opacity-100-hover hover-lighten" href=<?php echo $author_link; ?>>
-                                <?php echo htmlspecialchars($book['first_name'] . ' ' . $book['last_name']); ?>
-                            </a>
-                        </p>
-                        <p class="card-subtitle text-muted">
-                            <small><?php echo htmlspecialchars($book['isbn']); ?></small>
-                        </p>
-                    </div>
-                </div>
-            </div>
+
+            <!-- Book Item -->
+            <li class="list-group-item d-flex flex-column flex-sm-row align-items-sm-center">
+            <span class="book-title">
+                <a class="link-opacity-100-hover hover-lighten" href=<?php echo $title_link; ?>>
+                    <?php echo htmlspecialchars($book['title']); ?>
+                </a>
+            </span>
+                <span class="mx-2">•</span>
+                <span class="book-author">
+                <a class="link-opacity-100-hover hover-lighten" href=<?php echo $author_link; ?>>
+                    <?php echo htmlspecialchars($book['first_name'] . ' ' . $book['last_name']); ?>
+                </a>
+            </span>
+                <span class="mx-2">•</span>
+                <span class="book-isbn">
+                <?php echo htmlspecialchars($book['isbn']); ?>
+            </span>
+            </li>
+
         <?php endforeach; ?>
-    </div>
+    </ul>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
