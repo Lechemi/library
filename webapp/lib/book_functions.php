@@ -68,3 +68,23 @@ function group_authors($queryResults): array
     return $books;
 }
 
+/*
+ * TODO missing specs
+ */
+function get_available_copies($isbn): Result|false
+{
+    $db = open_connection();
+    $sql = "
+        SELECT id
+        FROM library.book_copy
+            WHERE book = '$isbn'
+            AND id NOT IN (SELECT copy FROM library.loan WHERE returned IS NULL)
+            AND removed = FALSE
+    ";
+
+    pg_prepare($db, 'available_copies', $sql);
+    $result = pg_execute($db, 'available_copies', array());
+    close_connection($db);
+    return $result;
+}
+

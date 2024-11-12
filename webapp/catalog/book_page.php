@@ -1,6 +1,11 @@
 <?php
 
 include_once('../lib/book_functions.php');
+include_once('../lib/redirect.php');
+
+session_start();
+
+if (!isset($_SESSION['user'])) redirect('../index.php');
 
 if (!empty($_GET['isbn'])) {
     $isbn = $_GET['isbn'];
@@ -12,7 +17,7 @@ if (!empty($_GET['isbn'])) {
     }
 
     $bookDetails = group_authors($result)[$isbn];
-    $bookDetails['available_copies'] = 3;
+    $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn));
 }
 
 ?>
@@ -55,7 +60,13 @@ if (!empty($_GET['isbn'])) {
             <p><strong>Publisher:</strong> <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
             <p><strong>Blurb:</strong> <?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
             <p><strong>Available
-                    Copies:</strong> <?php echo ($bookDetails['available_copies'] > 0) ? htmlspecialchars($bookDetails['available_copies']) : 'None'; ?>
+                    Copies:</strong>
+                <?php
+                $copyCount = count($bookDetails['available_copies']);
+                echo ($copyCount > 0) ?
+                    htmlspecialchars($copyCount)
+                    : 'None';
+                ?>
             </p>
 
             <form action="" method="POST">
