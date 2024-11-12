@@ -5,7 +5,7 @@ use PgSql\Result;
 include_once('../lib/connection.php');
 
 /*
- * Returns the entire book catalog.
+ * Returns the entire book catalog (only essential information).
  */
 function get_catalog(): false|Result
 {
@@ -20,11 +20,13 @@ function get_catalog(): false|Result
 }
 
 /*
- * Returns the book(s) with title $book or with ISBN $book.
+ * TODO missing specs for get_book
  */
 function get_book($searchInput): false|Result
 {
     $searchInput = trim($searchInput);
+    if (empty($searchInput)) return get_catalog();
+
     $params = array($searchInput);
 
     $db = open_connection();
