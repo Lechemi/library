@@ -27,6 +27,12 @@ if (!empty($_GET['isbn'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
+<!-- Back Button -->
+<button onclick="history.back()" class="btn btn-outline-secondary mb-4">
+    &larr; Back
+</button>
+
+
 <div class="container mt-5">
     <h1 class="mb-4"><?php echo htmlspecialchars($bookDetails['title']); ?></h1>
 
@@ -34,7 +40,9 @@ if (!empty($_GET['isbn'])) {
         <div class="card-body">
             <h5 class="card-title">Book Details</h5>
             <p><strong>ISBN:</strong> <?php echo htmlspecialchars($bookDetails['isbn']); ?></p>
-            <p><strong>Author:</strong> <?php echo htmlspecialchars($bookDetails['first_name']  . ' ' . $bookDetails['last_name']); ?></p>
+            <p>
+                <strong>Author:</strong> <?php echo htmlspecialchars($bookDetails['first_name'] . ' ' . $bookDetails['last_name']); ?>
+            </p>
             <p><strong>Publisher:</strong> <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
             <p><strong>Blurb:</strong> <?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
             <p><strong>Available
