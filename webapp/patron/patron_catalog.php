@@ -66,6 +66,8 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             <button class="btn rounded-4" type="submit">Search</button>
         </div>
     </form>
+
+    <!-- TODO: clear search button -->
 </div>
 
 <!-- Displayed book(s) -->
