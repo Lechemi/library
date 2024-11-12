@@ -3,14 +3,15 @@
 include_once('../lib/book_functions.php');
 
 if (!empty($_GET['isbn'])) {
-    $result = get_books($_GET['isbn']);
+    $isbn = $_GET['isbn'];
+    $result = get_books($isbn);
 
     if ($result === false) {
         echo "Error in query execution.";
         exit;
     }
 
-    $bookDetails = pg_fetch_all($result)[0];
+    $bookDetails = group_authors($result)[$isbn];
     $bookDetails['available_copies'] = 3;
 }
 
@@ -39,9 +40,17 @@ if (!empty($_GET['isbn'])) {
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Book Details</h5>
-            <p><strong>ISBN:</strong> <?php echo htmlspecialchars($bookDetails['isbn']); ?></p>
+            <p><strong>ISBN:</strong> <?php echo htmlspecialchars($isbn); ?></p>
             <p>
-                <strong>Author:</strong> <?php echo htmlspecialchars($bookDetails['first_name'] . ' ' . $bookDetails['last_name']); ?>
+                <strong>Author:</strong>
+                <?php
+                foreach ($bookDetails['authors'] as $author) {
+                    echo htmlspecialchars($author['name']);
+                    if ($author !== end($bookDetails['authors'])) {
+                        echo ', ';
+                    }
+                }
+                ?>
             </p>
             <p><strong>Publisher:</strong> <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
             <p><strong>Blurb:</strong> <?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
@@ -50,7 +59,7 @@ if (!empty($_GET['isbn'])) {
             </p>
 
             <form action="" method="POST">
-                <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($bookDetails['isbn']); ?>">
+                <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($isbn); ?>">
                 <button type="submit"
                         class="btn btn-primary" <?php echo ($bookDetails['available_copies'] <= 0) ? 'disabled' : ''; ?>>
                     Request Loan
