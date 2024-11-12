@@ -61,8 +61,8 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <h2 class="text-center mb-4">Explore our catalog</h2>
     <form class="d-flex justify-content-center" method="GET" action="">
         <div class="input-group rounded-4" style="max-width: 400px;">
-            <input class="form-control rounded-4" type="search" placeholder="Enter a title or ISBN code"
-                   aria-label="Search" name="searchedBook">
+            <input class="form-control rounded-4" type="search" placeholder="Enter a title, an ISBN code or an author"
+                   aria-label="Search" name="searchInput">
             <button class="btn rounded-4" type="submit">Search</button>
         </div>
     </form>
@@ -75,8 +75,8 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <ul class="list-group list-group-flush rounded-4">
         <?php
 
-        if (!empty($_GET['searchedBook'])) {
-            $result = get_book($_GET['searchedBook']);
+        if (!empty($_GET['searchInput'])) {
+            $result = get_book($_GET['searchInput']);
         } else {
             $result = get_catalog();
         }

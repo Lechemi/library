@@ -20,20 +20,25 @@ function get_catalog(): false|Result
 }
 
 /*
- * Returns the book with title $book or with ISBN $book.
+ * Returns the book(s) with title $book or with ISBN $book.
  */
-function get_book($book): false|Result
+function get_book($searchInput): false|Result
 {
-    $book = trim($book);
-    $params = array($book);
+    $searchInput = trim($searchInput);
+    $params = array($searchInput);
 
     $db = open_connection();
-    $sql = "SELECT b.isbn, b.title, a.first_name, a.last_name, a.id as author, p.name as publisher, blurb
+    $sql = "SELECT b.isbn, b.title, a.first_name, a.last_name, a.id AS author, p.name AS publisher, blurb
     FROM library.book b 
-    INNER JOIN library.credits c ON b.isbn = c.book 
-    INNER JOIN library.author a on a.id = c.author
-    inner join library.publisher p on b.publisher = p.name
-    where isbn = $1 OR title ILIKE $1";
+        INNER JOIN library.credits c ON b.isbn = c.book 
+        INNER JOIN library.author a ON a.id = c.author
+        INNER JOIN library.publisher p ON b.publisher = p.name
+    WHERE isbn = $1 
+        OR title ILIKE $1 
+        OR first_name ILIKE $1 
+        OR last_name ILIKE $1
+        OR concat(first_name, ' ', last_name) ILIKE $1
+    ";
 
     pg_prepare($db, 'book', $sql);
     $result = pg_execute($db, 'book', $params);
