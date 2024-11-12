@@ -86,21 +86,26 @@ if (!empty($_GET['isbn'])) {
                         <form>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="input-datalist" class="form-label">Do you have a preferred branch?</label>
-                                    <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Insert a location" list="list-timezone" id="input-datalist">
+                                    <label for="input-datalist" class="form-label">Do you have a preferred
+                                        branch?</label>
+                                    <input type="text" class="form-control" aria-describedby="emailHelp"
+                                           placeholder="Insert a location" list="list-timezone" id="input-datalist">
                                     <datalist id="list-timezone">
                                         <option selected>No preference</option>
 
                                         <?php
 
-                                            $branches = ['Lecco', 'Milano', 'Como', 'Bergamo', 'Varese', 'Mandello'];
-                                            foreach ($branches as $branch) {
-                                                echo '<option>' . $branch . '</option>';
-                                            }
+                                        $branches = pg_fetch_all(get_branches());
+                                        print_r($branches);
+                                        foreach ($branches as $branch) {
+                                            echo '<option>' . $branch['city'] . ' - ' . $branch['address'] . '</option>';
+                                        }
 
                                         ?>
                                     </datalist>
-                                    <div id="emailHelp" class="form-text">If no preference is specified, a copy can be provided from any branch.</div>
+                                    <div id="emailHelp" class="form-text">If no preference is specified, a copy can be
+                                        provided from any branch.
+                                    </div>
                                 </div>
                             </div>
                         </form>
