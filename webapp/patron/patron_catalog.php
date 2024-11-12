@@ -75,7 +75,11 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <ul class="list-group list-group-flush rounded-4">
         <?php
 
-        $result = get_books($_GET['searchInput']);
+        if (isset($_GET['searchInput'])) {
+            $result = get_books($_GET['searchInput']);
+        } else {
+            $result = get_books('');
+        }
 
         if ($result === false) {
             echo "Error in query execution.";
@@ -86,10 +90,6 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
         foreach (group_authors($result) as $isbn => $details):
             $title_link = '../catalog/book_page.php' . '?isbn=' . $isbn;
-//            $author_links = [];
-//            foreach ($book['authors'] as $author) {
-//                $author_links[] = '../catalog/author_page.php' . '?author=' . $book['author'];
-//            }
             ?>
 
             <!-- Book Item -->
@@ -109,7 +109,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
                         echo '<a href="' . $author_link . '">' . $author['name'] . '</a><br>';
 
-                        }
+                    }
                     ?>
             </span>
                 <span class="mx-2">•</span>
