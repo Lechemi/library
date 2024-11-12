@@ -75,7 +75,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <ul class="list-group list-group-flush rounded-4">
         <?php
 
-        $result = get_book($_GET['searchInput']);
+        $result = get_books($_GET['searchInput']);
 
         if ($result === false) {
             echo "Error in query execution.";

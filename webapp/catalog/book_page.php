@@ -3,7 +3,7 @@
 include_once('../lib/book_functions.php');
 
 if (!empty($_GET['isbn'])) {
-    $result = get_book($_GET['isbn']);
+    $result = get_books($_GET['isbn']);
 
     if ($result === false) {
         echo "Error in query execution.";
