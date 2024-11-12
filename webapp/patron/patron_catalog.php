@@ -101,14 +101,14 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             </span>
                 <span class="mx-2">•</span>
                 <span class="book-author">
-
-
                     <?php
                     foreach ($details['authors'] as $author) {
                         $author_link = '../catalog/author_page.php' . '?author=' . $author['id'];
 
-                        echo '<a href="' . $author_link . '">' . $author['name'] . '</a><br>';
-
+                        echo '<a class="link-opacity-100-hover hover-lighten" href="' . $author_link . '">' . $author['name'] . '</a>';
+                        if ($author !== end($details['authors'])) {
+                            echo ', ';
+                        }
                     }
                     ?>
             </span>
