@@ -6,7 +6,7 @@ include_once('../lib/connection.php');
 
 
 /*
- * TODO missing specs for get_book
+ * TODO missing specs
  */
 function get_books($searchInput): false|Result
 {
@@ -22,7 +22,7 @@ function get_books($searchInput): false|Result
     }
 
     $db = open_connection();
-    $sql = "SELECT b.isbn, b.title, a.first_name, a.last_name, a.id AS author, p.name AS publisher, blurb
+    $sql = "SELECT b.isbn, b.title, CONCAT(a.first_name, ' ', a.last_name) as author, a.id AS author_id, p.name AS publisher, blurb
     FROM library.book b 
         INNER JOIN library.credits c ON b.isbn = c.book 
         INNER JOIN library.author a ON a.id = c.author
@@ -36,6 +36,37 @@ function get_books($searchInput): false|Result
     return $result;
 }
 
-print_r(pg_fetch_all(get_books('9788804484447')));
+/*
+ * TODO missing specs
+ */
+function group_authors($queryResults): array
+{
+    $books = [];
 
-?>
+    foreach (pg_fetch_all($queryResults) as $row) {
+        $isbn = $row['isbn'];
+        $title = $row['title'];
+        $author = $row['author'];
+        $author_id = $row['author_id'];
+        $publisher = $row['publisher'];
+        $blurb = $row['blurb'];
+
+        // If this book is not already in the books array, add it
+        if (!isset($books[$isbn])) {
+            $books[$isbn] = [
+                'title' => $title,
+                'publisher' => $publisher,
+                'blurb' => $blurb,
+                'authors' => []
+            ];
+        }
+
+        // Append the author to the book's authors array
+        $books[$isbn]['authors'][] = [$author, $author_id];
+    }
+
+    return $books;
+}
+
+print_r(group_authors(get_books('')));
+
