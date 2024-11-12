@@ -88,3 +88,18 @@ function get_available_copies($isbn): Result|false
     return $result;
 }
 
+/*
+ * Retrieves all library branches.
+ */
+function get_branches(): Result|false
+{
+    $db = open_connection();
+    $sql = "
+        SELECT * FROM library.branch;
+    ";
+
+    pg_prepare($db, 'branches', $sql);
+    $result = pg_execute($db, 'branches', array());
+    close_connection($db);
+    return $result;
+}
