@@ -84,28 +84,37 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
         if (pg_num_rows($result) == 0) echo 'No books found';
 
-        foreach (pg_fetch_all($result) as $book):
-            $title_link = '../catalog/book_page.php' . '?isbn=' . $book['isbn'];
-            $author_link = '../catalog/author_page.php' . '?author=' . $book['author'];
-
+        foreach (group_authors($result) as $isbn => $details):
+            $title_link = '../catalog/book_page.php' . '?isbn=' . $isbn;
+//            $author_links = [];
+//            foreach ($book['authors'] as $author) {
+//                $author_links[] = '../catalog/author_page.php' . '?author=' . $book['author'];
+//            }
             ?>
 
             <!-- Book Item -->
             <li class="list-group-item d-flex flex-column flex-sm-row align-items-sm-center">
             <span class="book-title">
                 <a class="link-opacity-100-hover hover-lighten" href=<?php echo $title_link; ?>>
-                    <?php echo htmlspecialchars($book['title']); ?>
+                    <?php echo htmlspecialchars($details['title']); ?>
                 </a>
             </span>
                 <span class="mx-2">•</span>
                 <span class="book-author">
-                <a class="link-opacity-100-hover hover-lighten" href=<?php echo $author_link; ?>>
-                    <?php echo htmlspecialchars($book['first_name'] . ' ' . $book['last_name']); ?>
-                </a>
+
+
+                    <?php
+                    foreach ($details['authors'] as $author) {
+                        $author_link = '../catalog/author_page.php' . '?author=' . $author['id'];
+
+                        echo '<a href="' . $author_link . '">' . $author['name'] . '</a><br>';
+
+                        }
+                    ?>
             </span>
                 <span class="mx-2">•</span>
                 <span class="book-isbn">
-                <?php echo htmlspecialchars($book['isbn']); ?>
+                <?php echo htmlspecialchars($isbn); ?>
             </span>
             </li>
 

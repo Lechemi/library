@@ -62,11 +62,9 @@ function group_authors($queryResults): array
         }
 
         // Append the author to the book's authors array
-        $books[$isbn]['authors'][] = [$author, $author_id];
+        $books[$isbn]['authors'][] = ['name' => $author, 'id' => $author_id];
     }
 
     return $books;
 }
-
-print_r(group_authors(get_books('')));
 
