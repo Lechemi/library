@@ -103,3 +103,38 @@ function get_branches(): Result|false
     close_connection($db);
     return $result;
 }
+
+/*
+ * TODO specs
+ */
+function make_loan($isbn, $patron, $preferredBranches): array
+{
+    if ($preferredBranches) {
+        $preferredBranches = '{' . implode(',', $preferredBranches) . '}';
+    }
+
+    $params = array($isbn, $patron, $preferredBranches);
+
+    $db = open_connection();
+
+    $sql = "SET search_path TO library;";
+    pg_prepare($db, 'set-sp', $sql);
+    pg_execute($db, 'set-sp', array());
+
+    $sql = "
+        SELECT * FROM library.make_loan($1, $2, $3);
+    ";
+
+    pg_prepare($db, 'make-loan', $sql);
+    @ $result = pg_execute($db, 'make-loan', $params);
+
+    if ($result) {
+        $loan = pg_fetch_all($result)[0];
+        $result = ['ok' => true, 'copy' => $loan['_loaned_copy'], 'branch' => $loan['_loan_branch']];
+    } else {
+        $result = ['ok' => false, 'error' => pg_last_error($db)];
+    }
+
+    close_connection($db);
+    return $result;
+}

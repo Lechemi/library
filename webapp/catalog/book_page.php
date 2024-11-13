@@ -78,7 +78,8 @@ $branchesJson = json_encode($branches);
                 <div class="mb-3">
                     <label for="branch-city" class="form-label">Do you have a preferred
                         city?</label>
-                    <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select" aria-label="Default select example">
+                    <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select"
+                            aria-label="Default select example">
                         <option selected>No preference</option>
 
                         <?php
@@ -97,8 +98,9 @@ $branchesJson = json_encode($branches);
 
                     <label for="branch-address" class="form-label">Do you have a preferred
                         branch?</label>
-                    <select name="branch-address" id="branch-address" class="form-select" aria-label="Default select example">
-                        <option value="">-- Select a Branch --</option>
+                    <select name="branch-address" id="branch-address" class="form-select"
+                            aria-label="Default select example">
+                        <option value="">No preference</option>
                     </select>
                     <div class="form-text">If no preference is specified, a copy can be
                         provided from any branch.
@@ -111,21 +113,19 @@ $branchesJson = json_encode($branches);
                 <?php
                 // Check if the form was submitted
                 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submitButton'])) {
-                    // Define the function that uses the input
-                    function make_loan($isbn, $patron, $preferredBranch)
-                    {
-                        // Your custom logic here, using the input
-                        return "ISBN: " . htmlspecialchars($isbn)
-                            . "Patron: " . htmlspecialchars($patron)
-                            . "branch: " . htmlspecialchars($preferredBranch);
+
+                    if ($_POST['branch-city'] != 'No preference') {
+                        if ($_POST['branch-address'] != 'No preference') {
+                            $preferredBranch = array($_POST['branch-address']);
+                            $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
+                        } else {
+                            # TODO call make_loan with all the id's of branches in specified cities
+                        }
+                    } else {
+                        $result = make_loan($isbn, $_SESSION['user']['id'], null);
                     }
 
-                    // Get the input value
-                    $preferredCity = $_POST['branch-city'];
-
-                    // Call the function with the input value and display the result
-                    $result = make_loan($isbn, $_SESSION['user']['id'], $preferredCity);
-                    echo "<p>Result: $result</p>";
+                    print_r($result);
                 }
                 ?>
             </div>
