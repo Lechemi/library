@@ -92,15 +92,15 @@ if (!empty($_GET['isbn'])) {
                         provided from any branch.
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Request</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', e => {
-        $('#input-datalist').autocomplete()
+    document.addEventListener('DOMContentLoaded', () => {
+        ('#input-datalist').autocomplete()
     }, false);
 </script>
 
