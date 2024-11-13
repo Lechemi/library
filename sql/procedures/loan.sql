@@ -7,7 +7,9 @@
 CREATE OR REPLACE PROCEDURE make_loan(
     _book book.ISBN%TYPE,
     _patron patron.USER%TYPE,
-    _preferred_branches INT[] DEFAULT NULL
+    _preferred_branches INT[] DEFAULT NULL,
+    OUT loaned_copy book_copy.ID%TYPE,
+    OUT selected_branch branch.ID%TYPE
 )
     LANGUAGE plpgsql
 AS
@@ -45,8 +47,8 @@ BEGIN
                 INSERT INTO loan (patron, copy)
                 VALUES (_patron, _copy.id);
 
-                RAISE NOTICE 'Loaned copy % from branch %.',
-                    _copy.id, _copy.branch;
+                loaned_copy := _copy.id;
+                selected_branch := _copy.branch;
 
                 RETURN;
             END IF;
