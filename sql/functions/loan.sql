@@ -4,13 +4,12 @@
     If one or more preferred branches are specified, the copy has to belong
     to one of those.
  */
-CREATE OR REPLACE PROCEDURE make_loan(
+CREATE OR REPLACE FUNCTION make_loan(
     _book book.ISBN%TYPE,
     _patron patron.USER%TYPE,
-    _preferred_branches INT[] DEFAULT NULL,
-    OUT loaned_copy book_copy.ID%TYPE,
-    OUT selected_branch branch.ID%TYPE
+    _preferred_branches INT[] DEFAULT NULL
 )
+    RETURNS TABLE (_loaned_copy book_copy.ID%TYPE, _loan_branch branch.ID%TYPE)
     LANGUAGE plpgsql
 AS
 $$
@@ -47,8 +46,7 @@ BEGIN
                 INSERT INTO loan (patron, copy)
                 VALUES (_patron, _copy.id);
 
-                loaned_copy := _copy.id;
-                selected_branch := _copy.branch;
+                RETURN QUERY SELECT _copy.id, _copy.branch;
 
                 RETURN;
             END IF;
