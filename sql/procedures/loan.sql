@@ -35,7 +35,7 @@ BEGIN
                          );
 
     IF ARRAY_LENGTH(_available_copies, 1) IS NULL THEN
-        RAISE EXCEPTION 'There are no copies available for catalog %.', _book;
+        RAISE EXCEPTION 'There are no copies available for book %.', _book;
     END IF;
 
     FOREACH _copy IN ARRAY _available_copies
@@ -53,7 +53,7 @@ BEGIN
 
         END LOOP;
 
-    RAISE EXCEPTION 'No copies available in branches % for catalog %.',
+    RAISE EXCEPTION 'No copies available in branches % for book %.',
         _preferred_branches, _book;
 END;
 $$;
