@@ -20,6 +20,9 @@ if (!empty($_GET['isbn'])) {
     $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn));
 }
 
+$branches = pg_fetch_all(get_branches());
+$branchesJson = json_encode($branches);
+
 ?>
 
 <!DOCTYPE html>
@@ -37,6 +40,8 @@ if (!empty($_GET['isbn'])) {
 <button onclick="history.back()" class="btn btn-outline-secondary mb-4">
     &larr; Back
 </button>
+
+<a href="../patron/patron_catalog.php">Back to catalog</a>
 
 
 <div class="container mt-5">
@@ -69,39 +74,89 @@ if (!empty($_GET['isbn'])) {
                 ?>
             </p>
 
-            <form>
+            <form method="POST" action="">
                 <div class="mb-3">
-                    <label for="input-datalist" class="form-label">Do you have a preferred
-                        branch?</label>
-                    <input type="text" class="form-control"
-                           placeholder="Insert a location" list="list-branches" id="input-datalist">
-                    <datalist id="list-branches">
+                    <label for="branch-city" class="form-label">Do you have a preferred
+                        city?</label>
+                    <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select" aria-label="Default select example">
                         <option selected>No preference</option>
 
                         <?php
 
-                        $branches = pg_fetch_all(get_branches());
-                        print_r($branches);
-                        foreach ($branches as $branch) {
-                            echo '<option>' . $branch['city'] . ' - ' . $branch['address'] . '</option>';
+                        // Extract all city names
+                        $cities = array_column($branches, 'city');
+
+                        // Remove duplicates to get unique cities
+                        $uniqueCities = array_unique($cities);
+                        foreach ($uniqueCities as $city) {
+                            echo '<option>' . $city . '</option>';
                         }
 
                         ?>
-                    </datalist>
+                    </select>
+
+                    <label for="branch-address" class="form-label">Do you have a preferred
+                        branch?</label>
+                    <select name="branch-address" id="branch-address" class="form-select" aria-label="Default select example">
+                        <option value="">-- Select a Branch --</option>
+                    </select>
                     <div class="form-text">If no preference is specified, a copy can be
                         provided from any branch.
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Request</button>
+                <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
             </form>
+
+            <div>
+                <?php
+                // Check if the form was submitted
+                if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submitButton'])) {
+                    // Define the function that uses the input
+                    function make_loan($isbn, $patron, $preferredBranch)
+                    {
+                        // Your custom logic here, using the input
+                        return "ISBN: " . htmlspecialchars($isbn)
+                            . "Patron: " . htmlspecialchars($patron)
+                            . "branch: " . htmlspecialchars($preferredBranch);
+                    }
+
+                    // Get the input value
+                    $preferredCity = $_POST['branch-city'];
+
+                    // Call the function with the input value and display the result
+                    $result = make_loan($isbn, $_SESSION['user']['id'], $preferredCity);
+                    echo "<p>Result: $result</p>";
+                }
+                ?>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        ('#input-datalist').autocomplete()
-    }, false);
+    // Parse PHP array into JavaScript object
+    const branches = <?php echo $branchesJson; ?>;
+
+    function updateBranches() {
+        // Get the selected city
+        const selectedCity = document.getElementById('branch-city').value;
+
+        // Get the branch select element
+        const branchSelect = document.getElementById('branch-address');
+
+        // Clear previous branch options
+        branchSelect.innerHTML = '<option value="">-- Select a Branch --</option>';
+
+        // Filter branches based on the selected city and populate the branch dropdown
+        branches.forEach(branch => {
+            if (branch.city === selectedCity) {
+                const option = document.createElement('option');
+                option.value = branch.id;
+                option.textContent = branch.address;
+                branchSelect.appendChild(option);
+            }
+        });
+    }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
