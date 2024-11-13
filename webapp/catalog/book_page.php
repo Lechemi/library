@@ -69,55 +69,31 @@ if (!empty($_GET['isbn'])) {
                 ?>
             </p>
 
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Request loan
-            </button>
+            <form>
+                <div class="mb-3">
+                    <label for="input-datalist" class="form-label">Do you have a preferred
+                        branch?</label>
+                    <input type="text" class="form-control"
+                           placeholder="Insert a location" list="list-branches" id="input-datalist">
+                    <datalist id="list-branches">
+                        <option selected>No preference</option>
 
-            <!-- Modal -->
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Loan request</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="input-datalist" class="form-label">Do you have a preferred
-                                        branch?</label>
-                                    <input type="text" class="form-control" aria-describedby="emailHelp"
-                                           placeholder="Insert a location" list="list-timezone" id="input-datalist">
-                                    <datalist id="list-timezone">
-                                        <option selected>No preference</option>
+                        <?php
 
-                                        <?php
+                        $branches = pg_fetch_all(get_branches());
+                        print_r($branches);
+                        foreach ($branches as $branch) {
+                            echo '<option>' . $branch['city'] . ' - ' . $branch['address'] . '</option>';
+                        }
 
-                                        $branches = pg_fetch_all(get_branches());
-                                        print_r($branches);
-                                        foreach ($branches as $branch) {
-                                            echo '<option>' . $branch['city'] . ' - ' . $branch['address'] . '</option>';
-                                        }
-
-                                        ?>
-                                    </datalist>
-                                    <div id="emailHelp" class="form-text">If no preference is specified, a copy can be
-                                        provided from any branch.
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary">Request</button>
-                        </div>
+                        ?>
+                    </datalist>
+                    <div class="form-text">If no preference is specified, a copy can be
+                        provided from any branch.
                     </div>
                 </div>
-            </div>
-
-
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
     </div>
 </div>
