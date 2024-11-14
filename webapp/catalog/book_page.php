@@ -22,7 +22,7 @@ if (!empty($_GET['isbn'])) {
 
 $branches = pg_fetch_all(get_branches());
 $branchesJson = json_encode($branches);
-
+const noPreferenceStr = 'No preference';
 ?>
 
 <!DOCTYPE html>
@@ -80,7 +80,7 @@ $branchesJson = json_encode($branches);
                         city?</label>
                     <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select"
                             aria-label="Default select example">
-                        <option selected>No preference</option>
+                        <option selected> <?php echo noPreferenceStr ?> </option>
 
                         <?php
 
@@ -100,7 +100,7 @@ $branchesJson = json_encode($branches);
                         branch?</label>
                     <select name="branch-address" id="branch-address" class="form-select"
                             aria-label="Default select example">
-                        <option value="">No preference</option>
+                        <option value=""> <?php echo noPreferenceStr ?> </option>
                     </select>
                     <div class="form-text">If no preference is specified, a copy can be
                         provided from any branch.
@@ -111,15 +111,22 @@ $branchesJson = json_encode($branches);
 
             <div>
                 <?php
-                // Check if the form was submitted
                 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submitButton'])) {
 
-                    if ($_POST['branch-city'] != 'No preference') {
-                        if ($_POST['branch-address'] != 'No preference') {
+                    if ($_POST['branch-city'] != noPreferenceStr) {
+                        if (!empty($_POST['branch-address'])) {
                             $preferredBranch = array($_POST['branch-address']);
                             $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
                         } else {
-                            # TODO call make_loan with all the id's of branches in specified cities
+                            $preferredBranches = [];
+
+                            foreach ($branches as $branch) {
+                                if ($branch['city'] === $_POST['branch-city']) {
+                                    $preferredBranches[] = $branch['id'];
+                                }
+                            }
+
+                            $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranches);
                         }
                     } else {
                         $result = make_loan($isbn, $_SESSION['user']['id'], null);
@@ -145,7 +152,7 @@ $branchesJson = json_encode($branches);
         const branchSelect = document.getElementById('branch-address');
 
         // Clear previous branch options
-        branchSelect.innerHTML = '<option value="">-- Select a Branch --</option>';
+        branchSelect.innerHTML = '<option value=""> <?php echo noPreferenceStr ?> </option>';
 
         // Filter branches based on the selected city and populate the branch dropdown
         branches.forEach(branch => {
