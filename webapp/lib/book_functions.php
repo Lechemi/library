@@ -138,3 +138,26 @@ function make_loan($isbn, $patron, $preferredBranches): array
     close_connection($db);
     return $result;
 }
+
+/*
+ * TODO specs
+ */
+function get_active_loans($patron): Result|false
+{
+    $db = open_connection();
+    $sql = "
+        SELECT *
+        FROM library.loan
+            INNER JOIN library.book_copy ON loan.copy = book_copy.id
+            INNER JOIN library.book ON book_copy.book = book.isbn
+            INNER JOIN library.branch ON book_copy.branch = branch.id
+        WHERE returned IS NULL 
+            AND patron = '$patron'
+        ORDER BY due
+    ";
+
+    pg_prepare($db, 'active-loans', $sql);
+    $result = pg_execute($db, 'active-loans', array());
+    close_connection($db);
+    return $result;
+}
