@@ -9,7 +9,11 @@ CREATE OR REPLACE FUNCTION make_loan(
     _patron patron.USER%TYPE,
     _preferred_branches INT[] DEFAULT NULL
 )
-    RETURNS TABLE (_loaned_copy book_copy.ID%TYPE, _loan_branch branch.ID%TYPE)
+    RETURNS TABLE
+            (
+                _loaned_copy book_copy.ID%TYPE,
+                _loan_branch branch.ID%TYPE
+            )
     LANGUAGE plpgsql
 AS
 $$
@@ -53,7 +57,7 @@ BEGIN
 
         END LOOP;
 
-    RAISE EXCEPTION 'No copies available in branches % for book %.',
-        _preferred_branches, _book;
+    RAISE EXCEPTION 'No copies available in specified branches for book %.',
+        _book;
 END;
 $$;
