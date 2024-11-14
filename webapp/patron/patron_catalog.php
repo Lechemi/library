@@ -51,6 +51,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
+<body>
 <!-- Navbar -->
 <div class="container mt-3">
     <?php include 'navbar.php'; ?>
@@ -58,7 +59,6 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
 <!-- Search bar -->
 <div class="container my-3">
-    <h2 class="text-center mb-4">Explore our catalog</h2>
     <form class="d-flex justify-content-center" method="GET" action="">
         <div class="input-group rounded-4" style="max-width: 400px;">
             <input class="form-control rounded-4" type="search" placeholder="Enter a title, an ISBN code or an author"
@@ -121,6 +121,8 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
         <?php endforeach; ?>
     </ul>
 </div>
+</body>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
