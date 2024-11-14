@@ -18,6 +18,9 @@ if (!empty($_GET['isbn'])) {
 
     $bookDetails = group_authors($result)[$isbn];
     $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn));
+} else {
+    echo "Error, no book.";
+    exit;
 }
 
 $branches = pg_fetch_all(get_branches());
@@ -43,101 +46,81 @@ const noPreferenceStr = 'No preference';
 
 <a href="../patron/patron_catalog.php">Back to catalog</a>
 
-
 <div class="container mt-5">
     <h1 class="mb-4"><?php echo htmlspecialchars($bookDetails['title']); ?></h1>
 
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Book Details</h5>
-            <p><strong>ISBN:</strong> <?php echo htmlspecialchars($isbn); ?></p>
-            <p>
-                <strong>Author:</strong>
-                <?php
-                foreach ($bookDetails['authors'] as $author) {
-                    echo htmlspecialchars($author['name']);
-                    if ($author !== end($bookDetails['authors'])) {
-                        echo ', ';
-                    }
-                }
-                ?>
-            </p>
-            <p><strong>Publisher:</strong> <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
-            <p><strong>Blurb:</strong> <?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
-            <p><strong>Available
-                    Copies:</strong>
-                <?php
-                $copyCount = count($bookDetails['available_copies']);
-                echo ($copyCount > 0) ?
-                    htmlspecialchars($copyCount)
-                    : 'None';
-                ?>
-            </p>
-
-            <form method="POST" action="">
-                <div class="mb-3">
-                    <label for="branch-city" class="form-label">Do you have a preferred
-                        city?</label>
-                    <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select"
-                            aria-label="Default select example">
-                        <option selected> <?php echo noPreferenceStr ?> </option>
-
-                        <?php
-
-                        // Extract all city names
-                        $cities = array_column($branches, 'city');
-
-                        // Remove duplicates to get unique cities
-                        $uniqueCities = array_unique($cities);
-                        foreach ($uniqueCities as $city) {
-                            echo '<option>' . $city . '</option>';
+    <div class="container my-5">
+        <div class="card mb-5 pb-4">
+            <div class="card-body">
+                <h5 class="card-title">Book Details</h5>
+                <p><strong>ISBN:</strong> <?php echo htmlspecialchars($isbn); ?></p>
+                <p>
+                    <strong>Author:</strong>
+                    <?php
+                    foreach ($bookDetails['authors'] as $author) {
+                        echo htmlspecialchars($author['name']);
+                        if ($author !== end($bookDetails['authors'])) {
+                            echo ', ';
                         }
+                    }
+                    ?>
+                </p>
+                <p><strong>Publisher:</strong> <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
+                <p><strong>Blurb:</strong> <?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
+                <p><strong>Available
+                        Copies:</strong>
+                    <?php
+                    $copyCount = count($bookDetails['available_copies']);
+                    echo ($copyCount > 0) ?
+                        htmlspecialchars($copyCount)
+                        : 'None';
+                    ?>
+                </p>
 
-                        ?>
-                    </select>
+                <form method="POST" action="loan_request_results.php">
+                    <div class="mb-3">
+                        <input type="hidden" name="isbn" value=" <?php echo htmlspecialchars($isbn); ?> ">
 
-                    <label for="branch-address" class="form-label">Do you have a preferred
-                        branch?</label>
-                    <select name="branch-address" id="branch-address" class="form-select"
-                            aria-label="Default select example">
-                        <option value=""> <?php echo noPreferenceStr ?> </option>
-                    </select>
-                    <div class="form-text">If no preference is specified, a copy can be
-                        provided from any branch.
-                    </div>
-                </div>
-                <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
-            </form>
+                        <!-- City selection -->
+                        <label for="branch-city" class="form-label">Do you have a preferred
+                            city?</label>
+                        <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select"
+                                aria-label="Default select example">
+                            <option selected> <?php echo noPreferenceStr ?> </option>
 
-            <div>
-                <?php
-                if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submitButton'])) {
+                            <?php
 
-                    if ($_POST['branch-city'] != noPreferenceStr) {
-                        if (!empty($_POST['branch-address'])) {
-                            $preferredBranch = array($_POST['branch-address']);
-                            $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
-                        } else {
-                            $preferredBranches = [];
+                            // Extract all city names
+                            $cities = array_column($branches, 'city');
 
-                            foreach ($branches as $branch) {
-                                if ($branch['city'] === $_POST['branch-city']) {
-                                    $preferredBranches[] = $branch['id'];
-                                }
+                            // Remove duplicates to get unique cities
+                            $uniqueCities = array_unique($cities);
+                            foreach ($uniqueCities as $city) {
+                                echo '<option>' . $city . '</option>';
                             }
 
-                            $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranches);
-                        }
-                    } else {
-                        $result = make_loan($isbn, $_SESSION['user']['id'], null);
-                    }
+                            ?>
+                        </select>
 
-                    print_r($result);
-                }
-                ?>
+                        <!-- Address selection -->
+                        <label for="branch-address" class="form-label">Do you have a preferred
+                            branch?</label>
+                        <select name="branch-address" id="branch-address" class="form-select"
+                                aria-label="Default select example">
+                            <option value=""> <?php echo noPreferenceStr ?> </option>
+                        </select>
+
+                        <div class="form-text">If no preference is specified, a copy can be
+                            provided from any branch.
+                        </div>
+                    </div>
+                    <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
+                </form>
+
             </div>
         </div>
     </div>
+
 </div>
 
 <script>
