@@ -11,6 +11,7 @@ if (!empty($_GET['author'])) {
     }
 
     $authorDetails = pg_fetch_all($result)[0];
+    $authorDetails['full_name'] = $authorDetails['first_name'] . ' ' . $authorDetails['last_name'];
 }
 
 ?>
@@ -34,12 +35,10 @@ if (!empty($_GET['author'])) {
 <div class="container profile-container">
     <div class="card">
         <div class="card-body">
-            <!-- Display author's full name -->
             <h1 class="author-title">
-                <?= htmlspecialchars($authorDetails['first_name'] . ' ' . $authorDetails['last_name']) ?>
+                <?= htmlspecialchars($authorDetails['full_name']) ?>
             </h1>
 
-            <!-- Display birth and death dates with "Unknown" if null -->
             <p class="text-muted">
                 Born: <?= $authorDetails['birth_date'] ?? 'unknown' ?> -
                 Died: <?= $authorDetails['alive'] == 't' ? 'Present' : ($authorDetails['death_date'] ?? 'Unknown') ?>
@@ -47,10 +46,12 @@ if (!empty($_GET['author'])) {
 
             <hr>
 
-            <!-- Display author bio -->
             <p>
                 <?= htmlspecialchars($authorDetails['bio'] ?? 'No bio available.') ?>
             </p>
+
+            <a href=<?php echo '../patron/patron_catalog.php?searchInput=' . $authorDetails['full_name'] ?>>View
+                books</a>
         </div>
     </div>
 </div>
