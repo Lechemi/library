@@ -55,9 +55,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
-<body class="container py-4">
+<body>
 
-<a href="../patron/patron_catalog.php">Back to catalog</a>
+<!-- TODO "logout" button -->
+
+<!-- Navbar -->
+<div class="container mt-3">
+    <?php include 'navbar.php'; ?>
+</div>
+
+<div class="container my-4">
 
 <div class="card mb-4">
     <div class="card-body">
@@ -75,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Change Password
 </button>
 
-<!-- Change Password Modal -->
 <!-- Change Password Modal -->
 <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
      aria-hidden="true">
@@ -121,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 </div>
 
+</div>
 
 </body>
 

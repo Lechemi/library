@@ -54,12 +54,11 @@ $activeLoans = pg_fetch_all($result);
 </head>
 
 <body>
+
 <!-- Navbar -->
 <div class="container mt-3">
     <?php include 'navbar.php'; ?>
 </div>
-
-
 
 <div class="container my-4">
 
