@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
     if ($newPassword !== $confirmPassword) {
-        $message = "Passwords do not match.";
+        $message = "Failed to confirm new password.";
         $messageType = "danger";
     } else {
         try {
@@ -56,6 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="container py-4">
+
+<a href="../patron/patron_catalog.php">Back to catalog</a>
+
 <div class="card mb-4">
     <div class="card-body">
         <!-- Main User Info -->
