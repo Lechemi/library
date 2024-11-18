@@ -21,3 +21,29 @@ function get_patron($userId): Result|false
     close_connection($db);
     return $result;
 }
+
+function change_password($userID, $currentPassword, $newPassword): array
+{
+    $db = open_connection();
+    $sql = "
+        UPDATE library.user u
+        SET password = '$newPassword'
+        WHERE id = '$userID' and password = '$currentPassword'
+    ";
+
+    pg_prepare($db, 'change-password', $sql);
+    $result = pg_execute($db, 'change-password', array());
+
+    if ($result) {
+        if (pg_affected_rows($result) != 1) {
+            $result = ['ok' => false, 'error' => 'Incorrect password.'];
+        } else {
+            $result = ['ok' => true];
+        }
+    } else {
+        $result = ['ok' => false, 'error' => pg_last_error($db)];
+    }
+
+    close_connection($db);
+    return $result;
+}
