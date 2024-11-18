@@ -30,6 +30,9 @@ function get_patron($userId): Result|false
  */
 function change_password($userID, $currentPassword, $newPassword): void
 {
+    if ($newPassword == $currentPassword)
+        throw new Exception("New and current password are identical.");
+
     $db = open_connection();
     $sql = "
         UPDATE library.user u
