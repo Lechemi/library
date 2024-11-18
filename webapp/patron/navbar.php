@@ -37,8 +37,8 @@ $current_page = basename($_SERVER['PHP_SELF']); // Name of the current file
         </div>
 
         <!-- Right-aligned button -->
-        <button class="btn ms-auto" type="button">
+        <a href="manage_account.php" class="btn ms-auto">
             <i class="bi bi-person" style="font-size: 1.5rem;"></i>
-        </button>
+        </a>
     </div>
 </nav>
