@@ -11,7 +11,7 @@ if (!empty($_GET['isbn'])) {
     $isbn = $_GET['isbn'];
     $result = get_books($isbn);
 
-    if ($result === false) {
+    if (!$result) {
         echo "Error in query execution.";
         exit;
     }
