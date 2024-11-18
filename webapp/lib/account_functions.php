@@ -25,9 +25,6 @@ function get_patron($userId): Result|false
 /*
  * Sets password to newPassword for user with id of userID.
  */
-/**
- * @throws Exception
- */
 function change_password($userID, $currentPassword, $newPassword): void
 {
     if ($newPassword == $currentPassword)

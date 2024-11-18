@@ -17,6 +17,30 @@ if (!$result) {
 
 $patron = pg_fetch_all($result)[0];
 $user = $_SESSION['user'];
+
+$message = '';
+$messageType = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $currentPassword = $_POST['current_password'] ?? '';
+    $newPassword = $_POST['new_password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+
+    if ($newPassword !== $confirmPassword) {
+        $message = "Passwords do not match.";
+        $messageType = "danger";
+    } else {
+        try {
+            change_password($user['id'], $currentPassword, $newPassword);
+            $message = "Password changed successfully!";
+            $messageType = "success";
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            $messageType = "danger";
+        }
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -49,7 +73,9 @@ $user = $_SESSION['user'];
 </button>
 
 <!-- Change Password Modal -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -57,10 +83,13 @@ $user = $_SESSION['user'];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="changePasswordForm" method="post" action="/change-password">
+
+                <!-- Password change form -->
+                <form id="changePasswordForm" method="post">
                     <div class="mb-3">
                         <label for="currentPassword" class="form-label">Current Password</label>
-                        <input type="password" class="form-control" id="currentPassword" name="current_password" required>
+                        <input type="password" class="form-control" id="currentPassword" name="current_password"
+                               required>
                     </div>
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">New Password</label>
@@ -68,16 +97,29 @@ $user = $_SESSION['user'];
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                               required>
                     </div>
                     <button type="submit" class="btn btn-primary">Change Password</button>
                 </form>
+
             </div>
         </div>
     </div>
 </div>
-</body>
 
+<!-- Placeholder for bottom alert -->
+<div class="mt-4">
+    <?php if (!empty($message)): ?>
+        <div class="alert alert-<?= htmlspecialchars($messageType) ?> mt-5 alert-dismissible fade show">
+            <?= htmlspecialchars($message) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+</div>
+
+
+</body>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

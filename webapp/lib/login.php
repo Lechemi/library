@@ -6,6 +6,8 @@ include_once('redirect.php');
 
 session_start();
 
+
+# TODO should return everything except the password (for safety)
 /*
  * Retrieves the user with email $usr and password $psw.
  */
