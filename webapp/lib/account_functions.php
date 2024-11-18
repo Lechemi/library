@@ -22,7 +22,13 @@ function get_patron($userId): Result|false
     return $result;
 }
 
-function change_password($userID, $currentPassword, $newPassword): array
+/*
+ * Sets password to newPassword for user with id of userID.
+ */
+/**
+ * @throws Exception
+ */
+function change_password($userID, $currentPassword, $newPassword): void
 {
     $db = open_connection();
     $sql = "
@@ -32,18 +38,15 @@ function change_password($userID, $currentPassword, $newPassword): array
     ";
 
     pg_prepare($db, 'change-password', $sql);
-    $result = pg_execute($db, 'change-password', array());
+    @ $result = pg_execute($db, 'change-password', array());
 
-    if ($result) {
-        if (pg_affected_rows($result) != 1) {
-            $result = ['ok' => false, 'error' => 'Incorrect password.'];
-        } else {
-            $result = ['ok' => true];
-        }
-    } else {
-        $result = ['ok' => false, 'error' => pg_last_error($db)];
+    if (!$result) {
+        throw new Exception('New password is too simple.');
+    }
+
+    if (pg_affected_rows($result) != 1) {
+        throw new Exception('Current password is incorrect.');
     }
 
     close_connection($db);
-    return $result;
 }
