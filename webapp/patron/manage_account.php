@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-<!-- TODO "logout" button -->
+
 
 <!-- Navbar -->
 <div class="container mt-3">
