@@ -5,6 +5,42 @@ use PgSql\Result;
 include_once('../lib/connection.php');
 
 /*
+ * Retrieves the user with email $usr and password $psw.
+ */
+/**
+ * @throws Exception
+ */
+function retrieve_user($usr, $psw): array
+{
+    $db = open_connection();
+
+    $sql =
+        "SELECT * FROM library.user
+         WHERE email = '$usr'";
+
+    pg_prepare($db, 'login', $sql);
+    $result = pg_execute($db, 'login', array());
+
+    close_connection($db);
+
+    $user = pg_fetch_all($result);
+
+    if (empty($user)) {
+        throw new Exception("User not found!");
+    }
+
+    $user = $user[0];
+
+    if ($psw != $user['password']) {
+        throw new Exception("Password is incorrect!");
+    }
+
+    unset($user['password']);
+
+    return $user;
+}
+
+/*
  * Retrieves the patron associated with userId.
  */
 function get_patron($userId): Result|false

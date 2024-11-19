@@ -32,17 +32,17 @@ session_start();
             </form>
 
             <?php
-            if (isset($_SESSION['feedback'])) {
-                if (!$_SESSION['feedback']) {
-                    ?>
-                    <div class="alert alert-danger d-flex align-items-center" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
-                        <div>
-                            Wrong login credentials!
-                        </div>
+            if (isset($_SESSION['login_error'])) {
+
+                ?>
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+                    <div>
+                        <?php echo $_SESSION['login_error'] ?>
                     </div>
-                    <?php
-                }
+                </div>
+                <?php
+
             }
             ?>
         </div>
