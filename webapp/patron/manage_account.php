@@ -57,77 +57,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-
-
-<!-- Navbar -->
-<div class="container mt-3">
-    <?php include 'navbar.php'; ?>
-</div>
-
-<div class="container my-4">
-
-<div class="card mb-4">
-    <div class="card-body">
-        <!-- Main User Info -->
-        <h2 class="card-title mb-1"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h2>
-        <p class="text-muted mb-3"><?= htmlspecialchars($user['email']) ?></p>
-
-        <!-- Other Information -->
-        <p><strong>Tax Code:</strong> <?= htmlspecialchars($patron['tax_code']) ?></p>
-        <p><strong>Number of Delays:</strong> <?= htmlspecialchars($patron['n_delays']) ?></p>
-        <p><strong>Category:</strong> <?= htmlspecialchars($patron['category']) ?></p>
+    <!-- Navbar -->
+    <div class="container mt-3">
+        <?php include 'navbar.php'; ?>
     </div>
-</div>
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-    Change Password
-</button>
 
-<!-- Change Password Modal -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
+    <div class="container my-4">
 
-                <!-- Password change form -->
-                <form id="changePasswordForm" method="post">
-                    <div class="mb-3">
-                        <label for="currentPassword" class="form-label">Current Password</label>
-                        <input type="password" class="form-control" id="currentPassword" name="current_password"
-                               required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" name="new_password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
-                               required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Change Password</button>
-                </form>
+        <!-- Card with patron info -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <!-- Main User Info -->
+                <h2 class="card-title mb-1"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h2>
+                <p class="text-muted mb-3"><?= htmlspecialchars($user['email']) ?></p>
 
+                <!-- Other Information -->
+                <p><strong>Tax Code:</strong> <?= htmlspecialchars($patron['tax_code']) ?></p>
+                <p><strong>Number of Delays:</strong> <?= htmlspecialchars($patron['n_delays']) ?></p>
+                <p><strong>Category:</strong> <?= htmlspecialchars($patron['category']) ?></p>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Placeholder for bottom alert -->
-<div class="mt-4">
-    <?php if (!empty($message)): ?>
-        <div class="alert alert-<?= htmlspecialchars($messageType) ?> mt-5 alert-dismissible fade show">
-            <?= htmlspecialchars($message) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Logout button -->
+        <a class="btn btn-primary" href="../lib/logout.php">
+            Logout
+        </a>
+
+        <!-- Change password button -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+            Change Password
+        </button>
+
+        <!-- Change Password Modal -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <!-- Password change form -->
+                        <form id="changePasswordForm" method="post">
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <input type="password" class="form-control" id="currentPassword" name="current_password"
+                                       required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                                       required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
         </div>
-    <?php endif; ?>
-</div>
 
-</div>
+        <!-- Placeholder for bottom alert -->
+        <div class="mt-4">
+            <?php if (!empty($message)): ?>
+                <div class="alert alert-<?= htmlspecialchars($messageType) ?> mt-5 alert-dismissible fade show">
+                    <?= htmlspecialchars($message) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+        </div>
+
+    </div>
 
 </body>
 
