@@ -54,7 +54,13 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <body>
 <!-- Navbar -->
 <div class="container mt-3">
-    <?php include 'navbar.php'; ?>
+    <?php
+    if ($_SESSION['user']['type'] == 'patron') {
+        include '../patron/navbar.php';
+    } else {
+        include '../librarian/navbar.php';
+    }
+    ?>
 </div>
 
 <!-- Search bar -->

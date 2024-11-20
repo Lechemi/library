@@ -44,7 +44,7 @@ const noPreferenceStr = 'No preference';
     &larr; Back
 </button>
 
-<a href="../patron/patron_catalog.php">Back to catalog</a>
+<a href="catalog.php">Back to catalog</a>
 
 <div class="container mt-5">
     <h1 class="mb-4"><?php echo htmlspecialchars($bookDetails['title']); ?></h1>

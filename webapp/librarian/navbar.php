@@ -1,6 +1,5 @@
 <?php
-$current_page = basename($_SERVER['PHP_SELF']);
-$user_type = $_SESSION['user']['type'];
+$current_page = basename($_SERVER['PHP_SELF']); // Name of the current file
 ?>
 
 <head>
@@ -31,14 +30,14 @@ $user_type = $_SESSION['user']['type'];
                        href="../catalog/catalog.php">Book catalog</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'manage_loans.php') ? 'active' : ''; ?>"
-                       href="../patron/manage_loans.php">Manage loans</a>
+                    <a class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>"
+                       href="../librarian/dashboard.php">Dashboard</a>
                 </li>
             </ul>
         </div>
 
         <!-- Right-aligned button -->
-        <a href="../patron/manage_account.php" class="btn ms-auto">
+        <a href="" class="btn ms-auto">
             <i class="bi bi-person" style="font-size: 1.5rem;"></i>
         </a>
     </div>

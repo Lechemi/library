@@ -50,7 +50,7 @@ if (!empty($_GET['author'])) {
                 <?= htmlspecialchars($authorDetails['bio'] ?? 'No bio available.') ?>
             </p>
 
-            <a href=<?php echo '../patron/patron_catalog.php?searchInput=' . $authorDetails['full_name'] ?>>View
+            <a href=<?php echo '../catalog/catalog.php?searchInput=' . $authorDetails['full_name'] ?>>View
                 books</a>
         </div>
     </div>

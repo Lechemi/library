@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
 
             <a class="btn btn-secondary mt-3" href=<?php echo 'book_page.php?isbn=' . trim($_POST['isbn']); ?>>Back to
                 Book Page</a>
-            <a href="../patron/patron_catalog.php" class="btn btn-secondary mt-3">Back to catalog</a>
+            <a href="catalog.php" class="btn btn-secondary mt-3">Back to catalog</a>
         </div>
     </div>
 </div>

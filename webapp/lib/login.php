@@ -25,12 +25,7 @@ if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
     $user_type = $user['type'];
 
     if (!isset($_SESSION['login_error'])) {
-        switch ($user_type) {
-            case 'librarian':
-                redirect('../librarian/patron_catalog.php');
-            case 'patron':
-                redirect('../patron/patron_catalog.php');
-        }
+        redirect('../catalog/catalog.php');
     }
 }
 
