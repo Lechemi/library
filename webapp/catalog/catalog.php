@@ -3,7 +3,7 @@
 ini_set('display_errors', 'On');
 ini_set('error_reporting', E_ALL);
 include_once('../lib/redirect.php');
-include_once('../lib/book_functions.php');
+include_once('../lib/book-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
@@ -95,7 +95,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
         if (pg_num_rows($result) == 0) echo 'No books found';
 
         foreach (group_authors($result) as $isbn => $details):
-            $title_link = '../catalog/book_page.php' . '?isbn=' . $isbn;
+            $title_link = '../catalog/book-page.php' . '?isbn=' . $isbn;
             ?>
 
             <!-- Book Item -->
@@ -109,7 +109,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
                 <span class="book-author">
                     <?php
                     foreach ($details['authors'] as $author) {
-                        $author_link = '../catalog/author_page.php' . '?author=' . $author['id'];
+                        $author_link = '../catalog/author-page.php' . '?author=' . $author['id'];
 
                         echo '<a class="link-opacity-100-hover hover-lighten" href="' . $author_link . '">' . $author['name'] . '</a>';
                         if ($author !== end($details['authors'])) {

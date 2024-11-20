@@ -1,6 +1,6 @@
 <?php
 
-include_once('../lib/book_functions.php');
+include_once('../lib/book-functions.php');
 include_once('../lib/redirect.php');
 
 session_start();
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
                 </div>
             <?php endif; ?>
 
-            <a class="btn btn-secondary mt-3" href=<?php echo 'book_page.php?isbn=' . trim($_POST['isbn']); ?>>Back to
+            <a class="btn btn-secondary mt-3" href=<?php echo 'book-page.php?isbn=' . trim($_POST['isbn']); ?>>Back to
                 Book Page</a>
             <a href="catalog.php" class="btn btn-secondary mt-3">Back to catalog</a>
         </div>

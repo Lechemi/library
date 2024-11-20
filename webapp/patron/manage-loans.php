@@ -2,7 +2,7 @@
 ini_set('display_errors', 'On');
 ini_set('error_reporting', E_ALL);
 include_once('../lib/redirect.php');
-include_once('../lib/book_functions.php');
+include_once('../lib/book-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');

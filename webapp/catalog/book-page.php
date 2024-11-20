@@ -1,6 +1,6 @@
 <?php
 
-include_once('../lib/book_functions.php');
+include_once('../lib/book-functions.php');
 include_once('../lib/redirect.php');
 
 session_start();
@@ -77,7 +77,7 @@ const noPreferenceStr = 'No preference';
                     ?>
                 </p>
 
-                <form method="POST" action="loan_request_results.php">
+                <form method="POST" action="loan-request-results.php">
                     <div class="mb-3">
                         <input type="hidden" name="isbn" value=" <?php echo htmlspecialchars($isbn); ?> ">
 

@@ -2,7 +2,7 @@
 ini_set("display_errors", "On");
 ini_set("error_reporting", E_ALL);
 include_once('redirect.php');
-include_once('account_functions.php');
+include_once('account-functions.php');
 
 session_start();
 

@@ -1,6 +1,6 @@
 <?php
 
-include_once('../lib/author_functions.php');
+include_once('../lib/author-functions.php');
 
 if (!empty($_GET['author'])) {
     $result = get_author($_GET['author']);
