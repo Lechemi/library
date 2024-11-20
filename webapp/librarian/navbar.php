@@ -26,12 +26,12 @@ $current_page = basename($_SERVER['PHP_SELF']); // Name of the current file
             <!-- Left-aligned links -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'catalog.php') ? 'active' : ''; ?>"
-                       href="../catalog/catalog.php">Book catalog</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>"
                        href="../librarian/dashboard.php">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($current_page == 'catalog.php') ? 'active' : ''; ?>"
+                       href="../catalog/catalog.php">Book catalog</a>
                 </li>
             </ul>
         </div>

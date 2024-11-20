@@ -22,10 +22,12 @@ if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
         $_SESSION['login_error'] = $e->getMessage();
     }
 
-    $user_type = $user['type'];
-
     if (!isset($_SESSION['login_error'])) {
-        redirect('../catalog/catalog.php');
+        if ($user['type'] == 'patron') {
+            redirect('../catalog/catalog.php');
+        } else {
+            redirect('../librarian/dashboard.php');
+        }
     }
 }
 
