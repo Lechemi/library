@@ -62,12 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="container my-4">
 
-    <!-- Card with patron info -->
+    <!-- Card with user info -->
     <div class="card mb-4">
         <div class="card-body">
             <!-- Main User Info -->
             <h2 class="card-title mb-1"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h2>
             <p class="text-muted mb-3"><?= htmlspecialchars($user['email']) ?></p>
+            <p><?php echo ($user['type'] == 'patron') ? 'Patron' : 'Librarian'; ?></p>
 
             <!-- Patron-related information -->
             <?php
