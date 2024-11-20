@@ -17,15 +17,13 @@ if (!empty($_GET['isbn'])) {
     }
 
     $bookDetails = group_authors($result)[$isbn];
-    $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn));
+    if ($_SESSION['user']['type'] == 'patron')
+        $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn));
 } else {
     echo "Error, no book.";
     exit;
 }
 
-$branches = pg_fetch_all(get_branches());
-$branchesJson = json_encode($branches);
-const noPreferenceStr = 'No preference';
 ?>
 
 <!DOCTYPE html>
@@ -67,87 +65,30 @@ const noPreferenceStr = 'No preference';
                 </p>
                 <p><strong>Publisher:</strong> <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
                 <p><strong>Blurb:</strong> <?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
-                <p><strong>Available
-                        Copies:</strong>
-                    <?php
+
+                <?php
+
+                if (isset($bookDetails['available_copies'])) {
                     $copyCount = count($bookDetails['available_copies']);
-                    echo ($copyCount > 0) ?
-                        htmlspecialchars($copyCount)
-                        : 'None';
-                    ?>
-                </p>
 
-                <form method="POST" action="loan-request-results.php">
-                    <div class="mb-3">
-                        <input type="hidden" name="isbn" value=" <?php echo htmlspecialchars($isbn); ?> ">
+                    if ($copyCount == 0) {
+                        echo '<p><strong>There are no available copies.</strong></p>';
+                    } else if ($copyCount == 1) {
+                        echo '<p><strong>There\'s one available copy.</strong></p>';
+                    } else {
+                        echo '<p><strong>There are ' . htmlspecialchars($copyCount) . ' available copies.</strong></p>';
+                    }
 
-                        <!-- City selection -->
-                        <label for="branch-city" class="form-label">Do you have a preferred
-                            city?</label>
-                        <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select"
-                                aria-label="Default select example">
-                            <option selected> <?php echo noPreferenceStr ?> </option>
+                }
+                ?>
 
-                            <?php
-
-                            // Extract all city names
-                            $cities = array_column($branches, 'city');
-
-                            // Remove duplicates to get unique cities
-                            $uniqueCities = array_unique($cities);
-                            foreach ($uniqueCities as $city) {
-                                echo '<option>' . $city . '</option>';
-                            }
-
-                            ?>
-                        </select>
-
-                        <!-- Address selection -->
-                        <label for="branch-address" class="form-label">Do you have a preferred
-                            branch?</label>
-                        <select name="branch-address" id="branch-address" class="form-select"
-                                aria-label="Default select example">
-                            <option value=""> <?php echo noPreferenceStr ?> </option>
-                        </select>
-
-                        <div class="form-text">If no preference is specified, a copy can be
-                            provided from any branch.
-                        </div>
-                    </div>
-                    <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
-                </form>
+                <?php if ($_SESSION['user']['type'] == 'patron') include 'loan-request-form.php' ?>
 
             </div>
         </div>
     </div>
 
 </div>
-
-<script>
-    // Parse PHP array into JavaScript object
-    const branches = <?php echo $branchesJson; ?>;
-
-    function updateBranches() {
-        // Get the selected city
-        const selectedCity = document.getElementById('branch-city').value;
-
-        // Get the branch select element
-        const branchSelect = document.getElementById('branch-address');
-
-        // Clear previous branch options
-        branchSelect.innerHTML = '<option value=""> <?php echo noPreferenceStr ?> </option>';
-
-        // Filter branches based on the selected city and populate the branch dropdown
-        branches.forEach(branch => {
-            if (branch.city === selectedCity) {
-                const option = document.createElement('option');
-                option.value = branch.id;
-                option.textContent = branch.address;
-                branchSelect.appendChild(option);
-            }
-        });
-    }
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
