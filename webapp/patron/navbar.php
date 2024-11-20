@@ -32,7 +32,7 @@ $user_type = $_SESSION['user']['type'];
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'manage-loans.php') ? 'active' : ''; ?>"
-                       href="manage-loans.php">Manage loans</a>
+                       href="../patron/manage-loans.php">Manage loans</a>
                 </li>
             </ul>
         </div>
