@@ -39,45 +39,27 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
             <?php
 
+                $pages = [
+                        'Manage Users' => ['manage-users.php', 'Insert or remove users, reset patron delays and update due dates for loans.'],
+                        'Manage Branches' => ['manage-branches.php', 'View all branches and insert new ones.'],
+                        'Manage Catalog' => ['manage-catalog.php', 'Insert new books and authors, add or remove book copies.'],
+                ];
 
+                foreach ($pages as $title => $details) {
+                    echo '
+                        <div class="col-md-4 mb-4">
+                            <a href=' . $details[0] . ' class="text-decoration-none card-link">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title text-dark">' . $title . '</h5>
+                                        <p class="card-text text-muted">' . $details[1] . '</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>';
+                }
 
             ?>
-
-            <!-- Manage Users -->
-            <div class="col-md-4 mb-4">
-                <a href="manage-users.php" class="text-decoration-none card-link">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-dark">Manage Users</h5>
-                            <p class="card-text text-muted">Add, edit, or remove users from the system and assign roles as needed.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Manage Branches -->
-            <div class="col-md-4 mb-4">
-                <a href="manage-branches.php" class="text-decoration-none card-link">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-dark">Manage Branches</h5>
-                            <p class="card-text text-muted">Organize and oversee branches, update details, or create new ones.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Manage Catalog -->
-            <div class="col-md-4 mb-4">
-                <a href="manage-catalog.php" class="text-decoration-none card-link">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-dark">Manage Catalog</h5>
-                            <p class="card-text text-muted">Update product listings, manage categories, and oversee inventory.</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
         </div>
     </div>
 
