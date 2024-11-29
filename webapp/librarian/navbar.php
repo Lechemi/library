@@ -26,7 +26,7 @@ $current_page = basename($_SERVER['PHP_SELF']); // Name of the current file
             <!-- Left-aligned links -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>"
+                    <a class="nav-link <?php echo (in_array($current_page, ['dashboard.php', 'manage-users.php', 'manage-branches.php', 'manage-catalog.php'])) ? 'active' : ''; ?>"
                        href="../librarian/dashboard.php">Dashboard</a>
                 </li>
                 <li class="nav-item">

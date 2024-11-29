@@ -12,7 +12,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book catalog</title>
+    <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -36,10 +36,17 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
     <div class="container py-4">
         <div class="row">
+
+            <?php
+
+
+
+            ?>
+
             <!-- Manage Users -->
             <div class="col-md-4 mb-4">
                 <a href="manage-users.php" class="text-decoration-none card-link">
-                    <div class="card shadow-sm h-100">
+                    <div class="card h-100">
                         <div class="card-body text-center">
                             <h5 class="card-title text-dark">Manage Users</h5>
                             <p class="card-text text-muted">Add, edit, or remove users from the system and assign roles as needed.</p>
@@ -51,7 +58,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             <!-- Manage Branches -->
             <div class="col-md-4 mb-4">
                 <a href="manage-branches.php" class="text-decoration-none card-link">
-                    <div class="card shadow-sm h-100">
+                    <div class="card h-100">
                         <div class="card-body text-center">
                             <h5 class="card-title text-dark">Manage Branches</h5>
                             <p class="card-text text-muted">Organize and oversee branches, update details, or create new ones.</p>
@@ -63,7 +70,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             <!-- Manage Catalog -->
             <div class="col-md-4 mb-4">
                 <a href="manage-catalog.php" class="text-decoration-none card-link">
-                    <div class="card shadow-sm h-100">
+                    <div class="card h-100">
                         <div class="card-body text-center">
                             <h5 class="card-title text-dark">Manage Catalog</h5>
                             <p class="card-text text-muted">Update product listings, manage categories, and oversee inventory.</p>
