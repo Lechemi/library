@@ -26,3 +26,23 @@ function get_branches(): array
 
     throw new Exception(pg_last_error($db));
 }
+
+/**
+ * @throws Exception
+ */
+function add_branch($city, $address): void
+{
+    $db = open_connection();
+    $sql = "
+        INSERT INTO library.branch (address, city)
+        VALUES ('$address', '$city')
+    ";
+
+    pg_prepare($db, 'add-branch', $sql);
+
+    @ $result = pg_execute($db, 'add-branch', array());
+
+    if (!$result) throw new Exception(pg_last_error($db));
+
+    close_connection($db);
+}
