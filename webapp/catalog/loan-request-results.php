@@ -2,6 +2,7 @@
 
 include_once('../lib/book-functions.php');
 include_once('../lib/redirect.php');
+include_once('../lib/branch-functions.php');
 
 session_start();
 
@@ -9,7 +10,11 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
 $result = null;
 const noPreferenceStr = 'No preference';
-$branches = pg_fetch_all(get_branches());
+try {
+    $branches = get_branches();
+} catch (Exception $e) {
+
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
 

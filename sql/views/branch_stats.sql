@@ -9,7 +9,7 @@ GROUP BY branch.id;
 
 -- Total number of different books managed by each branch
 CREATE VIEW managed_books AS
-SELECT branch.id AS branch, COUNT(DISTINCT book_copy.book) AS n_copies
+SELECT branch.id AS branch, COUNT(DISTINCT book_copy.book) AS n_books
 FROM branch
          LEFT JOIN book_copy ON branch.id = book_copy.branch
 WHERE removed IS FALSE

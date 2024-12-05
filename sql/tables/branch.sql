@@ -1,7 +1,15 @@
-CREATE TABLE branch
+create table branch
 (
-    id      SERIAL PRIMARY KEY,
-    address VARCHAR(200) NOT NULL CHECK (address ~* '^.+$'),
-    city    VARCHAR(100) NOT NULL CHECK (city ~* '^.+$'),
-    UNIQUE (address, city)
+    id      serial
+        primary key,
+    address varchar(200) not null
+        constraint branch_address_check
+            check ((address)::text ~* '^.+$'::text),
+    city    varchar(100) not null
+        constraint branch_city_check
+            check ((city)::text ~* '^.+$'::text),
+    name    varchar(100) not null
+        constraint branch_name_check
+            check ((name)::text ~* '^.+$'::text),
+    unique (address, city)
 );

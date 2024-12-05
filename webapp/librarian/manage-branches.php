@@ -24,12 +24,42 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             width: 100%;
             border-collapse: collapse;
         }
+
         th, td {
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
+        }
+
+        /* Step 2: Custom CSS for Hover Effect */
+        .hover-lighten {
+            color: #000; /* Default color: black */
+            transition: color 0.2s ease-in-out;
+            text-decoration: none; /* Ensure no underline by default */
+        }
+
+        .hover-lighten:hover {
+            color: #555; /* Lighter shade on hover */
+            text-decoration: none; /* Ensure no underline on hover */
+        }
+
+        /* Custom styles for book list */
+        .branch-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .branch-city {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .branch-address {
+            font-size: 0.8rem;
+            color: #888;
         }
     </style>
 </head>
@@ -41,41 +71,47 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 </div>
 
 <div class="container my-4">
+    <!-- Displayed book(s) -->
+    <div class="container">
+        <ul class="list-group list-group-flush rounded-4">
+            <?php
 
-    <?php
-    try {
-        $branches = get_branches();
+            try {
+                $branches = get_branches();
+            } catch (Exception $e) {
+                echo 'An error occurred...';
+            }
 
-    } catch (Exception $e) {
-        echo 'An error occurred...';
-    }
-    ?>
+            foreach ($branches as $branch => $details):
+                $branch_link = 'branch.php' . '?id=' . $details['id'];
+                ?>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>City</th>
-            <th>Address</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        // Loop through each row of data
-        foreach ($branches as $branch) {
-            $id = $branch['id'];
-            $city = $branch['city'];
-            $address = $branch['address'];
+                <!-- Branch Item -->
+                <li class="list-group-item d-flex flex-column flex-sm-row align-items-sm-center">
 
-            echo "<tr>";
-            echo "<td>{$id}</td>";
-            echo "<td>{$city}</td>";
-            echo "<td>{$address}</td>";
-            echo "</tr>";
-        }
-        ?>
-        </tbody>
-    </table>
+                    <span class="branch-name">
+                        <a class="link-opacity-100-hover hover-lighten" href=<?php echo $branch_link; ?>>
+                            <?php echo htmlspecialchars($details['name']); ?>
+                        </a>
+                    </span>
+
+                    <span class="mx-2">•</span>
+
+                    <span class="branch-city">
+                        <?php echo htmlspecialchars($details['city']); ?>
+                    </span>
+
+                    <span class="mx-2">•</span>
+
+                    <span class="branch-address">
+                        <?php echo htmlspecialchars($details['address']); ?>
+                    </span>
+                </li>
+
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
 
 </div>
 

@@ -28,7 +28,8 @@ AS
 $$
 BEGIN
     new.start := NOW();
-    new.due := NOW() + INTERVAL '30 days';
+    -- new.due := NOW() + INTERVAL '30 days';
+    new.due := NOW() - INTERVAL '2 days';
     new.returned := NULL;
 
     RETURN new;
@@ -246,7 +247,7 @@ EXECUTE PROCEDURE check_return_timestamp();
 
 /*
     If the loan has expired, the patron's delay counter will be
-    incremented after returning the catalog.
+    incremented after returning the book.
 */
 CREATE OR REPLACE FUNCTION increment_patron_delay_counter() RETURNS TRIGGER
     LANGUAGE plpgsql

@@ -1,6 +1,7 @@
 <?php
 
 include_once('../lib/book-functions.php');
+include_once('../lib/branch-functions.php');
 include_once('../lib/redirect.php');
 
 if (!empty($_GET['isbn'])) {
@@ -10,7 +11,11 @@ if (!empty($_GET['isbn'])) {
     exit;
 }
 
-$branches = pg_fetch_all(get_branches());
+try {
+    $branches = get_branches();
+} catch (Exception $e) {
+
+}
 $branchesJson = json_encode($branches);
 const noPreferenceStr = 'No preference';
 ?>
