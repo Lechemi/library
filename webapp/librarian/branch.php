@@ -28,7 +28,7 @@ if (!empty($_GET['id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book page</title>
+    <title>Branch page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -47,7 +47,7 @@ if (!empty($_GET['id'])) {
     <!-- Branch Details -->
     <div class="card mb-4">
         <div class="card-header">
-            <h2>Branch Details</h2>
+            <h2>Branch details</h2>
         </div>
         <div class="card-body">
             <p><strong>Address:</strong> <?= $stats[0]['address'] ?>, <?= $stats[0]['city'] ?></p>
@@ -59,7 +59,7 @@ if (!empty($_GET['id'])) {
     <!-- Overdue Loans -->
     <div class="card">
         <div class="card-header">
-            <h2>Overdue Loans</h2>
+            <h2>Overdue loans</h2>
         </div>
         <div class="card-body">
             <?php if (!empty($stats['delays'])): ?>

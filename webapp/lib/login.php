@@ -26,7 +26,7 @@ if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
         if ($user['type'] == 'patron') {
             redirect('../catalog/catalog.php');
         } else {
-            redirect('../librarian/dashboard.php');
+            redirect('../catalog/catalog.php');
         }
     }
 }
