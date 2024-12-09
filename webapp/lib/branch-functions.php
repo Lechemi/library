@@ -56,7 +56,7 @@ function get_branch_stats($id): array
     pg_execute($db, 'set-sp', array());
 
     $sql = " 
-        SELECT d.book, b.title, d.copy, u.first_name, u.last_name, u.email
+        SELECT d.book, b.title, d.copy, u.first_name, u.last_name, u.email, d.due
         FROM library.delays('$id') d
             INNER JOIN library.user u on d.patron = u.id
             INNER JOIN library.patron p on d.patron = p.user
