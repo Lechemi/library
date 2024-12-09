@@ -55,7 +55,13 @@ function get_branch_stats($id): array
     pg_prepare($db, 'set-sp', $sql);
     pg_execute($db, 'set-sp', array());
 
-    $sql = " SELECT * FROM library.delays('$id') ";
+    $sql = " 
+        SELECT d.book, b.title, d.copy, u.first_name, u.last_name, u.email
+        FROM library.delays('$id') d
+            INNER JOIN library.user u on d.patron = u.id
+            INNER JOIN library.patron p on d.patron = p.user
+            INNER JOIN library.book b on d.book = b.isbn
+    ";
     pg_prepare($db, 'branch-delays', $sql);
     $result = pg_execute($db, 'branch-delays', array());
 
