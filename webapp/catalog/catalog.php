@@ -95,7 +95,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
         if (pg_num_rows($result) == 0) echo 'No books found';
 
         foreach (group_authors($result) as $isbn => $details):
-            $title_link = '../catalog/book-page.php' . '?isbn=' . $isbn;
+            $title_link = '../catalog/book.php' . '?isbn=' . $isbn;
             ?>
 
             <!-- Book Item -->
