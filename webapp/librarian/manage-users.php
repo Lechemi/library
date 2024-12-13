@@ -99,10 +99,7 @@ $email = $_SESSION['userEmail'] ?? null;
                 echo '<p><strong>Number of Delays:</strong> ' . htmlspecialchars($userInfo['patronInfo']['n_delays']) . '</p>';
 
                 if ($userInfo['patronInfo']['n_delays'] > 0) {
-                    echo '    <form method="post" action="" style="display:inline;">';
-                    echo '      <input type="hidden" name="resetDelays" value=' . $userInfo['id'] . '>';
-                    echo '      <button type="submit" class="btn btn-danger btn-sm">Reset Delays</button>';
-                    echo '    </form>';
+                    echo '    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">Reset Delays</button>';
                 }
 
                 echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
@@ -150,6 +147,28 @@ $email = $_SESSION['userEmail'] ?? null;
 
     ?>
 
+</div>
+
+<!-- Modal for Resetting Delays -->
+<div class="modal fade" id="resetDelaysModal" tabindex="-1" aria-labelledby="resetDelaysModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetDelaysModalLabel">Confirm Reset Delays</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to reset the number of delays for this user? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="">
+                    <input type="hidden" name="resetDelays" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
+                    <button type="submit" class="btn btn-danger">Confirm Reset</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
