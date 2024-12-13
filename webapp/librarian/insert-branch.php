@@ -7,6 +7,24 @@ session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
 
+$message = '';
+$messageType = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['branch_name'] ?? '';
+    $city = $_POST['branch_city'] ?? '';
+    $address = $_POST['branch_address'] ?? '';
+
+    try {
+        add_branch($city, $address, $name);
+        $message = "Branch added successfully!";
+        $messageType = "success";
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+        $messageType = "danger";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +90,35 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
 <div class="container my-4">
 
+    <div class="container d-flex justify-content-center">
+        <div class="w-50">
+            <form method="post">
+                <div class="mb-3">
+                    <label for="branchName" class="form-label">Branch name</label>
+                    <input type="text" class="form-control" id="branchName" name="branch_name" placeholder="Enter branch name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="branchCity" class="form-label">City</label>
+                    <input type="text" class="form-control" id="branchCity" name="branch_city" placeholder="Enter city" required>
+                </div>
+                <div class="mb-3">
+                    <label for="branchAddress" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="branchAddress" name="branch_address" placeholder="Enter address" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Placeholder for bottom alert -->
+    <div class="mt-4">
+        <?php if (!empty($message)): ?>
+            <div class="alert alert-<?= htmlspecialchars($messageType) ?> mt-5 alert-dismissible fade show">
+                <?= htmlspecialchars($message) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+    </div>
 
 </div>
 

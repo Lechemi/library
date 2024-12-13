@@ -81,7 +81,7 @@ function add_branch($city, $address, $name): void
     $db = open_connection();
     $sql = "
         INSERT INTO library.branch (address, city, name)
-        VALUES ('$address', '$city', '$name')s
+        VALUES ('$address', '$city', '$name')
     ";
 
     pg_prepare($db, 'add-branch', $sql);
