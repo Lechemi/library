@@ -76,12 +76,12 @@ function get_branch_stats($id): array
 /**
  * @throws Exception
  */
-function add_branch($city, $address): void
+function add_branch($city, $address, $name): void
 {
     $db = open_connection();
     $sql = "
-        INSERT INTO library.branch (address, city)
-        VALUES ('$address', '$city')
+        INSERT INTO library.branch (address, city, name)
+        VALUES ('$address', '$city', '$name')s
     ";
 
     pg_prepare($db, 'add-branch', $sql);

@@ -14,7 +14,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage branches</title>
+    <title>Insert branch</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -71,51 +71,6 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 </div>
 
 <div class="container my-4">
-
-
-
-    <!-- Displayed branches -->
-    <div class="container">
-        <a href="insert-branch.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Insert a new branch</a>
-
-        <ul class="list-group list-group-flush rounded-4">
-            <?php
-
-            try {
-                $branches = get_branches();
-            } catch (Exception $e) {
-                echo 'An error occurred...';
-            }
-
-            foreach ($branches as $branch => $details):
-                $branch_link = 'branch.php' . '?id=' . $details['id'];
-                ?>
-
-                <!-- Branch Item -->
-                <li class="list-group-item d-flex flex-column flex-sm-row align-items-sm-center">
-
-                    <span class="branch-name">
-                        <a class="link-opacity-100-hover hover-lighten" href=<?php echo $branch_link; ?>>
-                            <?php echo htmlspecialchars($details['name']); ?>
-                        </a>
-                    </span>
-
-                    <span class="mx-2">•</span>
-
-                    <span class="branch-city">
-                        <?php echo htmlspecialchars($details['city']); ?>
-                    </span>
-
-                    <span class="mx-2">•</span>
-
-                    <span class="branch-address">
-                        <?php echo htmlspecialchars($details['address']); ?>
-                    </span>
-                </li>
-
-            <?php endforeach; ?>
-        </ul>
-    </div>
 
 
 </div>

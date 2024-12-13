@@ -38,7 +38,7 @@ $current_page = basename($_SERVER['PHP_SELF']); // Name of the current file
                        href="../librarian/manage-users.php">Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (in_array($current_page, ['manage-branches.php', 'branch.php'])) ? 'active' : ''; ?>"
+                    <a class="nav-link <?php echo (in_array($current_page, ['manage-branches.php', 'branch.php', 'insert-branch.php'])) ? 'active' : ''; ?>"
                        href="../librarian/manage-branches.php">Branches</a>
                 </li>
             </ul>
