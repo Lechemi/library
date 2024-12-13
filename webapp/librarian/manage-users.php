@@ -24,6 +24,27 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <?php include 'navbar.php'; ?>
 </div>
 
+<div class="container my-4">
+
+    <div class="container d-flex justify-content-center">
+        <div class="w-50">
+            <form>
+                <div class="mb-3">
+                    <label for="userEmail" class="form-label d-block">
+                        Search for a user or
+                        <a href="add-user.php" class="text-primary">add a new one</a>
+                    </label>
+                    <input type="email" class="form-control" id="userEmail" placeholder="Enter user's email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+
+
+</div>
+
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
