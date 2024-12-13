@@ -128,3 +128,32 @@ function change_password($userID, $currentPassword, $newPassword): void
 
     close_connection($db);
 }
+
+/*
+ * Resets the delay counter of the patron with id $patronId.
+ */
+/**
+ * @throws Exception
+ */
+function reset_delays($patronId): void
+{
+    $db = open_connection();
+    $sql = "
+        UPDATE library.patron p
+        SET n_delays = 0
+        WHERE p.user = '$patronId'
+    ";
+
+    pg_prepare($db, 'reset-delays', $sql);
+    @ $result = pg_execute($db, 'reset-delays', array());
+
+    if (!$result) {
+        throw new Exception('Cannot reset number of delays.');
+    }
+
+    if (pg_affected_rows($result) != 1) {
+        throw new Exception('Invalid patron id: ' . $patronId);
+    }
+
+    close_connection($db);
+}

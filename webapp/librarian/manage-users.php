@@ -71,7 +71,17 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
                 $activeLoans = pg_fetch_all($result);
 
                 echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';
+
+                // Display Number of Delays with a reset button
                 echo '<p><strong>Number of Delays:</strong> ' . htmlspecialchars($userInfo['patronInfo']['n_delays']) . '</p>';
+
+                if ($userInfo['patronInfo']['n_delays'] > -1) {
+                    echo '    <form method="post" action="" style="display:inline;">';
+                    echo '      <input type="hidden" name="resetDelays" value=' . $userInfo['id'] . '>';
+                    echo '      <button type="submit" class="btn btn-danger btn-sm">Reset Delays</button>';
+                    echo '    </form>';
+                }
+
                 echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
 
                 if (!empty($activeLoans)) {
@@ -94,10 +104,10 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
                         // Display the loan information in a card-like format
                         echo '<div class="list-group-item">';
-                        echo "<h6>{$titleWithIsbn}</h6>";
-                        echo '  <p><strong>Branch:</strong> ' . htmlspecialchars($branch) . '</p>';
-                        echo '  <p><strong>Start Date:</strong> ' . htmlspecialchars($start) . '</p>';
-                        echo '  <p><strong>Due Date:</strong> ' . htmlspecialchars($due) . '</p>';
+                        echo "<h4c>{$titleWithIsbn}</h4c>";
+                        echo '  <p><strong>Branch:</strong> ' . $branch . '</p>';
+                        echo '  <p><strong>Start Date:</strong> ' . $start . '</p>';
+                        echo '  <p><strong>Due Date:</strong> ' . $due . '</p>';
                         echo '</div>';
                     }
 
@@ -115,6 +125,15 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
         }
 
     }
+
+    if (isset($_POST['resetDelays'])) {
+        try {
+            reset_delays($_POST['resetDelays']);
+        } catch (Exception $e) {
+
+        }
+    }
+
     ?>
 
 </div>
