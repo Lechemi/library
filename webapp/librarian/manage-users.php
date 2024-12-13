@@ -2,6 +2,8 @@
 ini_set('display_errors', 'On');
 ini_set('error_reporting', E_ALL);
 include_once('../lib/redirect.php');
+include_once('../lib/account-functions.php');
+include_once('../lib/book-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
@@ -28,20 +30,92 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
     <div class="container d-flex justify-content-center">
         <div class="w-50">
-            <form>
+            <form method="post" action="">
                 <div class="mb-3">
                     <label for="userEmail" class="form-label d-block">
                         Search for a user or
                         <a href="add-user.php" class="text-primary">add a new one</a>
                     </label>
-                    <input type="email" class="form-control" id="userEmail" placeholder="Enter user's email" required>
+                    <input type="email" class="form-control" name="userEmail" id="userEmail" placeholder="Enter user's email" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
+
         </div>
     </div>
 
+    <!-- Display User Information -->
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userEmail'])) {
+        $email = $_POST['userEmail'];
+        $userInfo = null;
+        try {
+            $userInfo = get_user_with_email($email);
+        } catch (Exception $e) {}
 
+        if ($userInfo) {
+            echo '<div class="card mt-4">';
+            echo '  <div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
+            echo '  <div class="card-body">';
+            echo '    <p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
+            echo '    <p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
+
+            // If user is a patron, display additional patronInfo fields
+            if (isset($userInfo['patronInfo'])) {
+
+                $result = get_active_loans($userInfo['id']);
+                if ($result === false) {
+                    echo "Error in query execution.";
+                    exit;
+                }
+                $activeLoans = pg_fetch_all($result);
+
+                echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';
+                echo '<p><strong>Number of Delays:</strong> ' . htmlspecialchars($userInfo['patronInfo']['n_delays']) . '</p>';
+                echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
+
+                if (!empty($activeLoans)) {
+                    echo '<h5 class="mt-3">Active Loans</h5>';
+                    echo '<div class="list-group">';
+
+                    foreach ($activeLoans as $loan) {
+                        try {
+                            $start = new DateTime($loan['start']);
+                            $due = new DateTime($loan['due']);
+                            $start = $start->format('Y-m-d H:i:s');
+                            $due = $due->format('Y-m-d H:i:s');
+                        } catch (Exception $e) {
+                            echo 'Some error occurred with the dates.';
+                        }
+
+                        $branch = $loan['address'] . ' - ' . $loan['city'];
+                        $isbn = $loan['isbn'];
+                        $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
+
+                        // Display the loan information in a card-like format
+                        echo '<div class="list-group-item">';
+                        echo "<h6>{$titleWithIsbn}</h6>";
+                        echo '  <p><strong>Branch:</strong> ' . htmlspecialchars($branch) . '</p>';
+                        echo '  <p><strong>Start Date:</strong> ' . htmlspecialchars($start) . '</p>';
+                        echo '  <p><strong>Due Date:</strong> ' . htmlspecialchars($due) . '</p>';
+                        echo '</div>';
+                    }
+
+                    echo '</div>';
+                } else {
+                    echo '<p>No active loans.</p>';
+                }
+
+            }
+
+            echo '  </div>';
+            echo '</div>';
+        } else {
+            echo '<div class="mt-4 alert alert-danger">No user found with the given email address.</div>';
+        }
+
+    }
+    ?>
 
 </div>
 

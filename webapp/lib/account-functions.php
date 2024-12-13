@@ -41,6 +41,45 @@ function retrieve_user($usr, $psw): array
 }
 
 /*
+ * Retrieves info about the user with email $email.
+ */
+/**
+ * @throws Exception
+ */
+function get_user_with_email($email)
+{
+    $db = open_connection();
+
+    $sql =
+        "SELECT * FROM library.user
+         WHERE email = '$email' AND removed IS FALSE
+    ";
+
+    pg_prepare($db, 'user-info', $sql);
+    $result = pg_execute($db, 'user-info', array());
+
+    close_connection($db);
+
+    $user = pg_fetch_all($result);
+
+    if (empty($user)) {
+        throw new Exception("No user with such email!");
+    }
+
+    $user = $user[0];
+
+    if ($user['type'] == 'patron') {
+        $patronInfo = pg_fetch_all(get_patron($user['id']))[0];
+        unset($patronInfo['user']);
+        $user['patronInfo'] = $patronInfo;
+    }
+
+    unset($user['password']);
+
+    return $user;
+}
+
+/*
  * Retrieves the patron associated with userId.
  */
 function get_patron($userId): Result|false
@@ -60,6 +99,9 @@ function get_patron($userId): Result|false
 
 /*
  * Sets password to newPassword for user with id of userID.
+ */
+/**
+ * @throws Exception
  */
 function change_password($userID, $currentPassword, $newPassword): void
 {
