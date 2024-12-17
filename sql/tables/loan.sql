@@ -1,11 +1,13 @@
-CREATE TABLE loan
+create table loan
 (
-    start    TIMESTAMP NOT NULL,
-    patron   UUID      NOT NULL
-        REFERENCES patron,
-    copy     INTEGER   NOT NULL
-        REFERENCES book_copy,
-    due      TIMESTAMP NOT NULL,
-    returned TIMESTAMP,
-    PRIMARY KEY (start, patron, copy)
+    start    timestamp default now()                         not null,
+    patron   uuid                                            not null
+        constraint patron_reference
+            references patron,
+    copy     integer                                         not null
+        references book_copy,
+    due      timestamp default (now() + '30 days'::interval) not null,
+    returned timestamp,
+    id       serial
+        primary key
 );
