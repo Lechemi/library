@@ -69,7 +69,7 @@ $activeLoans = pg_fetch_all($result);
         <tr>
             <th>Book</th>
             <th>Branch</th>
-            <th>Start</th>
+            <th>Started</th>
             <th>Due</th>
             <th>Returned</th>
         </tr>

@@ -21,12 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             reset_delays($_POST['resetDelays']);  // Reset the delays based on user ID
         } catch (Exception $e) {
-            // Handle error, you can log the error or show a message
+            // TODO Handle error, you can log the error or show a message
         }
-        // Redirect to reload the page after reset
+        // Redirect to refresh the page
         header('Location: ' . $_SERVER['PHP_SELF']);
-        exit();  // Make sure no further code is executed
+        exit();
     }
+
+    if (isset($_POST['returnCopy'])) {
+        try {
+            return_copy($_POST['returnCopy']);
+        } catch (Exception $e) {
+            // TODO Handle error (e.g., log it or show a message)
+        }
+    }
+
 }
 
 // Check if email is set in session, otherwise handle empty state
@@ -43,6 +52,37 @@ $email = $_SESSION['userEmail'] ?? null;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* Custom styles for loan cards */
+        .list-group-item {
+            font-size: 0.9rem; /* Smaller font size */
+            padding: 0.5rem 1rem; /* Reduce padding */
+            margin-bottom: 0.5rem; /* Less separation between cards */
+            border: 1px solid #ddd; /* Optional: to add a border */
+            border-radius: 0.25rem;
+        }
+
+        .list-group-item h4 {
+            font-size: 1rem; /* Smaller font for titles */
+            margin: 0; /* Remove margin for compactness */
+        }
+
+        .loan-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem; /* Space between header and content */
+        }
+
+        .loan-card-header button {
+            margin-left: auto;
+        }
+
+        .loan-card-body p {
+            margin: 0.25rem 0; /* Reduce spacing between lines */
+        }
+    </style>
 </head>
 
 <body>
@@ -53,6 +93,7 @@ $email = $_SESSION['userEmail'] ?? null;
 
 <div class="container my-4">
 
+    <!-- Search bar -->
     <div class="container d-flex justify-content-center">
         <div class="w-50">
             <form method="post" action="">
@@ -91,7 +132,7 @@ $email = $_SESSION['userEmail'] ?? null;
                     echo "Error in query execution.";
                     exit;
                 }
-                $activeLoans = pg_fetch_all($result);
+                $loans = pg_fetch_all($result);
 
                 echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';
 
@@ -104,32 +145,47 @@ $email = $_SESSION['userEmail'] ?? null;
 
                 echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
 
-                if (!empty($activeLoans)) {
-                    echo '<h5 class="mt-3">Active Loans</h5>';
+                if (!empty($loans)) {
+                    echo '<h5 class="mt-3">Loans</h5>';
                     echo '<div class="list-group">';
 
-                    foreach ($activeLoans as $loan) {
-                        try {
-                            $start = new DateTime($loan['start']);
-                            $due = new DateTime($loan['due']);
-                            $start = $start->format('Y-m-d H:i:s');
-                            $due = $due->format('Y-m-d H:i:s');
-                        } catch (Exception $e) {
-                            echo 'Some error occurred with the dates.';
+                foreach ($loans as $loan) {
+                    try {
+                        $start = new DateTime($loan['start']);
+                        $due = new DateTime($loan['due']);
+                        $start = $start->format('Y-m-d H:i:s');
+                        $due = $due->format('Y-m-d H:i:s');
+                        $returned = null;
+                        if ($loan['returned'] != null) {
+                            $returned = new DateTime($loan['returned']);
+                            $returned = $returned->format('Y-m-d H:i:s');
                         }
-
-                        $branch = $loan['address'] . ' - ' . $loan['city'];
-                        $isbn = $loan['isbn'];
-                        $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
-
-                        // Display the loan information in a card-like format
-                        echo '<div class="list-group-item">';
-                        echo "<h4>{$titleWithIsbn}</h4>";
-                        echo '  <p><strong>Branch:</strong> ' . $branch . '</p>';
-                        echo '  <p><strong>Start Date:</strong> ' . $start . '</p>';
-                        echo '  <p><strong>Due Date:</strong> ' . $due . '</p>';
-                        echo '</div>';
+                    } catch (Exception $e) {
+                        echo 'Some error occurred with the dates.';
                     }
+
+                    $branch = $loan['address'] . ' - ' . $loan['city'];
+                    $isbn = $loan['isbn'];
+                    $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
+
+                    echo '<div class="list-group-item">';
+                    echo '  <div class="loan-card-header">';
+                    echo "    <h4>{$titleWithIsbn}</h4>";
+                    if (!$returned) {
+                        echo '    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Return Copy</button>';
+                    }
+                    echo '  </div>';
+                    echo '  <div class="loan-card-body">';
+                    echo '    <p><strong>Branch:</strong> ' . $branch . '</p>';
+                    echo '    <p><strong>Start Date:</strong> ' . $start . '</p>';
+                    echo '    <p><strong>Due Date:</strong> ' . $due . '</p>';
+                    if ($returned) {
+                        echo '    <p><strong>Returned on:</strong> ' . $returned . '</p>';
+                    }
+                    echo '  </div>';
+                    echo '</div>';
+                }
+
 
                     echo '</div>';
                 } else {
@@ -170,7 +226,41 @@ $email = $_SESSION['userEmail'] ?? null;
     </div>
 </div>
 
+<!-- Modal for Returning Copy -->
+<div class="modal fade" id="returnCopyModal" tabindex="-1" aria-labelledby="returnCopyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnCopyModalLabel">Confirm Return Copy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to mark this copy as returned?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="">
+                    <input type="hidden" name="returnCopy" id="returnCopyInput">
+                    <button type="submit" class="btn btn-success">Confirm Return</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const returnCopyModal = document.getElementById('returnCopyModal');
+        returnCopyModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Button that triggered the modal
+            const loanId = button.getAttribute('data-loan-id'); // Extract loan ID
+            const input = document.getElementById('returnCopyInput'); // Hidden input field
+            input.value = loanId; // Set the value to the loan ID
+        });
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

@@ -28,8 +28,7 @@ AS
 $$
 BEGIN
     new.start := NOW();
-    -- new.due := NOW() + INTERVAL '30 days';
-    new.due := NOW() - INTERVAL '2 days';
+    new.due := NOW() + INTERVAL '30 days';
     new.returned := NULL;
 
     RETURN new;

@@ -130,13 +130,13 @@ function get_loans($patron): Result|false
 {
     $db = open_connection();
     $sql = "
-        SELECT *
+        SELECT loan.start, loan.copy, loan.due, loan.returned, loan.id, book.isbn, book.title, branch.address, branch.city
         FROM library.loan
             INNER JOIN library.book_copy ON loan.copy = book_copy.id
             INNER JOIN library.book ON book_copy.book = book.isbn
             INNER JOIN library.branch ON book_copy.branch = branch.id
         WHERE patron = '$patron'
-        ORDER BY due desc
+        ORDER BY returned desc
     ";
 
     pg_prepare($db, 'loans', $sql);
@@ -145,7 +145,36 @@ function get_loans($patron): Result|false
     return $result;
 }
 
-function postpone_due()
+/*
+ * TODO specs
+ */
+/**
+ * @throws Exception
+ */
+function return_copy($loanId): void
 {
+    $db = open_connection();
 
+    $sql = "SET search_path TO library;";
+    pg_prepare($db, 'set-sp', $sql);
+    pg_execute($db, 'set-sp', array());
+
+    $sql = "
+        UPDATE library.loan l
+        SET returned = NOW()
+        WHERE l.id = '$loanId'
+    ";
+
+    pg_prepare($db, 'return-copy', $sql);
+    @ $result = pg_execute($db, 'return-copy', array());
+
+    if (!$result) {
+        throw new Exception(pg_last_error($db));
+    }
+
+    if (pg_affected_rows($result) != 1) {
+        throw new Exception('Invalid loan id: ' . $loanId);
+    }
+
+    close_connection($db);
 }
