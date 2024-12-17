@@ -7,7 +7,7 @@ session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
 
-$result = get_active_loans($_SESSION['user']['id']);
+$result = get_loans($_SESSION['user']['id']);
 
 if ($result === false) {
     echo "Error in query execution.";
@@ -61,7 +61,6 @@ $activeLoans = pg_fetch_all($result);
 </div>
 
 <div class="container my-4">
-
 
     <table>
         <thead>

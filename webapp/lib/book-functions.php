@@ -126,7 +126,7 @@ function make_loan($isbn, $patron, $preferredBranches): array
 /*
  * TODO specs
  */
-function get_active_loans($patron): Result|false
+function get_loans($patron): Result|false
 {
     $db = open_connection();
     $sql = "
@@ -135,13 +135,17 @@ function get_active_loans($patron): Result|false
             INNER JOIN library.book_copy ON loan.copy = book_copy.id
             INNER JOIN library.book ON book_copy.book = book.isbn
             INNER JOIN library.branch ON book_copy.branch = branch.id
-        WHERE returned IS NULL 
-            AND patron = '$patron'
+        WHERE patron = '$patron'
         ORDER BY due
     ";
 
-    pg_prepare($db, 'active-loans', $sql);
-    $result = pg_execute($db, 'active-loans', array());
+    pg_prepare($db, 'loans', $sql);
+    $result = pg_execute($db, 'loans', array());
     close_connection($db);
     return $result;
+}
+
+function postpone_due()
+{
+
 }

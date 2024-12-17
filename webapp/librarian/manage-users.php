@@ -86,7 +86,7 @@ $email = $_SESSION['userEmail'] ?? null;
             // If user is a patron, display additional patronInfo fields
             if (isset($userInfo['patronInfo'])) {
 
-                $result = get_active_loans($userInfo['id']);
+                $result = get_loans($userInfo['id']);
                 if ($result === false) {
                     echo "Error in query execution.";
                     exit;
@@ -135,7 +135,6 @@ $email = $_SESSION['userEmail'] ?? null;
                 } else {
                     echo '<p>No active loans.</p>';
                 }
-
             }
 
             echo '  </div>';
