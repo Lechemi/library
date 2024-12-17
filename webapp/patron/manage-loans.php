@@ -34,10 +34,12 @@ $activeLoans = pg_fetch_all($result);
             width: 100%;
             border-collapse: collapse;
         }
+
         th, td {
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
@@ -69,6 +71,7 @@ $activeLoans = pg_fetch_all($result);
             <th>Branch</th>
             <th>Start</th>
             <th>Due</th>
+            <th>Returned</th>
         </tr>
         </thead>
         <tbody>
@@ -80,6 +83,13 @@ $activeLoans = pg_fetch_all($result);
                 $due = new DateTime($loan['due']);
                 $start = $start->format('Y-m-d H:i:s');
                 $due = $due->format('Y-m-d H:i:s');
+
+                $returned = 'Not returned';
+                if ($loan['returned'] != null) {
+                    $returned = new DateTime($loan['returned']);
+                    $returned = $returned->format('Y-m-d H:i:s');
+                }
+
             } catch (DateMalformedStringException $e) {
                 echo 'Some error occurred';
             }
@@ -95,6 +105,7 @@ $activeLoans = pg_fetch_all($result);
             echo "<td>{$branch}</td>";
             echo "<td>{$start}</td>";
             echo "<td>{$due}</td>";
+            echo "<td>{$returned}</td>";
             echo "</tr>";
         }
         ?>

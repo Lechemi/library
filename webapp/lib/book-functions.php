@@ -136,7 +136,7 @@ function get_loans($patron): Result|false
             INNER JOIN library.book ON book_copy.book = book.isbn
             INNER JOIN library.branch ON book_copy.branch = branch.id
         WHERE patron = '$patron'
-        ORDER BY due
+        ORDER BY due desc
     ";
 
     pg_prepare($db, 'loans', $sql);
