@@ -178,3 +178,33 @@ function return_copy($loanId): void
 
     close_connection($db);
 }
+
+/*
+ * Postpones the due for loan with id $loanId by $days days.
+ */
+/**
+ * @throws Exception
+ */
+function postpone_due($loanId, $days): void
+{
+    $db = open_connection();
+
+    $sql = "
+        UPDATE library.loan l
+        SET due = due + INTERVAL '$days days' 
+        WHERE l.id = '$loanId'
+    ";
+
+    pg_prepare($db, 'postpone-due', $sql);
+    @ $result = pg_execute($db, 'postpone-due', array());
+
+    if (!$result) {
+        throw new Exception(pg_last_error($db));
+    }
+
+    if (pg_affected_rows($result) != 1) {
+        throw new Exception('Invalid loan id: ' . $loanId);
+    }
+
+    close_connection($db);
+}
