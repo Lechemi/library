@@ -36,6 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if (isset($_POST['postponeDue'])) {
+        $loanId = $_POST['postponeDue'];
+        $days = $_POST['postponeDays'];
+        if (filter_var($days, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => 30]])) {
+            try {
+                postpone_due($loanId, $days);
+            } catch (Exception $e) {
+                // TODO Handle error (e.g., log it or show a message)
+            }
+        } else {
+            // TODO Handle invalid input (e.g., show an error message)
+        }
+    }
+
 }
 
 // Check if email is set in session, otherwise handle empty state
@@ -171,9 +185,18 @@ $email = $_SESSION['userEmail'] ?? null;
                     echo '<div class="list-group-item">';
                     echo '  <div class="loan-card-header">';
                     echo "    <h4>{$titleWithIsbn}</h4>";
+
+                    // "Return Copy" button
                     if (!$returned) {
                         echo '    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Return Copy</button>';
                     }
+
+                    // "Postpone Due" button
+                    // TODO also check if we're past the due date
+                    if (!$returned) {
+                        echo '    <button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Postpone Due</button>';
+                    }
+
                     echo '  </div>';
                     echo '  <div class="loan-card-body">';
                     echo '    <p><strong>Branch:</strong> ' . $branch . '</p>';
@@ -248,6 +271,31 @@ $email = $_SESSION['userEmail'] ?? null;
     </div>
 </div>
 
+<!-- Modal for Postponing Due -->
+<div class="modal fade" id="postponeDueModal" tabindex="-1" aria-labelledby="postponeDueModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postponeDueModalLabel">Postpone Due Date</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="postponeDays" class="form-label">Number of days to postpone (1-30):</label>
+                        <input type="number" class="form-control" name="postponeDays" id="postponeDays" min="1" max="30" required>
+                    </div>
+                    <input type="hidden" name="postponeDue" id="postponeDueInput">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Postpone</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 </body>
 
 <script>
@@ -261,6 +309,19 @@ $email = $_SESSION['userEmail'] ?? null;
         });
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const postponeDueModal = document.getElementById('postponeDueModal');
+        postponeDueModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Button that triggered the modal
+            const loanId = button.getAttribute('data-loan-id'); // Extract loan ID
+            const input = document.getElementById('postponeDueInput'); // Hidden input field
+            input.value = loanId; // Set the value to the loan ID
+        });
+    });
+</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
