@@ -157,3 +157,41 @@ function reset_delays($patronId): void
 
     close_connection($db);
 }
+
+/*
+ * Adds a new user with the specified fields.
+ * Automatically sets the password to be identical to the email.
+ */
+/**
+ * @throws Exception
+ */
+function add_user($email, $firstName, $lastName, $type, $taxCode): void
+{
+    $db = open_connection();
+
+    $sql = "SET search_path TO library;";
+    pg_prepare($db, 'set-sp', $sql);
+    pg_execute($db, 'set-sp', array());
+
+    $sql = "";
+
+    if ($type == 'patron') {
+        $sql = "
+            CALL library.create_patron('$email', '$email', '$firstName', '$lastName', '$taxCode', 'base')
+        ";
+    } else {
+        $sql = "
+        INSERT INTO library.user (email, password, first_name, last_name, type)
+        VALUES ('$email', '$email', '$firstName', '$lastName', '$type')
+    ";
+    }
+
+    pg_prepare($db, 'add-user', $sql);
+    @ $result = pg_execute($db, 'add-user', array());
+
+    if (!$result) {
+        throw new Exception('Cannot insert user! ' . pg_last_error($db));
+    }
+
+    close_connection($db);
+}
