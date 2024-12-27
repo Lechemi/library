@@ -1,16 +1,22 @@
-CREATE TABLE "user"
+create table "user"
 (
-    id         UUID    DEFAULT gen_random_uuid() NOT NULL
-        PRIMARY KEY,
-    email      VARCHAR(100)                      NOT NULL
-        UNIQUE
-        CHECK ((email)::TEXT ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::TEXT),
-    password   VARCHAR(100)                      NOT NULL
-        CHECK (LENGTH((password)::TEXT) > 5),
-    first_name VARCHAR(100)                      NOT NULL
-        CHECK ((first_name)::TEXT ~* '^.+$'::TEXT),
-    last_name  VARCHAR(100)                      NOT NULL
-        CHECK ((last_name)::TEXT ~* '^.+$'::TEXT),
-    type       library.USER_TYPE                 NOT NULL,
-    removed    BOOLEAN DEFAULT FALSE
+    id         uuid    default gen_random_uuid() not null
+        primary key,
+    email      varchar(100)                      not null
+        unique
+        constraint user_email_check
+            check ((email)::text ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text),
+    password   varchar(100)                      not null
+        constraint user_password_check
+            check (length((password)::text) > 5),
+    first_name varchar(100)                      not null
+        constraint user_first_name_check
+            check ((first_name)::text ~* '^.+$'::text),
+    last_name  varchar(100)                      not null
+        constraint user_last_name_check
+            check ((last_name)::text ~* '^.+$'::text),
+    type       library.user_type                 not null,
+    removed    boolean default false,
+    constraint librarian_email_check
+        check ((type <> 'librarian'::library.user_type) OR ((email)::text ~~ '%@librarian.com'::text))
 );
