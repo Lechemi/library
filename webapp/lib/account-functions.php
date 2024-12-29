@@ -228,8 +228,36 @@ function remove_user($email): void
     close_connection($db);
 }
 
-try {
-    remove_user('matilde@librarian.com');
-} catch (Exception $e) {
-    echo $e->getMessage();
+/*
+ * Restores the user with the specified email.
+ */
+/**
+ * @throws Exception
+ */
+function restore_user($email): void
+{
+    $db = open_connection();
+
+    $sql = "SET search_path TO library;";
+    pg_prepare($db, 'set-sp', $sql);
+    pg_execute($db, 'set-sp', array());
+
+    $sql = "
+        UPDATE library.user u
+        SET removed = false
+        WHERE u.email = '$email'
+    ";
+
+    pg_prepare($db, 'restore-user', $sql);
+    @ $result = pg_execute($db, 'restore-user', array());
+
+    if (!$result) {
+        throw new Exception('Cannot restore this user. ' . pg_last_error($db));
+    }
+
+    if (pg_affected_rows($result) != 1) {
+        throw new Exception('Invalid user email: ' . $email);
+    }
+
+    close_connection($db);
 }
