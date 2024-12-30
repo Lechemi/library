@@ -195,12 +195,12 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
 }
 
 /*
- * Removes the user with the specified email.
+ * Removes the user with the specified id.
  */
 /**
  * @throws Exception
  */
-function remove_user($email): void
+function remove_user($id): void
 {
     $db = open_connection();
 
@@ -211,7 +211,7 @@ function remove_user($email): void
     $sql = "
         UPDATE library.user u
         SET removed = true
-        WHERE u.email = '$email'
+        WHERE u.id = '$id'
     ";
 
     pg_prepare($db, 'remove-user', $sql);
@@ -222,7 +222,7 @@ function remove_user($email): void
     }
 
     if (pg_affected_rows($result) != 1) {
-        throw new Exception('Invalid user email: ' . $email);
+        throw new Exception('Invalid user id: ' . $id);
     }
 
     close_connection($db);
@@ -234,7 +234,7 @@ function remove_user($email): void
 /**
  * @throws Exception
  */
-function restore_user($email): void
+function restore_user($id): void
 {
     $db = open_connection();
 
@@ -245,7 +245,7 @@ function restore_user($email): void
     $sql = "
         UPDATE library.user u
         SET removed = false
-        WHERE u.email = '$email'
+        WHERE u.email = '$id'
     ";
 
     pg_prepare($db, 'restore-user', $sql);
@@ -256,10 +256,8 @@ function restore_user($email): void
     }
 
     if (pg_affected_rows($result) != 1) {
-        throw new Exception('Invalid user email: ' . $email);
+        throw new Exception('Invalid user id: ' . $id);
     }
 
     close_connection($db);
 }
-
-remove_user('alessandro.bianchi@example.com');
