@@ -22,9 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             // TODO Handle error, you can log the error or show a message
         }
-        // Redirect to refresh the page
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit();
     }
 
     if (isset($_POST['restoreUser'])) {
@@ -33,9 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             // TODO Handle error, you can log the error or show a message
         }
-        // Redirect to refresh the page
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit();
     }
 
     // If resetting delays, call the reset function and then redirect to refresh the page
@@ -45,9 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             // TODO Handle error, you can log the error or show a message
         }
-        // Redirect to refresh the page
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit();
     }
 
     if (isset($_POST['returnCopy'])) {
