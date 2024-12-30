@@ -1,8 +1,19 @@
 <?php
 
+use PgSql\Connection;
 use PgSql\Result;
 
 include_once('../lib/connection.php');
+
+/*
+ * Sets the search path to library.
+ */
+function setSearchPath(false|Connection $db): void
+{
+    $sql = "SET search_path TO library;";
+    pg_prepare($db, 'set-sp', $sql);
+    pg_execute($db, 'set-sp', array());
+}
 
 /*
  * Retrieves the user with email $usr and password $psw.
@@ -169,9 +180,7 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
 {
     $db = open_connection();
 
-    $sql = "SET search_path TO library;";
-    pg_prepare($db, 'set-sp', $sql);
-    pg_execute($db, 'set-sp', array());
+    setSearchPath($db);
 
     if ($type == 'patron') {
         $sql = "
@@ -204,9 +213,7 @@ function remove_user($id): void
 {
     $db = open_connection();
 
-    $sql = "SET search_path TO library;";
-    pg_prepare($db, 'set-sp', $sql);
-    pg_execute($db, 'set-sp', array());
+    setSearchPath($db);
 
     $sql = "
         UPDATE library.user u
@@ -238,9 +245,7 @@ function restore_user($id): void
 {
     $db = open_connection();
 
-    $sql = "SET search_path TO library;";
-    pg_prepare($db, 'set-sp', $sql);
-    pg_execute($db, 'set-sp', array());
+    setSearchPath($db);
 
     $sql = "
         UPDATE library.user u
@@ -257,6 +262,38 @@ function restore_user($id): void
 
     if (pg_affected_rows($result) != 1) {
         throw new Exception('Invalid user id: ' . $id);
+    }
+
+    close_connection($db);
+}
+
+/*
+ * Changes the category of the patron with the specified id.
+ */
+/**
+ * @throws Exception
+ */
+function change_patron_category($patronId, $newCategory): void
+{
+    $db = open_connection();
+
+    setSearchPath($db);
+
+    $sql = "
+        UPDATE library.patron p
+        SET category = '$newCategory'
+        WHERE p.user = '$patronId'
+    ";
+
+    pg_prepare($db, 'change-patron-category', $sql);
+    @ $result = pg_execute($db, 'change-patron-category', array());
+
+    if (!$result) {
+        throw new Exception('Cannot change this patron\'s category. ' . pg_last_error($db));
+    }
+
+    if (pg_affected_rows($result) != 1) {
+        throw new Exception('Invalid patron id: ' . $patronId);
     }
 
     close_connection($db);
