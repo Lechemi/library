@@ -298,3 +298,23 @@ function change_patron_category($patronId, $newCategory): void
 
     close_connection($db);
 }
+
+/*
+ * Returns the names of all possible patron categories.
+ */
+function get_category_names(): array
+{
+    $db = open_connection();
+
+    $sql = "
+        SELECT name
+        FROM library.patron_category
+    ";
+
+    pg_prepare($db, 'categories', $sql);
+    $result = pg_execute($db, 'categories', array());
+
+    close_connection($db);
+
+    return pg_fetch_all($result);
+}
