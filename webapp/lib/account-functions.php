@@ -245,7 +245,7 @@ function restore_user($id): void
     $sql = "
         UPDATE library.user u
         SET removed = false
-        WHERE u.email = '$id'
+        WHERE u.id = '$id'
     ";
 
     pg_prepare($db, 'restore-user', $sql);
