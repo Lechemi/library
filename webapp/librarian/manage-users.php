@@ -116,7 +116,8 @@ $email = $_SESSION['userEmail'] ?? null;
                         Search for a user or
                         <a href="add-user.php" class="text-primary">add a new one</a>
                     </label>
-                    <input type="email" class="form-control" name="userEmail" id="userEmail" placeholder="Enter user's email" required>
+                    <input type="email" class="form-control" name="userEmail" id="userEmail"
+                           placeholder="Enter user's email" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
@@ -129,95 +130,96 @@ $email = $_SESSION['userEmail'] ?? null;
         $userInfo = null;
         try {
             $userInfo = get_user_with_email($email);
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         if ($userInfo) {
-            echo '<div class="card mt-4">';
-            echo '  <div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
-            echo '  <div class="card-body">';
-            echo '    <p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
-            echo '    <p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
 
-            // If user is a patron, display additional patronInfo fields
-            if (isset($userInfo['patronInfo'])) {
+            if ($userInfo['removed'] == 'f') {
+                echo '<div class="card mt-4">';
+                echo '  <div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
+                echo '  <div class="card-body">';
+                echo '    <p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
+                echo '    <p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
 
-                $result = get_loans($userInfo['id']);
-                if ($result === false) {
-                    echo "Error in query execution.";
-                    exit;
-                }
-                $loans = pg_fetch_all($result);
+                // If user is a patron, display additional patronInfo fields
+                if (isset($userInfo['patronInfo'])) {
 
-                echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';
+                    $result = get_loans($userInfo['id']);
+                    if ($result === false) {
+                        echo "Error in query execution.";
+                        exit;
+                    }
+                    $loans = pg_fetch_all($result);
 
-                // Display Number of Delays with a reset button
-                echo '<p><strong>Number of Delays:</strong> ' . htmlspecialchars($userInfo['patronInfo']['n_delays']) . '</p>';
+                    echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';
 
-                if ($userInfo['patronInfo']['n_delays'] > 0) {
-                    echo '    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">Reset Delays</button>';
-                }
+                    // Display Number of Delays with a reset button
+                    echo '<p><strong>Number of Delays:</strong> ' . htmlspecialchars($userInfo['patronInfo']['n_delays']) . '</p>';
+                    if ($userInfo['patronInfo']['n_delays'] > 0) {
+                        echo '    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">Reset Delays</button>';
+                    }
 
-                echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
+                    echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
 
-                if (!empty($loans)) {
-                    echo '<h5 class="mt-3">Loans</h5>';
-                    echo '<div class="list-group">';
+                    if (!empty($loans)) {
+                        echo '<h5 class="mt-3">Loans</h5>';
+                        echo '<div class="list-group">';
+                        foreach ($loans as $loan) {
+                            try {
+                                $start = new DateTime($loan['start']);
+                                $due = new DateTime($loan['due']);
+                                $start = $start->format('Y-m-d H:i:s');
+                                $due = $due->format('Y-m-d H:i:s');
+                                $returned = null;
+                                if ($loan['returned'] != null) {
+                                    $returned = new DateTime($loan['returned']);
+                                    $returned = $returned->format('Y-m-d H:i:s');
+                                }
+                            } catch (Exception $e) {
+                                echo 'Some error occurred with the dates.';
+                            }
 
-                foreach ($loans as $loan) {
-                    try {
-                        $start = new DateTime($loan['start']);
-                        $due = new DateTime($loan['due']);
-                        $start = $start->format('Y-m-d H:i:s');
-                        $due = $due->format('Y-m-d H:i:s');
-                        $returned = null;
-                        if ($loan['returned'] != null) {
-                            $returned = new DateTime($loan['returned']);
-                            $returned = $returned->format('Y-m-d H:i:s');
+                            $branch = $loan['address'] . ' - ' . $loan['city'];
+                            $isbn = $loan['isbn'];
+                            $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
+
+                            echo '<div class="list-group-item">';
+                            echo '  <div class="loan-card-header">';
+                            echo "    <h4>{$titleWithIsbn}</h4>";
+
+                            // "Return Copy" button
+                            if (!$returned) {
+                                echo '    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Return Copy</button>';
+                            }
+
+                            // "Postpone Due" button
+                            // TODO also check if we're past the due date
+                            if (!$returned) {
+                                echo '    <button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Postpone Due</button>';
+                            }
+
+                            echo '  </div>';
+                            echo '  <div class="loan-card-body">';
+                            echo '    <p><strong>Branch:</strong> ' . $branch . '</p>';
+                            echo '    <p><strong>Start Date:</strong> ' . $start . '</p>';
+                            echo '    <p><strong>Due Date:</strong> ' . $due . '</p>';
+                            if ($returned) {
+                                echo '    <p><strong>Returned on:</strong> ' . $returned . '</p>';
+                            }
+                            echo '  </div>';
+                            echo '</div>';
                         }
-                    } catch (Exception $e) {
-                        echo 'Some error occurred with the dates.';
+                        echo '</div>';
+                    } else {
+                        echo '<p>No loans.</p>';
                     }
-
-                    $branch = $loan['address'] . ' - ' . $loan['city'];
-                    $isbn = $loan['isbn'];
-                    $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
-
-                    echo '<div class="list-group-item">';
-                    echo '  <div class="loan-card-header">';
-                    echo "    <h4>{$titleWithIsbn}</h4>";
-
-                    // "Return Copy" button
-                    if (!$returned) {
-                        echo '    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Return Copy</button>';
-                    }
-
-                    // "Postpone Due" button
-                    // TODO also check if we're past the due date
-                    if (!$returned) {
-                        echo '    <button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Postpone Due</button>';
-                    }
-
-                    echo '  </div>';
-                    echo '  <div class="loan-card-body">';
-                    echo '    <p><strong>Branch:</strong> ' . $branch . '</p>';
-                    echo '    <p><strong>Start Date:</strong> ' . $start . '</p>';
-                    echo '    <p><strong>Due Date:</strong> ' . $due . '</p>';
-                    if ($returned) {
-                        echo '    <p><strong>Returned on:</strong> ' . $returned . '</p>';
-                    }
-                    echo '  </div>';
-                    echo '</div>';
                 }
-
-
-                    echo '</div>';
-                } else {
-                    echo '<p>No active loans.</p>';
-                }
+                echo '  </div>';
+                echo '</div>';
+            } else {
+                echo 'This user has been removed';
             }
-
-            echo '  </div>';
-            echo '</div>';
         } else {
             echo '<div class="mt-4 alert alert-danger">No user found with the given email address.</div>';
         }
@@ -283,7 +285,8 @@ $email = $_SESSION['userEmail'] ?? null;
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="postponeDays" class="form-label">Number of days to postpone (1-30):</label>
-                        <input type="number" class="form-control" name="postponeDays" id="postponeDays" min="1" max="30" required>
+                        <input type="number" class="form-control" name="postponeDays" id="postponeDays" min="1" max="30"
+                               required>
                     </div>
                     <input type="hidden" name="postponeDue" id="postponeDueInput">
                 </div>

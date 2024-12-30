@@ -52,7 +52,7 @@ function get_user_with_email($email)
 
     $sql =
         "SELECT * FROM library.user
-         WHERE email = '$email' AND removed IS FALSE
+         WHERE email = '$email'
     ";
 
     pg_prepare($db, 'user-info', $sql);
@@ -261,3 +261,5 @@ function restore_user($email): void
 
     close_connection($db);
 }
+
+remove_user('alessandro.bianchi@example.com');
