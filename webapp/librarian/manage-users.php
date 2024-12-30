@@ -147,6 +147,7 @@ $email = $_SESSION['userEmail'] ?? null;
 
     <!-- Display User Information -->
     <?php
+
     if ($email) {
         $userInfo = null;
         try {
@@ -387,9 +388,13 @@ $email = $_SESSION['userEmail'] ?? null;
                     <div class="mb-3">
                         <label for="selectedCategory" class="form-label">Select the new category</label>
                         <select class="form-select" name="selectedCategory" id="selectedCategory" aria-label="Default select example" required>
-                            <option selected>Categories</option>
-                            <option value="premium">premium</option>
-                            <option value="base">base</option>
+                            <?php
+                                foreach (get_category_names() as $category) {
+                                    if ($category['name'] != $userInfo['patronInfo']['category']) {
+                                        echo '<option value="' . $category['name'] . '">' . $category['name'] . '</option>';
+                                    }
+                                }
+                            ?>
                         </select>
                     </div>
                     <input type="hidden" name="changingPatron" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
