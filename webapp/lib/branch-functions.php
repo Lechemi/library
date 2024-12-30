@@ -73,6 +73,9 @@ function get_branch_stats($id): array
     return $stats;
 }
 
+/*
+ * Adds a branch with specified fields.
+ */
 /**
  * @throws Exception
  */
@@ -87,6 +90,29 @@ function add_branch($city, $address, $name): void
     pg_prepare($db, 'add-branch', $sql);
 
     @ $result = pg_execute($db, 'add-branch', array());
+
+    if (!$result) throw new Exception(pg_last_error($db));
+
+    close_connection($db);
+}
+
+/*
+ * Removes the branch with specified id.
+ */
+/**
+ * @throws Exception
+ */
+function remove_branch($id): void
+{
+    $db = open_connection();
+    $sql = "
+        DELETE FROM library.branch
+        WHERE id = '$id'
+    ";
+
+    pg_prepare($db, 'remove-branch', $sql);
+
+    @ $result = pg_execute($db, 'remove-branch', array());
 
     if (!$result) throw new Exception(pg_last_error($db));
 
