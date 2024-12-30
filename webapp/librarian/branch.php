@@ -21,6 +21,16 @@ if (!empty($_GET['id'])) {
     exit;
 }
 
+// Handle branch removal if form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
+    try {
+        remove_branch($branch);
+        redirect("manage-branches.php");
+    } catch (Exception $e) {
+        $removal_error = $e->getMessage();
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -55,6 +65,19 @@ if (!empty($_GET['id'])) {
             <p>This branch manages <?= $stats[0]['n_copies'] ?> copies, for a total of <?= $stats[0]['n_books'] ?> different books.</p>
         </div>
     </div>
+
+    <!-- Remove Branch -->
+    <div class="mb-4">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#removeBranchModal">Remove branch</button>
+    </div>
+
+    <!-- Display removal-related exceptions -->
+    <?php if (isset($removal_error)): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($removal_error); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
     <!-- Overdue Loans -->
     <div class="card">
@@ -104,11 +127,33 @@ if (!empty($_GET['id'])) {
     </div>
 </div>
 
-</body>
-
+<!-- Modal for removing branch confirmation -->
+<div class="modal fade" id="removeBranchModal" tabindex="-1" aria-labelledby="removeBranchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeBranchModalLabel">Confirm remove branch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove this branch? This action cannot be undone.
+                <!-- todo make this next sentence more visible -->
+                If the operation is successful, you will be taken back to the 'Branches' page.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="">
+                    <input type="hidden" name="removeBranch" value="<?= $branch ?? '' ?>">
+                    <button type="submit" class="btn btn-danger">Confirm removal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
+</body>
 </html>
