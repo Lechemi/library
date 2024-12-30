@@ -16,6 +16,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['userEmail'] = $_POST['userEmail'];
     }
 
+    if (isset($_POST['removeUser'])) {
+        try {
+            remove_user($_POST['removeUser']);
+        } catch (Exception $e) {
+            // TODO Handle error, you can log the error or show a message
+        }
+        // Redirect to refresh the page
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
     // If resetting delays, call the reset function and then redirect to refresh the page
     if (isset($_POST['resetDelays'])) {
         try {
@@ -136,11 +147,13 @@ $email = $_SESSION['userEmail'] ?? null;
         if ($userInfo) {
 
             if ($userInfo['removed'] == 'f') {
+
                 echo '<div class="card mt-4">';
-                echo '  <div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
-                echo '  <div class="card-body">';
-                echo '    <p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
-                echo '    <p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
+                echo '    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove this user</button>';
+                echo '    <div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
+                echo '    <div class="card-body">';
+                echo '        <p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
+                echo '        <p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
 
                 // If user is a patron, display additional patronInfo fields
                 if (isset($userInfo['patronInfo'])) {
@@ -218,6 +231,7 @@ $email = $_SESSION['userEmail'] ?? null;
                 echo '  </div>';
                 echo '</div>';
             } else {
+                // User has been removed
                 echo 'This user has been removed';
             }
         } else {
@@ -227,6 +241,28 @@ $email = $_SESSION['userEmail'] ?? null;
 
     ?>
 
+</div>
+
+<!-- Modal for removing user -->
+<div class="modal fade" id="removeUserModal" tabindex="-1" aria-labelledby="removeUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeUserModalLabel">Confirm removing user</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove this user?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="">
+                    <input type="hidden" name="removeUser" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
+                    <button type="submit" class="btn btn-danger">Remove user</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal for Resetting Delays -->
