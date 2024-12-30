@@ -72,6 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if (isset($_POST['selectedCategory'])) {
+        try {
+            change_patron_category($_POST['changingPatron'], $_POST['selectedCategory']);
+        } catch (Exception $e) {
+            // TODO Handle error (e.g., log it or show a message)
+        }
+    }
+
 }
 
 // Check if email is set in session, otherwise handle empty state
@@ -160,11 +168,11 @@ $email = $_SESSION['userEmail'] ?? null;
             if ($userInfo['removed'] == 'f') {
 
                 echo '<div class="card mt-4">';
-                echo '    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove this user</button>';
-                echo '    <div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
-                echo '    <div class="card-body">';
-                echo '        <p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
-                echo '        <p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
+                echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove this user</button>';
+                echo '<div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
+                echo '<div class="card-body">';
+                echo '<p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
+                echo '<p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
 
                 // If user is a patron, display additional patronInfo fields
                 if (isset($userInfo['patronInfo'])) {
@@ -185,6 +193,7 @@ $email = $_SESSION['userEmail'] ?? null;
                     }
 
                     echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
+                    echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#changeCategoryModal">Change category</button>';
 
                     if (!empty($loans)) {
                         echo '<h5 class="mt-3">Loans</h5>';
@@ -368,6 +377,35 @@ $email = $_SESSION['userEmail'] ?? null;
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-warning">Postpone</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for changing patron's category -->
+<div class="modal fade" id="changeCategoryModal" tabindex="-1" aria-labelledby="changeCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeCategoryModalLabel">Change patron's category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="selectedCategory" class="form-label">Select the new category</label>
+                        <select class="form-select" name="selectedCategory" id="selectedCategory" aria-label="Default select example" required>
+                            <option selected>Categories</option>
+                            <option value="premium">premium</option>
+                            <option value="base">base</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="changingPatron" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Change</button>
                 </div>
             </form>
         </div>
