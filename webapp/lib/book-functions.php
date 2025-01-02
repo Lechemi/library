@@ -233,13 +233,17 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
         pg_prepare($db, 'add-book', $sql);
         $result = pg_execute($db, 'add-book', array());
 
-        if (!$result) {throw new Exception(pg_last_error($db));}
+        if (!$result) {
+            throw new Exception(pg_last_error($db));
+        }
 
         foreach ($authors as $author) {
             $sql = "INSERT INTO library.credits (author, book) VALUES ($author, '$isbn');";
             pg_prepare($db, 'add-credits' . $author, $sql);
-            $result = pg_execute($db, 'add-credits'  . $author, array());
-            if (!$result) {throw new Exception(pg_last_error($db));}
+            $result = pg_execute($db, 'add-credits' . $author, array());
+            if (!$result) {
+                throw new Exception(pg_last_error($db));
+            }
         }
 
         pg_query($db, "COMMIT");
@@ -252,3 +256,48 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
     close_connection($db);
 
 }
+
+/**
+ * @throws Exception
+ */
+function update_book($isbn, $title, $blurb, $publisher): void
+{
+    // Check for at least one non-falsy field
+    $fields = [
+        'isbn' => $isbn,
+        'title' => $title,
+        'blurb' => $blurb,
+        'publisher' => $publisher,
+    ];
+
+    // Filter out falsy fields
+    $validFields = array_filter($fields, fn($value) => $value !== null && $value !== '');
+    if (empty($validFields)) {
+        throw new InvalidArgumentException('At least one field must be provided for update.');
+    }
+
+    $setParts = [];
+    foreach ($validFields as $field => $value) {
+        $setParts[] = "$field = '$value'";
+    }
+
+    $setClause = implode(', ', $setParts);
+    $sql = "UPDATE library.book SET $setClause WHERE isbn = '$isbn'";
+
+    $db = open_connection();
+
+    pg_prepare($db, 'update-book', $sql);
+    $result = pg_execute($db, 'update-book', array());
+
+    if (!$result) {
+        throw new Exception('Cannot update book\'s info. ' . pg_last_error($db));
+    }
+
+    if (pg_affected_rows($result) != 1) {
+        throw new Exception('Invalid book isbn: ' . $isbn);
+    }
+
+    close_connection($db);
+}
+
+update_book('9788807882112', '', '', 'Salani');
