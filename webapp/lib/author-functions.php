@@ -22,3 +22,8 @@ function get_author($id): false|Result
     close_connection($db);
     return $result;
 }
+
+function add_author($firstName, $lastName, $bio, )
+{
+
+}
