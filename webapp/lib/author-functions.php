@@ -102,3 +102,39 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
 
     close_connection($db);
 }
+
+/*
+ * TODO specs
+ */
+/**
+ * @throws Exception
+ */
+function get_authors($searchInput): array
+{
+    $searchInput = trim($searchInput);
+    $whereConditions = '';
+    if (!empty($searchInput)) {
+        $whereConditions =
+            "WHERE first_name ILIKE '$searchInput'
+                OR last_name ILIKE '$searchInput'
+                OR concat(first_name, ' ', last_name) ILIKE '$searchInput'";
+    }
+
+    $db = open_connection();
+    $sql = "
+        SELECT *
+        FROM library.author
+        $whereConditions
+    ";
+
+    pg_prepare($db, 'get-authors', $sql);
+    $result = pg_execute($db, 'get-authors', array());
+
+    if (!$result) {
+        throw new Exception('Cannot get authors: ' . pg_last_error($db));
+    }
+
+    close_connection($db);
+
+    return pg_fetch_all($result);
+}
