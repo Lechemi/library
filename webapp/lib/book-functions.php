@@ -1,5 +1,6 @@
 <?php
 
+use PgSql\Connection;
 use PgSql\Result;
 
 include_once('../lib/connection.php');
@@ -210,6 +211,24 @@ function postpone_due($loanId, $days): void
 }
 
 /*
+ * Utility function to add credits to a book.
+ */
+/**
+ * @throws Exception
+ */
+function add_credits($authors, $isbn, false|Connection $db): void
+{
+    foreach ($authors as $author) {
+        $sql = "INSERT INTO library.credits (author, book) VALUES ($author, '$isbn');";
+        pg_prepare($db, 'add-credits' . $author, $sql);
+        $result = pg_execute($db, 'add-credits' . $author, array());
+        if (!$result) {
+            throw new Exception(pg_last_error($db));
+        }
+    }
+}
+
+/*
  * Adds a book to the catalog with the specified fields, assigning the credits to the
  * author(s) in $authors.
  */
@@ -237,14 +256,7 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
             throw new Exception(pg_last_error($db));
         }
 
-        foreach ($authors as $author) {
-            $sql = "INSERT INTO library.credits (author, book) VALUES ($author, '$isbn');";
-            pg_prepare($db, 'add-credits' . $author, $sql);
-            $result = pg_execute($db, 'add-credits' . $author, array());
-            if (!$result) {
-                throw new Exception(pg_last_error($db));
-            }
-        }
+        add_credits($authors, $isbn, $db);
 
         pg_query($db, "COMMIT");
 
@@ -300,4 +312,44 @@ function update_book($isbn, $title, $blurb, $publisher): void
     close_connection($db);
 }
 
-update_book('9788807882112', '', '', 'Salani');
+/*
+ * Replaces the current writer(s) for the specified book with the one(s) in $authors.
+ */
+/**
+ * @throws Exception
+ */
+function update_authors($isbn, $authors): void
+{
+    $db = open_connection();
+
+    if (empty($authors)) {
+        throw new InvalidArgumentException('Authors list is empty');
+    }
+
+    try {
+
+        pg_query($db, "BEGIN");
+
+        $sql = "
+            DELETE FROM library.credits
+            WHERE book = '$isbn'
+        ";
+
+        pg_prepare($db, 'reset-credits', $sql);
+        $result = pg_execute($db, 'reset-credits', array());
+
+        if (!$result) {
+            throw new Exception(pg_last_error($db));
+        }
+
+        add_credits($authors, $isbn, $db);
+
+        pg_query($db, "COMMIT");
+
+    } catch (Exception $e) {
+        pg_query($db, "ROLLBACK");
+        throw new Exception('Error updating credits. ' . $e->getMessage());
+    }
+
+    close_connection($db);
+}
