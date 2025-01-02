@@ -208,3 +208,47 @@ function postpone_due($loanId, $days): void
 
     close_connection($db);
 }
+
+/*
+ * Adds a book to the catalog with the specified fields, assigning the credits to the
+ * author(s) in $authors.
+ */
+/**
+ * @throws Exception
+ */
+function add_book($isbn, $title, $blurb, $publisher, $authors): void
+{
+
+    $db = open_connection();
+
+    try {
+
+        pg_query($db, "BEGIN");
+
+        $sql = "
+        INSERT INTO library.book (isbn, title, blurb, publisher)
+        VALUES ('$isbn', '$title', '$blurb', '$publisher')
+        ";
+
+        pg_prepare($db, 'add-book', $sql);
+        $result = pg_execute($db, 'add-book', array());
+
+        if (!$result) {throw new Exception(pg_last_error($db));}
+
+        foreach ($authors as $author) {
+            $sql = "INSERT INTO library.credits (author, book) VALUES ($author, '$isbn');";
+            pg_prepare($db, 'add-credits' . $author, $sql);
+            $result = pg_execute($db, 'add-credits'  . $author, array());
+            if (!$result) {throw new Exception(pg_last_error($db));}
+        }
+
+        pg_query($db, "COMMIT");
+
+    } catch (Exception $e) {
+        pg_query($db, "ROLLBACK");
+        throw new Exception('Error inserting book. ' . $e->getMessage());
+    }
+
+    close_connection($db);
+
+}
