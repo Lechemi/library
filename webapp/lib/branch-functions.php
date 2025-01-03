@@ -118,3 +118,44 @@ function remove_branch($id): void
 
     close_connection($db);
 }
+
+/*
+ * Adds $toAdd new copies of the specified book ($isbn) to the branch
+ * with id $branchId.
+ */
+/**
+ * @throws Exception
+ */
+function add_copies($branchId, $isbn, $toAdd): void
+{
+
+    if ($toAdd <= 0) {
+        throw new Exception("Number of copies must be positive.");
+    }
+
+    $db = open_connection();
+    setSearchPath($db);
+
+    try {
+
+        pg_query($db, "BEGIN");
+
+        for ($i = 0; $i < $toAdd; $i++) {
+            $sql = "
+            INSERT INTO library.book_copy (branch, book)
+            VALUES ('$branchId', '$isbn')
+        ";
+
+            pg_prepare($db, 'add-copy' . $i, $sql);
+            @ $result = pg_execute($db, 'add-copy' . $i, array());
+            if (!$result) throw new Exception(pg_last_error($db));
+        }
+
+        pg_query($db, "COMMIT");
+    } catch (Exception $e) {
+        pg_query($db, "ROLLBACK");
+        throw new Exception('Error while inserting new copies. ' . $e->getMessage());
+    }
+
+    close_connection($db);
+}
