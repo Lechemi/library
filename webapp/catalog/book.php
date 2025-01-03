@@ -18,7 +18,7 @@ if (!empty($_GET['isbn'])) {
 
     $bookDetails = group_authors($result)[$isbn];
     if ($_SESSION['user']['type'] == 'patron')
-        $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn));
+        $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn, null));
 } else {
     echo "Error, no book.";
     exit;

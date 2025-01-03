@@ -70,9 +70,11 @@ function group_authors($queryResults): array
 }
 
 /*
- * TODO missing specs
+ * If a branch is specified, returns the id's of all available copies for
+ * the specified book that are kept in the specified branch.
+ * Otherwise, returns the id's of all available copies for the specified book.
  */
-function get_available_copies($isbn): Result|false
+function get_available_copies($isbn, $branch): array
 {
     $db = open_connection();
     $sql = "
@@ -83,10 +85,15 @@ function get_available_copies($isbn): Result|false
             AND removed = FALSE
     ";
 
+    if ($branch) {
+        $sql .= " AND branch = $branch";
+    }
+
     pg_prepare($db, 'available_copies', $sql);
     $result = pg_execute($db, 'available_copies', array());
     close_connection($db);
-    return $result;
+
+    return pg_fetch_all($result);
 }
 
 /*
