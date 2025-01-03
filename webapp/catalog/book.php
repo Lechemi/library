@@ -18,7 +18,7 @@ if (!empty($_GET['isbn'])) {
 
     $bookDetails = group_authors($result)[$isbn];
     if ($_SESSION['user']['type'] == 'patron')
-        $bookDetails['available_copies'] = pg_fetch_all(get_available_copies($isbn, null));
+        $bookDetails['available_copies'] =get_available_copies($isbn, null);
 } else {
     echo "Error, no book.";
     exit;
@@ -88,6 +88,8 @@ if (!empty($_GET['isbn'])) {
             ?>
 
             <?php if ($_SESSION['user']['type'] == 'patron') include 'loan-request-form.php' ?>
+
+            <?php if ($_SESSION['user']['type'] == 'librarian') include 'manage-copies-from.php' ?>
 
         </div>
     </div>
