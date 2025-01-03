@@ -3,6 +3,7 @@
 use PgSql\Result;
 
 include_once('../lib/connection.php');
+include_once('../lib/book-functions.php');
 
 /*
  * Retrieves all branches.
@@ -155,6 +156,64 @@ function add_copies($branchId, $isbn, $toAdd): void
     } catch (Exception $e) {
         pg_query($db, "ROLLBACK");
         throw new Exception('Error while inserting new copies. ' . $e->getMessage());
+    }
+
+    close_connection($db);
+}
+
+/*
+ * Removes $toRemove copies of the specified book ($isbn) to the branch
+ * with id $branchId.
+ */
+/**
+ * @throws Exception
+ */
+function remove_copies($branchId, $isbn, $toRemove): void
+{
+
+    if ($toRemove <= 0) {
+        throw new Exception("Number of copies must be positive.");
+    }
+
+    // I can only remove copies that are not currently loaned
+    $copies = get_available_copies($isbn, $branchId);
+
+    $available = sizeof($copies);
+    if ($available < $toRemove) {
+        throw new Exception("There are only $available available copies. You tried to remove $toRemove.");
+    }
+
+    $db = open_connection();
+    setSearchPath($db);
+
+    try {
+
+        pg_query($db, "BEGIN");
+
+        foreach ($copies as $copy) {
+            if ($toRemove) {
+                $copyId = $copy['id'];
+
+                $sql = "
+                    UPDATE library.book_copy
+                    SET removed = true
+                    WHERE id = $copyId
+                ";
+
+                pg_prepare($db, 'remove-copy' . $copyId, $sql);
+                @ $result = pg_execute($db, 'remove-copy' . $copyId, array());
+                if (!$result) throw new Exception(pg_last_error($db));
+
+                $toRemove--;
+            } else {
+                break;
+            }
+        }
+
+        pg_query($db, "COMMIT");
+    } catch (Exception $e) {
+        pg_query($db, "ROLLBACK");
+        throw new Exception('Error while removing copies. ' . $e->getMessage());
     }
 
     close_connection($db);
