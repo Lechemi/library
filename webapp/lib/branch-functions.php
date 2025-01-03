@@ -17,7 +17,7 @@ function get_branches(): array
     $db = open_connection();
     $sql = "
         SELECT *
-        FROM library.branch ORDER BY city
+        FROM library.branch ORDER BY city, address
     ";
 
     pg_prepare($db, 'branches', $sql);
