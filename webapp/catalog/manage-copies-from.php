@@ -11,6 +11,28 @@ if (!empty($_GET['isbn'])) {
     exit;
 }
 
+$feedback = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $branch = $_POST['branch'];
+    $quantity = $_POST['quantity'];
+
+    if ($_POST['action'] == 'remove') {
+        try {
+            remove_copies($branch, $isbn, $quantity);
+            $feedback = 'Correctly removed ' . $quantity . ' copies.';
+        } catch (Exception $e) {
+            $feedback = $e->getMessage();
+        }
+    } elseif ($_POST['action'] == 'add') {
+        try {
+            add_copies($branch, $isbn, $quantity);
+            $feedback = 'Correctly added ' . $quantity . ' copies.';
+        } catch (Exception $e) {
+            $feedback = $e->getMessage();
+        }
+    }
+}
+
 ?>
 
 <head>
@@ -23,6 +45,9 @@ if (!empty($_GET['isbn'])) {
 </head>
 
 <h4>Manage copies for this book</h4>
+
+<!-- todo display feedback in a more decent manner -->
+<p> <?php echo $feedback ?> </p>
 
 <form method="POST" action="">
     <div class="mb-3">
@@ -53,7 +78,8 @@ if (!empty($_GET['isbn'])) {
         <!-- Quantity of copies -->
         <div class="mb-3">
             <label for="quantity" class="form-label">Enter the number of copies</label>
-            <input type="number" name="quantity" id="quantity" class="form-control" min="1" placeholder="Enter quantity" required>
+            <input type="number" name="quantity" id="quantity" class="form-control" min="1" placeholder="Enter quantity"
+                   required>
         </div>
 
         <!-- Action (Add/Remove) -->
