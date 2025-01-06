@@ -112,7 +112,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
                 <span class="book-author">
                     <?php
                     foreach ($details['authors'] as $author) {
-                        $author_link = '../catalog/author-page.php' . '?author=' . $author['id'];
+                        $author_link = '../catalog/author.php' . '?author=' . $author['id'];
 
                         echo '<a class="link-opacity-100-hover hover-lighten" href="' . $author_link . '">' . $author['name'] . '</a>';
                         if ($author !== end($details['authors'])) {
