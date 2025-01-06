@@ -32,11 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     try {
         update_author($_GET['author'], $_POST['firstName'], $_POST['lastName'], $_POST['bio'], $_POST['birthdate'], $_POST['deathDate'], !$dead);
+        header("Refresh:0");
     } catch (Exception $e) {
         echo $e->getMessage();
     }
-
-    header("Refresh:0");
 }
 
 ?>
