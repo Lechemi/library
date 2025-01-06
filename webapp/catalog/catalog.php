@@ -78,6 +78,9 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
 <!-- Displayed book(s) -->
 <div class="container">
+
+    <a href="add-book.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Add a new book</a>
+
     <ul class="list-group list-group-flush rounded-4">
         <?php
 
