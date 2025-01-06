@@ -2,6 +2,8 @@
 
 include_once('../lib/author-functions.php');
 
+session_start();
+
 if (!empty($_GET['author'])) {
     $result = get_author($_GET['author']);
 
@@ -49,6 +51,12 @@ if (!empty($_GET['author'])) {
             <p>
                 <?= htmlspecialchars($authorDetails['bio'] ?? 'No bio available.') ?>
             </p>
+
+            <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
+                <a href="edit-author.php?author=<?php echo $authorDetails['id']; ?>" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Edit author details
+                </a>
+            <?php endif; ?>
 
             <a href=<?php echo '../catalog/catalog.php?searchInput=' . $authorDetails['full_name'] ?>>View
                 books</a>
