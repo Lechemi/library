@@ -46,6 +46,10 @@ if (!empty($_GET['author'])) {
                 Died: <?= $authorDetails['alive'] == 't' ? 'Present' : ($authorDetails['death_date'] ?? 'Unknown') ?>
             </p>
 
+            <p>
+                Id: <?= $authorDetails['id']?>
+            </p>
+
             <hr>
 
             <p>
