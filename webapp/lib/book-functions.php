@@ -96,6 +96,21 @@ function get_available_copies($isbn, $branch): array
     return pg_fetch_all($result);
 }
 
+function get_publishers(): array
+{
+    $db = open_connection();
+    $sql = "
+        SELECT name
+        FROM library.publisher
+    ";
+
+    pg_prepare($db, 'publishers', $sql);
+    $result = pg_execute($db, 'publishers', array());
+    close_connection($db);
+
+    return pg_fetch_all($result);
+}
+
 /*
  * TODO specs
  */
@@ -273,7 +288,6 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
     }
 
     close_connection($db);
-
 }
 
 /**
