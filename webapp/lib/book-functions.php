@@ -269,11 +269,11 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
 
         $sql = "
         INSERT INTO library.book (isbn, title, blurb, publisher)
-        VALUES ('$isbn', '$title', '$blurb', '$publisher')
+        VALUES ($1, $2, $3, $4)
         ";
 
         pg_prepare($db, 'add-book', $sql);
-        $result = pg_execute($db, 'add-book', array());
+        $result = pg_execute($db, 'add-book', array($isbn, $title, $blurb, $publisher));
 
         if (!$result) {
             throw new Exception(pg_last_error($db));
