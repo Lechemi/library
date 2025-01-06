@@ -79,7 +79,9 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <!-- Displayed book(s) -->
 <div class="container">
 
-    <a href="add-book.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Add a new book</a>
+    <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
+        <a href="add-book.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Add a new book</a>
+    <?php endif; ?>
 
     <ul class="list-group list-group-flush rounded-4">
         <?php
@@ -132,7 +134,6 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 </div>
 
 </body>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

@@ -57,9 +57,11 @@ if (!empty($_GET['isbn'])) {
         <div class="card-body">
             <h5 class="card-title">Book Details</h5>
 
-            <a href="edit-book.php?isbn=<?php echo $isbn; ?>"  class="btn btn-primary">
-                <i class="bi bi-pencil"></i> Edit book details
-            </a>
+            <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
+                <a href="edit-book.php?isbn=<?php echo $isbn; ?>" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Edit book details
+                </a>
+            <?php endif; ?>
 
             <p><strong>ISBN:</strong> <?php echo htmlspecialchars($isbn); ?></p>
             <p>
@@ -94,7 +96,7 @@ if (!empty($_GET['isbn'])) {
 
             <?php if ($_SESSION['user']['type'] == 'patron') include 'loan-request-form.php' ?>
 
-            <?php if ($_SESSION['user']['type'] == 'librarian') include 'manage-copies-from.php' ?>
+            <?php if ($_SESSION['user']['type'] == 'librarian') include 'manage-copies-form.php' ?>
 
         </div>
     </div>
