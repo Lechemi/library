@@ -63,6 +63,11 @@ function add_author($firstName, $lastName, $bio, $birthDate, $deathDate, $alive)
  */
 function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate, $alive): void
 {
+    // Validate ID
+    if (!$id) {
+        throw new InvalidArgumentException('Missing author ID.');
+    }
+
     // Check for at least one non-falsy field
     $fields = [
         'first_name' => $firstName,
@@ -70,7 +75,7 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
         'bio' => $bio,
         'birth_date' => $birthDate,
         'death_date' => $deathDate,
-        'alive' => $alive
+        'alive' => $alive ? 1 : 0,
     ];
 
     // Filter out falsy fields
@@ -79,25 +84,34 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
         throw new InvalidArgumentException('At least one field must be provided for update.');
     }
 
+    // Build the SET clause dynamically
     $setParts = [];
+    $params = [];
+    $paramIndex = 1; // PostgreSQL parameter indexing starts at 1
+
     foreach ($validFields as $field => $value) {
-        $setParts[] = "$field = '$value'";
+        $setParts[] = "$field = $" . $paramIndex;
+        $params[] = $value;
+        $paramIndex++;
     }
 
     $setClause = implode(', ', $setParts);
-    $sql = "UPDATE library.author SET $setClause WHERE id = $id";
+    $params[] = $id; // Add the ID as the last parameter
+
+    $sql = "UPDATE library.author SET $setClause WHERE id = $" . $paramIndex;
 
     $db = open_connection();
 
+    // Prepare and execute the parameterized query
     pg_prepare($db, 'update-author', $sql);
-    $result = pg_execute($db, 'update-author', array());
+    $result = pg_execute($db, 'update-author', $params);
 
     if (!$result) {
         throw new Exception('Cannot update author\'s info. ' . pg_last_error($db));
     }
 
     if (pg_affected_rows($result) != 1) {
-        throw new Exception('Invalid author id: ' . $id);
+        throw new Exception('Invalid author ID: ' . $id);
     }
 
     close_connection($db);
