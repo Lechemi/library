@@ -102,6 +102,7 @@ function get_publishers(): array
     $sql = "
         SELECT name
         FROM library.publisher
+        order by name
     ";
 
     pg_prepare($db, 'publishers', $sql);
