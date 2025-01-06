@@ -296,9 +296,12 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
  */
 function update_book($isbn, $title, $blurb, $publisher): void
 {
+    if (!$isbn) {
+        throw new InvalidArgumentException('Missing isbn.');
+    }
+
     // Check for at least one non-falsy field
     $fields = [
-        'isbn' => $isbn,
         'title' => $title,
         'blurb' => $blurb,
         'publisher' => $publisher,
@@ -310,18 +313,27 @@ function update_book($isbn, $title, $blurb, $publisher): void
         throw new InvalidArgumentException('At least one field must be provided for update.');
     }
 
+    // Build the SET clause dynamically
     $setParts = [];
+    $params = [];
+    $paramIndex = 1; // PostgreSQL parameter indexing starts at 1
+
     foreach ($validFields as $field => $value) {
-        $setParts[] = "$field = '$value'";
+        $setParts[] = "$field = $" . $paramIndex;
+        $params[] = $value;
+        $paramIndex++;
     }
 
     $setClause = implode(', ', $setParts);
-    $sql = "UPDATE library.book SET $setClause WHERE isbn = '$isbn'";
+    $params[] = $isbn; // Add the ISBN as the last parameter
+
+    $sql = "UPDATE library.book SET $setClause WHERE isbn = $" . $paramIndex;
 
     $db = open_connection();
 
+    // Prepare and execute the parameterized query
     pg_prepare($db, 'update-book', $sql);
-    $result = pg_execute($db, 'update-book', array());
+    $result = pg_execute($db, 'update-book', $params);
 
     if (!$result) {
         throw new Exception('Cannot update book\'s info. ' . pg_last_error($db));
