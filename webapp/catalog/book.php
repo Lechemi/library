@@ -56,6 +56,11 @@ if (!empty($_GET['isbn'])) {
     <div class="card mb-5 pb-4">
         <div class="card-body">
             <h5 class="card-title">Book Details</h5>
+
+            <a href="edit-book.php?isbn=<?php echo $isbn; ?>"  class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Edit book details
+            </a>
+
             <p><strong>ISBN:</strong> <?php echo htmlspecialchars($isbn); ?></p>
             <p>
                 <strong>Author:</strong>
