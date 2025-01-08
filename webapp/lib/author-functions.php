@@ -119,6 +119,7 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
 
 /*
  * TODO specs
+ * TODO replace get_author, it's included in get_authors
  */
 /**
  * @throws Exception
@@ -128,10 +129,14 @@ function get_authors($searchInput): array
     $searchInput = trim($searchInput);
     $whereConditions = '';
     if (!empty($searchInput)) {
-        $whereConditions =
-            "WHERE first_name ILIKE '$searchInput'
+        if (is_numeric($searchInput)) {
+            $whereConditions = "WHERE id = '$searchInput'";
+        } else {
+            $whereConditions =
+                "WHERE first_name ILIKE '$searchInput'
                 OR last_name ILIKE '$searchInput'
                 OR concat(first_name, ' ', last_name) ILIKE '$searchInput'";
+        }
     }
 
     $db = open_connection();
