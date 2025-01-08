@@ -9,66 +9,45 @@ session_start();
 // Redirect if no user is logged in
 if (!isset($_SESSION['user'])) redirect('../index.php');
 
-// Handle form submission and reset delays logic
+$errorMessage = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['userEmail'])) {
         // Store the email in session to persist it across page reloads
         $_SESSION['userEmail'] = $_POST['userEmail'];
     }
 
-    if (isset($_POST['removeUser'])) {
-        try {
+    try {
+        if (isset($_POST['removeUser'])) {
             remove_user($_POST['removeUser']);
-        } catch (Exception $e) {
-            // TODO Handle error, you can log the error or show a message
         }
-    }
 
-    if (isset($_POST['restoreUser'])) {
-        try {
+        if (isset($_POST['restoreUser'])) {
             restore_user($_POST['restoreUser']);
-        } catch (Exception $e) {
-            // TODO Handle error, you can log the error or show a message
         }
-    }
 
-    // If resetting delays, call the reset function and then redirect to refresh the page
-    if (isset($_POST['resetDelays'])) {
-        try {
-            reset_delays($_POST['resetDelays']);  // Reset the delays based on user ID
-        } catch (Exception $e) {
-            // TODO Handle error, you can log the error or show a message
+        if (isset($_POST['resetDelays'])) {
+            reset_delays($_POST['resetDelays']);
         }
-    }
 
-    if (isset($_POST['returnCopy'])) {
-        try {
+        if (isset($_POST['returnCopy'])) {
             return_copy($_POST['returnCopy']);
-        } catch (Exception $e) {
-            // TODO Handle error (e.g., log it or show a message)
         }
-    }
 
-    if (isset($_POST['postponeDue'])) {
-        $loanId = $_POST['postponeDue'];
-        $days = $_POST['postponeDays'];
-        if (filter_var($days, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => 30]])) {
-            try {
-                postpone_due($loanId, $days);
-            } catch (Exception $e) {
-                // TODO Handle error (e.g., log it or show a message)
+        if (isset($_POST['postponeDue'])) {
+            $loanId = $_POST['postponeDue'];
+            $days = $_POST['postponeDays'];
+            if (!filter_var($days, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => 30]])) {
+                throw new Exception("Invalid number of days for postponing due date. Enter a value between 1 and 30.");
             }
-        } else {
-            // TODO Handle invalid input (e.g., show an error message)
+            postpone_due($loanId, $days);
         }
-    }
 
-    if (isset($_POST['selectedCategory'])) {
-        try {
+        if (isset($_POST['selectedCategory'])) {
             change_patron_category($_POST['changingPatron'], $_POST['selectedCategory']);
-        } catch (Exception $e) {
-            // TODO Handle error (e.g., log it or show a message)
         }
+
+    } catch (Exception $e) {
+        $errorMessage = $e->getMessage(); // Capture the error message
     }
 
 }
@@ -142,6 +121,14 @@ $email = $_SESSION['userEmail'] ?? null;
                 </div>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
+
+            <!-- Error alert -->
+            <?php if ($errorMessage): ?>
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <?php echo htmlspecialchars($errorMessage); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -376,7 +363,8 @@ $email = $_SESSION['userEmail'] ?? null;
 </div>
 
 <!-- Modal for changing patron's category -->
-<div class="modal fade" id="changeCategoryModal" tabindex="-1" aria-labelledby="changeCategoryModalLabel" aria-hidden="true">
+<div class="modal fade" id="changeCategoryModal" tabindex="-1" aria-labelledby="changeCategoryModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -387,13 +375,14 @@ $email = $_SESSION['userEmail'] ?? null;
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="selectedCategory" class="form-label">Select the new category</label>
-                        <select class="form-select" name="selectedCategory" id="selectedCategory" aria-label="Default select example" required>
+                        <select class="form-select" name="selectedCategory" id="selectedCategory"
+                                aria-label="Default select example" required>
                             <?php
-                                foreach (get_category_names() as $category) {
-                                    if ($category['name'] != $userInfo['patronInfo']['category']) {
-                                        echo '<option value="' . $category['name'] . '">' . $category['name'] . '</option>';
-                                    }
+                            foreach (get_category_names() as $category) {
+                                if ($category['name'] != $userInfo['patronInfo']['category']) {
+                                    echo '<option value="' . $category['name'] . '">' . $category['name'] . '</option>';
                                 }
+                            }
                             ?>
                         </select>
                     </div>
