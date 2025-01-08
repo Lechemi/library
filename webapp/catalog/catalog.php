@@ -76,13 +76,15 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <!-- TODO: clear search button -->
 </div>
 
-<!-- Displayed book(s) -->
+
 <div class="container">
 
     <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
         <a href="add-book.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Add a new book</a>
+        <a href="search-authors.php" class="btn btn-primary"> <i class="bi bi-person-vcard"></i> Search for authors</a>
     <?php endif; ?>
 
+    <!-- Displayed book(s) -->
     <ul class="list-group list-group-flush rounded-4">
         <?php
 
