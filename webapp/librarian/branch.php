@@ -62,14 +62,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
         <div class="card-body">
             <p><strong>Address:</strong> <?= $stats[0]['address'] ?>, <?= $stats[0]['city'] ?></p>
             <p><strong>Number of currently loaned copies:</strong> <?= $stats[0]['active_loans'] ?></p>
-            <p>This branch manages <?= $stats[0]['n_copies'] ?> copies, for a total of <?= $stats[0]['n_books'] ?> different books.</p>
+            <p>This branch manages <?= $stats[0]['n_copies'] ?> copies, for a total of <?= $stats[0]['n_books'] ?>
+                different books.</p>
         </div>
     </div>
 
-    <!-- Remove Branch -->
-    <div class="mb-4">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#removeBranchModal">Remove branch</button>
-    </div>
+    <!-- Remove branch button -->
+    <?php if ($stats[0]['n_books'] == 0): ?>
+        <div class="mb-4">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#removeBranchModal">Remove branch
+            </button>
+        </div>
+    <?php endif; ?>
 
     <!-- Display removal-related exceptions -->
     <?php if (isset($removal_error)): ?>
@@ -128,7 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
 </div>
 
 <!-- Modal for removing branch confirmation -->
-<div class="modal fade" id="removeBranchModal" tabindex="-1" aria-labelledby="removeBranchModalLabel" aria-hidden="true">
+<div class="modal fade" id="removeBranchModal" tabindex="-1" aria-labelledby="removeBranchModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
