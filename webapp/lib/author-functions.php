@@ -29,24 +29,44 @@ function get_author($id): false|Result
 /**
  * @throws Exception
  */
-function add_author($firstName, $lastName, $bio, $birthDate, $deathDate, $alive): void
+function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $deathDate = null): void
 {
-    $db = open_connection();
-
-    if ($deathDate) {
-        $sql = "
-        INSERT INTO library.author (first_name, last_name, bio, birth_date, death_date, alive)
-        VALUES ('$firstName', '$lastName', '$bio', '$birthDate', '$deathDate', '$alive')
-        ";
-    } else {
-        $sql = "
-        INSERT INTO library.author (first_name, last_name, bio, birth_date, alive)
-        VALUES ('$firstName', '$lastName', '$bio', '$birthDate', '$alive')
-        ";
+    // Ensure required fields are set
+    if (!$firstName || !$lastName || !$bio || !isset($alive)) {
+        throw new InvalidArgumentException('Missing required fields.');
     }
 
+    $alive = $alive ? 1 : 0;
+
+    $db = open_connection();
+
+    // Start building the SQL query
+    $columns = ['first_name', 'last_name', 'alive', 'bio'];
+    $values = ['$1', '$2', '$3', '$4'];
+    $params = [$firstName, $lastName, $alive, $bio];
+    $paramIndex = 5;
+
+    // Add optional fields if they are set
+    if (!empty($birthDate)) {
+        $columns[] = 'birth_date';
+        $values[] = '$' . $paramIndex++;
+        $params[] = $birthDate;
+    }
+    if (!empty($deathDate)) {
+        $columns[] = 'death_date';
+        $values[] = '$' . $paramIndex++;
+        $params[] = $deathDate;
+    }
+
+    // Construct the final SQL query
+    $sql = "
+        INSERT INTO library.author (" . implode(', ', $columns) . ")
+        VALUES (" . implode(', ', $values) . ")
+    ";
+
+    // Prepare and execute the query
     pg_prepare($db, 'add-author', $sql);
-    $result = pg_execute($db, 'add-author', array());
+    $result = pg_execute($db, 'add-author', $params);
 
     if (!$result) {
         throw new Exception('Cannot insert author. ' . pg_last_error($db));
