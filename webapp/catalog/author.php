@@ -57,7 +57,7 @@ if (!empty($_GET['author'])) {
             </p>
 
             <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
-                <a href="edit-author.php?author=<?php echo $authorDetails['id']; ?>" class="btn btn-primary">
+                <a href="../librarian/edit-author.php?author=<?php echo $authorDetails['id']; ?>" class="btn btn-primary">
                     <i class="bi bi-pencil"></i> Edit author details
                 </a>
             <?php endif; ?>

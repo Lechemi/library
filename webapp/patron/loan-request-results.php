@@ -9,7 +9,7 @@ session_start();
 if (!isset($_SESSION['user'])) redirect('../index.php');
 
 $result = null;
-const noPreferenceStr = 'No preference';
+
 try {
     $branches = get_branches();
 } catch (Exception $e) {
@@ -18,7 +18,7 @@ try {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
     $isbn = trim($_POST['isbn']);
-    if ($_POST['branch']) {
+    if ($_POST['branch'] !== 'noPreference') {
         $preferredBranch = array($_POST['branch']);
         $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
     } else {
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
 
             <a class="btn btn-secondary mt-3" href=<?php echo 'book.php?isbn=' . trim($_POST['isbn']); ?>>Back to
                 Book Page</a>
-            <a href="catalog.php" class="btn btn-secondary mt-3">Back to catalog</a>
+            <a href="../catalog/catalog.php" class="btn btn-secondary mt-3">Back to catalog</a>
         </div>
     </div>
 </div>
