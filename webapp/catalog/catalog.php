@@ -81,7 +81,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
     <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
         <a href="add-book.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Add a new book</a>
-        <a href="search-authors.php" class="btn btn-primary"> <i class="bi bi-person-vcard"></i> Search for authors</a>
+        <a href="search-authors.php" class="btn btn-primary"> <i class="bi bi-person-vcard"></i> Search and add authors</a>
     <?php endif; ?>
 
     <!-- Displayed book(s) -->
