@@ -62,13 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 try {
                     $branches = get_branches();
+                    foreach ($branches as $branch) {
+                        $branchString = $branch['city'] . ' - ' . $branch['address'];
+                        echo '<option value="' . $branch['id'] . '">' . $branchString . '</option>';
+                    }
                 } catch (Exception $e) {
                     echo 'Error fetching branches: ' . $e->getMessage();
-                }
-
-                foreach ($branches as $branch) {
-                    $branchString = $branch['city'] . ' - ' . $branch['address'];
-                    echo '<option value="' . $branch['id'] . '">' . $branchString . '</option>';
                 }
 
                 ?>

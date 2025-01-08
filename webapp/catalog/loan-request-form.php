@@ -10,14 +10,6 @@ if (!empty($_GET['isbn'])) {
     echo "Error, no book.";
     exit;
 }
-
-try {
-    $branches = get_branches();
-} catch (Exception $e) {
-
-}
-$branchesJson = json_encode($branches);
-const noPreferenceStr = 'No preference';
 ?>
 
 <head>
@@ -33,34 +25,27 @@ const noPreferenceStr = 'No preference';
     <div class="mb-3">
         <input type="hidden" name="isbn" value=" <?php echo htmlspecialchars($isbn); ?> ">
 
-        <!-- City selection -->
-        <label for="branch-city" class="form-label">Do you have a preferred
-            city?</label>
-        <select onchange="updateBranches()" name="branch-city" id="branch-city" class="form-select"
-                aria-label="Default select example">
-            <option selected> <?php echo noPreferenceStr ?> </option>
+        <!-- Branch selection -->
+        <div>
+            <label for="branch" class="form-label">Do you have a preferred branch?</label>
+            <select name="branch" id="branch" class="form-select"
+                    aria-label="Default select example">
+                <?php
 
-            <?php
+                try {
+                    $branches = get_branches();
+                } catch (Exception $e) {
+                    echo 'Error fetching branches: ' . $e->getMessage();
+                }
 
-            // Extract all city names
-            $cities = array_column($branches, 'city');
+                foreach ($branches as $branch) {
+                    $branchString = $branch['city'] . ' - ' . $branch['address'];
+                    echo '<option value="' . $branch['id'] . '">' . $branchString . '</option>';
+                }
 
-            // Remove duplicates to get unique cities
-            $uniqueCities = array_unique($cities);
-            foreach ($uniqueCities as $city) {
-                echo '<option>' . $city . '</option>';
-            }
-
-            ?>
-        </select>
-
-        <!-- Address selection -->
-        <label for="branch-address" class="form-label">Do you have a preferred
-            branch?</label>
-        <select name="branch-address" id="branch-address" class="form-select"
-                aria-label="Default select example">
-            <option value=""> <?php echo noPreferenceStr ?> </option>
-        </select>
+                ?>
+            </select>
+        </div>
 
         <div class="form-text">If no preference is specified, a copy can be
             provided from any branch.
@@ -68,32 +53,6 @@ const noPreferenceStr = 'No preference';
     </div>
     <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
 </form>
-
-<script>
-    // Parse PHP array into JavaScript object
-    const branches = <?php echo $branchesJson; ?>;
-
-    function updateBranches() {
-        // Get the selected city
-        const selectedCity = document.getElementById('branch-city').value;
-
-        // Get the branch select element
-        const branchSelect = document.getElementById('branch-address');
-
-        // Clear previous branch options
-        branchSelect.innerHTML = '<option value=""> <?php echo noPreferenceStr ?> </option>';
-
-        // Filter branches based on the selected city and populate the branch dropdown
-        branches.forEach(branch => {
-            if (branch.city === selectedCity) {
-                const option = document.createElement('option');
-                option.value = branch.id;
-                option.textContent = branch.address;
-                branchSelect.appendChild(option);
-            }
-        });
-    }
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

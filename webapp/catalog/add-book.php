@@ -9,8 +9,6 @@ session_start();
 if (!isset($_SESSION['user'])) redirect('../index.php');
 // todo check that the user is a librarian
 
-$publishers = get_publishers();
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $authors = array_map('trim', explode(',', $_POST['authors']));
@@ -71,6 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <select id="publisher" name="publisher" class="form-select">
 
                 <?php
+
+                $publishers = get_publishers();
 
                 foreach ($publishers as $publisher) {
                     $pubName = $publisher['name'];

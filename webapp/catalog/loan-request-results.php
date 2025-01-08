@@ -17,24 +17,10 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
-
     $isbn = trim($_POST['isbn']);
-
-    if ($_POST['branch-city'] != noPreferenceStr) {
-        if (!empty($_POST['branch-address'])) {
-            $preferredBranch = array($_POST['branch-address']);
-            $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
-        } else {
-            $preferredBranches = [];
-
-            foreach ($branches as $branch) {
-                if ($branch['city'] === $_POST['branch-city']) {
-                    $preferredBranches[] = $branch['id'];
-                }
-            }
-
-            $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranches);
-        }
+    if ($_POST['branch']) {
+        $preferredBranch = array($_POST['branch']);
+        $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
     } else {
         $result = make_loan($isbn, $_SESSION['user']['id'], null);
     }
