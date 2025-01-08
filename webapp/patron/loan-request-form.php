@@ -10,6 +10,24 @@ if (!empty($_GET['isbn'])) {
     echo "Error, no book.";
     exit;
 }
+
+try {
+    $branches = get_branches();
+} catch (Exception $e) {
+
+}
+
+$result = null;
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
+    $isbn = trim($_POST['isbn']);
+    if ($_POST['branch'] !== 'noPreference' and $_POST['branch']) {
+        $preferredBranch = array($_POST['branch']);
+        $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
+    } else {
+        $result = make_loan($isbn, $_SESSION['user']['id'], null);
+    }
+}
+
 ?>
 
 <head>
@@ -21,7 +39,7 @@ if (!empty($_GET['isbn'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 
-<form method="POST" action="../patron/loan-request-results.php">
+<form method="POST" action="">
     <div class="mb-3">
         <input type="hidden" name="isbn" value=" <?php echo htmlspecialchars($isbn); ?> ">
 
@@ -51,8 +69,24 @@ if (!empty($_GET['isbn'])) {
         <div class="form-text">If no preference is specified, a copy can be
             provided from any branch.
         </div>
+
     </div>
     <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
+
+    <?php if ($result): ?>
+        <?php if ($result['ok']): ?>
+            <div class="alert alert-success mt-4 alert-dismissible fade show" role="alert">
+                <?php print_r($result); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-danger mt-4  alert-dismissible fade show" role="alert">
+                Something went wrong with your loan request.
+                <?php print($result['error']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
