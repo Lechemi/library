@@ -92,12 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <!-- Found authors -->
-    <?php if ($searchResults): ?>
+    <?php if ($searchResults !== null): ?>
 
         <ul class="list-group list-group-flush rounded-4">
             <?php
 
-            if (sizeof($searchResults) == 0) {
+            if (empty($searchResults)) {
                 echo 'No results found.';
             }
 
