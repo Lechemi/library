@@ -79,6 +79,14 @@ $email = $_SESSION['userEmail'] ?? null;
         .loan-card-body p {
             margin: 0.25rem 0; /* Reduce spacing between lines */
         }
+
+        .scrollable-loans {
+            max-height: 300px; /* Adjust height as needed */
+            overflow-y: auto;
+            border: 1px solid #ddd; /* Optional: Add border for visual separation */
+            padding: 0.5rem; /* Optional: Add padding for better aesthetics */
+        }
+
     </style>
 </head>
 
@@ -159,7 +167,8 @@ $email = $_SESSION['userEmail'] ?? null;
 
                     if (!empty($loans)) {
                         echo '<h5 class="mt-3">Loans</h5>';
-                        echo '<div class="list-group">';
+                        # Wrapping the loans in a scrollable div
+                        echo '<div class="list-group scrollable-loans" style="max-height: 300px; overflow-y: auto;">';
                         foreach ($loans as $loan) {
                             try {
                                 $start = new DateTime($loan['start']);
@@ -189,7 +198,6 @@ $email = $_SESSION['userEmail'] ?? null;
                             }
 
                             // "Postpone Due" button
-                            // TODO also check if we're past the due date
                             if (!$returned) {
                                 echo '    <button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Postpone Due</button>';
                             }
@@ -209,6 +217,7 @@ $email = $_SESSION['userEmail'] ?? null;
                     } else {
                         echo '<p>No loans.</p>';
                     }
+
                 }
                 echo '  </div>';
                 echo '</div>';
