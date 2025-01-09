@@ -8,8 +8,7 @@ include_once('../lib/author-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
-// todo check that the user is a librarian
-if ($_SESSION['user']['type'] == 'librarian') {}
+if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
 if (!empty($_GET['author'])) {
 
