@@ -6,8 +6,8 @@ include_once('../lib/account-functions.php');
 include_once('../lib/book-functions.php');
 session_start();
 
-// Redirect if no user is logged in
 if (!isset($_SESSION['user'])) redirect('../index.php');
+if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
 $errorMessage = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
