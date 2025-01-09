@@ -1,18 +1,19 @@
 <?php
 
 include_once('../lib/author-functions.php');
+include_once('../lib/redirect.php');
 
 session_start();
+if (!isset($_SESSION['user'])) redirect('../index.php');
 
 if (!empty($_GET['author'])) {
-    $result = get_author($_GET['author']);
 
-    if ($result === false) {
-        echo "Error in query execution.";
-        exit;
+    try {
+        $authorDetails = get_authors($_GET['author'])[0];
+    } catch (Exception $e) {
+        echo 'Error: ' . $e->getMessage();
     }
 
-    $authorDetails = pg_fetch_all($result)[0];
     $authorDetails['full_name'] = $authorDetails['first_name'] . ' ' . $authorDetails['last_name'];
 }
 
@@ -47,7 +48,7 @@ if (!empty($_GET['author'])) {
             </p>
 
             <p>
-                Id: <?= $authorDetails['id']?>
+                Id: <?= $authorDetails['id'] ?>
             </p>
 
             <hr>
@@ -57,7 +58,8 @@ if (!empty($_GET['author'])) {
             </p>
 
             <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
-                <a href="../librarian/edit-author.php?author=<?php echo $authorDetails['id']; ?>" class="btn btn-primary">
+                <a href="../librarian/edit-author.php?author=<?php echo $authorDetails['id']; ?>"
+                   class="btn btn-primary">
                     <i class="bi bi-pencil"></i> Edit author details
                 </a>
             <?php endif; ?>

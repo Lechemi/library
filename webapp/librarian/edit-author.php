@@ -9,17 +9,15 @@ session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
 // todo check that the user is a librarian
+if ($_SESSION['user']['type'] == 'librarian') {}
 
 if (!empty($_GET['author'])) {
 
-    $result = get_author($_GET['author']);
-
-    if ($result === false) {
-        echo "Error in query execution.";
-        exit;
+    try {
+        $authorDetails = get_authors($_GET['author'])[0];
+    } catch (Exception $e) {
+        echo 'Error: ' . $e->getMessage();
     }
-
-    $authorDetails = pg_fetch_all($result)[0];
 
 } else {
     echo "Error, no author.";
