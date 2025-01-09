@@ -17,37 +17,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        if (isset($_POST['removeUser'])) {
-            remove_user($_POST['removeUser']);
-        }
-
-        if (isset($_POST['restoreUser'])) {
-            restore_user($_POST['restoreUser']);
-        }
-
-        if (isset($_POST['resetDelays'])) {
-            reset_delays($_POST['resetDelays']);
-        }
-
-        if (isset($_POST['returnCopy'])) {
-            return_copy($_POST['returnCopy']);
-        }
+        if (isset($_POST['removeUser'])) remove_user($_POST['removeUser']);
+        if (isset($_POST['restoreUser'])) restore_user($_POST['restoreUser']);
+        if (isset($_POST['resetDelays'])) reset_delays($_POST['resetDelays']);
+        if (isset($_POST['returnCopy'])) return_copy($_POST['returnCopy']);
+        if (isset($_POST['selectedCategory'])) change_patron_category($_POST['changingPatron'], $_POST['selectedCategory']);
 
         if (isset($_POST['postponeDue'])) {
             $loanId = $_POST['postponeDue'];
             $days = $_POST['postponeDays'];
-            if (!filter_var($days, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => 30]])) {
-                throw new Exception("Invalid number of days for postponing due date. Enter a value between 1 and 30.");
-            }
             postpone_due($loanId, $days);
         }
 
-        if (isset($_POST['selectedCategory'])) {
-            change_patron_category($_POST['changingPatron'], $_POST['selectedCategory']);
-        }
-
     } catch (Exception $e) {
-        $errorMessage = $e->getMessage(); // Capture the error message
+        $errorMessage = $e->getMessage();
     }
 
 }
@@ -121,16 +104,16 @@ $email = $_SESSION['userEmail'] ?? null;
                 </div>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
-
-            <!-- Error alert -->
-            <?php if ($errorMessage): ?>
-                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                    <?php echo htmlspecialchars($errorMessage); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
         </div>
     </div>
+
+    <!-- Error alert -->
+    <?php if ($errorMessage): ?>
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <?php echo htmlspecialchars($errorMessage); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
     <!-- Display User Information -->
     <?php
@@ -248,180 +231,14 @@ $email = $_SESSION['userEmail'] ?? null;
 
 </div>
 
-<!-- Modal for removing user -->
-<div class="modal fade" id="removeUserModal" tabindex="-1" aria-labelledby="removeUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="removeUserModalLabel">Confirm removing user</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to remove this user?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="post" action="">
-                    <input type="hidden" name="removeUser" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
-                    <button type="submit" class="btn btn-danger">Remove user</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for restoring user -->
-<div class="modal fade" id="restoreUserModal" tabindex="-1" aria-labelledby="restoreUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="restoreUserModalLabel">Confirm restoring user</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to restore this user?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="post" action="">
-                    <input type="hidden" name="restoreUser" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
-                    <button type="submit" class="btn btn-danger">Restore user</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Resetting Delays -->
-<div class="modal fade" id="resetDelaysModal" tabindex="-1" aria-labelledby="resetDelaysModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="resetDelaysModalLabel">Confirm Reset Delays</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to reset the number of delays for this user? This action cannot be undone.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="post" action="">
-                    <input type="hidden" name="resetDelays" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
-                    <button type="submit" class="btn btn-danger">Confirm Reset</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Returning Copy -->
-<div class="modal fade" id="returnCopyModal" tabindex="-1" aria-labelledby="returnCopyModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="returnCopyModalLabel">Confirm Return Copy</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to mark this copy as returned?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form method="post" action="">
-                    <input type="hidden" name="returnCopy" id="returnCopyInput">
-                    <button type="submit" class="btn btn-success">Confirm Return</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for Postponing Due -->
-<div class="modal fade" id="postponeDueModal" tabindex="-1" aria-labelledby="postponeDueModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="postponeDueModalLabel">Postpone Due Date</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" action="">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="postponeDays" class="form-label">Number of days to postpone (1-30):</label>
-                        <input type="number" class="form-control" name="postponeDays" id="postponeDays" min="1" max="30"
-                               required>
-                    </div>
-                    <input type="hidden" name="postponeDue" id="postponeDueInput">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-warning">Postpone</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for changing patron's category -->
-<div class="modal fade" id="changeCategoryModal" tabindex="-1" aria-labelledby="changeCategoryModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changeCategoryModalLabel">Change patron's category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" action="">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="selectedCategory" class="form-label">Select the new category</label>
-                        <select class="form-select" name="selectedCategory" id="selectedCategory"
-                                aria-label="Default select example" required>
-                            <?php
-                            foreach (get_category_names() as $category) {
-                                if ($category['name'] != $userInfo['patronInfo']['category']) {
-                                    echo '<option value="' . $category['name'] . '">' . $category['name'] . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <input type="hidden" name="changingPatron" value="<?= isset($userInfo) ? $userInfo['id'] : '' ?>">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-warning">Change</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<?php include_once 'modals/removeUserModal.php' ?>
+<?php include_once 'modals/restoreUserModal.php' ?>
+<?php include_once 'modals/resetDelaysModal.php' ?>
+<?php include_once 'modals/changePatronCategoryModal.php' ?>
+<?php include_once 'modals/returnCopyModal.php' ?>
+<?php include_once 'modals/postPoneDueModal.php' ?>
 
 </body>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const returnCopyModal = document.getElementById('returnCopyModal');
-        returnCopyModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget; // Button that triggered the modal
-            const loanId = button.getAttribute('data-loan-id'); // Extract loan ID
-            const input = document.getElementById('returnCopyInput'); // Hidden input field
-            input.value = loanId; // Set the value to the loan ID
-        });
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const postponeDueModal = document.getElementById('postponeDueModal');
-        postponeDueModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget; // Button that triggered the modal
-            const loanId = button.getAttribute('data-loan-id'); // Extract loan ID
-            const input = document.getElementById('postponeDueInput'); // Hidden input field
-            input.value = loanId; // Set the value to the loan ID
-        });
-    });
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
