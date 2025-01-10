@@ -70,6 +70,33 @@ CREATE TRIGGER bi_loan_check_copy_availability
     FOR EACH ROW
 EXECUTE PROCEDURE check_copy_availability();
 
+-- Check that the patron doesn't already have the requested book
+CREATE OR REPLACE FUNCTION deny_already_loaned_book() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    PERFORM
+    FROM loan
+             INNER JOIN book_copy ON loan.copy = book_copy.id
+    WHERE patron = new.patron
+      AND book = (SELECT book FROM book_copy WHERE id = new.copy)
+      AND returned IS NULL;
+
+    IF FOUND THEN
+        RAISE EXCEPTION 'Patron is already borrowing the requested book.';
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bi_loan_deny_already_loaned_book
+    BEFORE INSERT
+    ON loan
+    FOR EACH ROW
+EXECUTE PROCEDURE deny_already_loaned_book();
+
 
 -- Check that the user requesting the loan is a patron and that it's not removed.
 CREATE OR REPLACE FUNCTION check_user_is_existing_patron() RETURNS TRIGGER
