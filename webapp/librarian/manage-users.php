@@ -12,7 +12,6 @@ if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 $errorMessage = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['userEmail'])) {
-        // Store the email in session to persist it across page reloads
         $_SESSION['userEmail'] = $_POST['userEmail'];
     }
 
@@ -32,12 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) {
         $errorMessage = $e->getMessage();
     }
-
 }
 
-// Check if email is set in session, otherwise handle empty state
 $email = $_SESSION['userEmail'] ?? null;
-
 ?>
 
 <!DOCTYPE html>
@@ -51,54 +47,45 @@ $email = $_SESSION['userEmail'] ?? null;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        /* Custom styles for loan cards */
         .list-group-item {
-            font-size: 0.9rem; /* Smaller font size */
-            padding: 0.5rem 1rem; /* Reduce padding */
-            margin-bottom: 0.5rem; /* Less separation between cards */
-            border: 1px solid #ddd; /* Optional: to add a border */
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            margin-bottom: 0.4rem;
+            border: 1px solid #ddd;
             border-radius: 0.25rem;
-        }
-
-        .list-group-item h4 {
-            font-size: 1rem; /* Smaller font for titles */
-            margin: 0; /* Remove margin for compactness */
         }
 
         .loan-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem; /* Space between header and content */
+            margin-bottom: 0.4rem;
         }
 
         .loan-card-header button {
             margin-left: auto;
         }
 
-        .loan-card-body p {
-            margin: 0.25rem 0; /* Reduce spacing between lines */
+        .scrollable-loans {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 0.5rem;
         }
 
-        .scrollable-loans {
-            max-height: 300px; /* Adjust height as needed */
-            overflow-y: auto;
-            border: 1px solid #ddd; /* Optional: Add border for visual separation */
-            padding: 0.5rem; /* Optional: Add padding for better aesthetics */
+        .card-body p {
+            margin-bottom: 0.3rem;
         }
 
     </style>
 </head>
-
 <body>
-<!-- Navbar -->
 <div class="container mt-3">
     <?php include 'navbar.php'; ?>
 </div>
 
 <div class="container my-4">
 
-    <!-- Search bar -->
     <div class="container d-flex justify-content-center">
         <div class="w-50">
             <form method="post" action="">
@@ -115,7 +102,6 @@ $email = $_SESSION['userEmail'] ?? null;
         </div>
     </div>
 
-    <!-- Error alert -->
     <?php if ($errorMessage): ?>
         <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
             <?php echo htmlspecialchars($errorMessage); ?>
@@ -123,9 +109,7 @@ $email = $_SESSION['userEmail'] ?? null;
         </div>
     <?php endif; ?>
 
-    <!-- Display User Information -->
     <?php
-
     if ($email) {
         $userInfo = null;
         try {
@@ -135,16 +119,18 @@ $email = $_SESSION['userEmail'] ?? null;
 
         if ($userInfo) {
 
+            echo '<div class="card mt-4">';
             if ($userInfo['removed'] == 'f') {
 
-                echo '<div class="card mt-4">';
-                echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove this user</button>';
-                echo '<div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
+                echo '<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">';
+                echo htmlspecialchars($userInfo['email']);
+                echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove User</button>';
+                echo '</div>';
                 echo '<div class="card-body">';
+
                 echo '<p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
                 echo '<p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
 
-                // If user is a patron, display additional patronInfo fields
                 if (isset($userInfo['patronInfo'])) {
 
                     $result = get_loans($userInfo['id']);
@@ -156,19 +142,21 @@ $email = $_SESSION['userEmail'] ?? null;
 
                     echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';
 
-                    // Display Number of Delays with a reset button
+                    echo '<div class="d-flex justify-content-between align-items-center">';
                     echo '<p><strong>Number of Delays:</strong> ' . htmlspecialchars($userInfo['patronInfo']['n_delays']) . '</p>';
                     if ($userInfo['patronInfo']['n_delays'] > 0) {
-                        echo '    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">Reset Delays</button>';
+                        echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">Reset Delays</button>';
                     }
+                    echo '</div>';
 
+                    echo '<div class="d-flex justify-content-between align-items-center">';
                     echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
-                    echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#changeCategoryModal">Change category</button>';
+                    echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#changeCategoryModal">Change Category</button>';
+                    echo '</div>';
 
                     if (!empty($loans)) {
                         echo '<h5 class="mt-3">Loans</h5>';
-                        # Wrapping the loans in a scrollable div
-                        echo '<div class="list-group scrollable-loans" style="max-height: 300px; overflow-y: auto;">';
+                        echo '<div class="list-group scrollable-loans">';
                         foreach ($loans as $loan) {
                             try {
                                 $start = new DateTime($loan['start']);
@@ -189,28 +177,26 @@ $email = $_SESSION['userEmail'] ?? null;
                             $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
 
                             echo '<div class="list-group-item">';
-                            echo '  <div class="loan-card-header">';
-                            echo "    <h4>{$titleWithIsbn}</h4>";
+                            echo '<div class="loan-card-header">';
+                            echo "<h4>{$titleWithIsbn}</h4>";
 
-                            // "Return Copy" button
                             if (!$returned) {
-                                echo '    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Return Copy</button>';
+                                echo '<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Return Copy</button>';
                             }
 
-                            // "Postpone Due" button
                             if (!$returned) {
-                                echo '    <button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Postpone Due</button>';
+                                echo '<button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Postpone Due</button>';
                             }
 
-                            echo '  </div>';
-                            echo '  <div class="loan-card-body">';
-                            echo '    <p><strong>Branch:</strong> ' . $branch . '</p>';
-                            echo '    <p><strong>Start Date:</strong> ' . $start . '</p>';
-                            echo '    <p><strong>Due Date:</strong> ' . $due . '</p>';
+                            echo '</div>';
+                            echo '<div class="loan-card-body">';
+                            echo '<p><strong>Branch:</strong> ' . $branch . '</p>';
+                            echo '<p><strong>Start Date:</strong> ' . $start . '</p>';
+                            echo '<p><strong>Due Date:</strong> ' . $due . '</p>';
                             if ($returned) {
-                                echo '    <p><strong>Returned on:</strong> ' . $returned . '</p>';
+                                echo '<p><strong>Returned on:</strong> ' . $returned . '</p>';
                             }
-                            echo '  </div>';
+                            echo '</div>';
                             echo '</div>';
                         }
                         echo '</div>';
@@ -219,23 +205,20 @@ $email = $_SESSION['userEmail'] ?? null;
                     }
 
                 }
-                echo '  </div>';
+                echo '</div>';
                 echo '</div>';
 
             } else {
 
-                // User has been removed
-                echo '<div class="card mt-4">';
-                echo '    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#restoreUserModal">Restore this user</button>';
-                echo '    <div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
-                echo '    <div class="card-body">';
-                echo '        <p>This user has been removed</p>';
+                echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#restoreUserModal">Restore this user</button>';
+                echo '<div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
+                echo '<div class="card-body">';
+                echo '<p>This user has been removed</p>';
             }
         } else {
             echo '<div class="mt-4 alert alert-danger">No user found with the given email address.</div>';
         }
     }
-
     ?>
 
 </div>
@@ -248,7 +231,6 @@ $email = $_SESSION['userEmail'] ?? null;
 <?php include_once 'modals/postPoneDueModal.php' ?>
 
 </body>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
