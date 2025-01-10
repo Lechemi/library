@@ -215,7 +215,7 @@ function remove_user($id): void
     @ $result = pg_execute($db, 'remove-user', array());
 
     if (!$result) {
-        throw new Exception('Cannot remove this user. ' . pg_last_error($db));
+        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
     }
 
     if (pg_affected_rows($result) != 1) {
@@ -279,7 +279,7 @@ function change_patron_category($patronId, $newCategory): void
     @ $result = pg_execute($db, 'change-patron-category', array());
 
     if (!$result) {
-        throw new Exception('Cannot change this patron\'s category. ' . pg_last_error($db));
+        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
     }
 
     if (pg_affected_rows($result) != 1) {
