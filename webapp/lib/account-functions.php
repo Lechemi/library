@@ -42,7 +42,7 @@ function retrieve_user($usr, $psw): array
 }
 
 /*
- * Retrieves info about the user with email $email.
+ * Retrieves info about the user with email $email, even if they're removed.
  */
 /**
  * @throws Exception
@@ -70,7 +70,7 @@ function get_user_with_email($email)
     $user = $user[0];
 
     if ($user['type'] == 'patron') {
-        $patronInfo = pg_fetch_all(get_patron($user['id']))[0];
+        $patronInfo = get_patron($user['id'])[0];
         unset($patronInfo['user']);
         $user['patronInfo'] = $patronInfo;
     }
@@ -83,8 +83,15 @@ function get_user_with_email($email)
 /*
  * Retrieves the patron associated with userId.
  */
-function get_patron($userId): Result|false
+/**
+ * @throws Exception
+ */
+function get_patron($userId): array
 {
+    if (!$userId) {
+        throw new Exception("User id required");
+    }
+
     $db = open_connection();
     $sql = "
         SELECT *
@@ -94,8 +101,13 @@ function get_patron($userId): Result|false
 
     pg_prepare($db, 'patron', $sql);
     $result = pg_execute($db, 'patron', array());
+
+    if (!$result) {
+        throw new Exception("Failed to retrieve patron with id $userId");
+    }
+
     close_connection($db);
-    return $result;
+    return pg_fetch_all($result);
 }
 
 /*

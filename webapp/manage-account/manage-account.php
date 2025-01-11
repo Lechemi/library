@@ -74,14 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php
 
             if ($user['type'] == 'patron') {
-                $result = get_patron($user['id']);
 
-                if (!$result) {
-                    echo "Some error occurred...";
-                    exit;
+                try {
+                    $patronInfo = get_patron($user['id'])[0];
+                } catch (Exception $e) {
+                    echo 'an error occurred';
                 }
-
-                $patronInfo = pg_fetch_all($result)[0];
 
                 echo "<p><strong>Tax Code:</strong> " . htmlspecialchars($patronInfo['tax_code']) . "</p>";
                 echo "<p><strong>Number of delays:</strong> " . htmlspecialchars($patronInfo['n_delays']) . "</p>";
