@@ -138,23 +138,21 @@ function change_password($userID, $currentPassword, $newPassword): void
  */
 function reset_delays($patronId): void
 {
-    $db = open_connection();
+    if (!$patronId) throw new Exception("Patron id required");
+
     $sql = "
         UPDATE library.patron p
         SET n_delays = 0
         WHERE p.user = '$patronId'
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'reset-delays', $sql);
     @ $result = pg_execute($db, 'reset-delays', array());
 
-    if (!$result) {
-        throw new Exception('Cannot reset number of delays.');
-    }
+    if (!$result) throw new Exception('Cannot reset number of delays.');
 
-    if (pg_affected_rows($result) != 1) {
-        throw new Exception('Invalid patron id: ' . $patronId);
-    }
+    if (pg_affected_rows($result) != 1) throw new Exception('Invalid patron id: ' . $patronId);
 
     close_connection($db);
 }
