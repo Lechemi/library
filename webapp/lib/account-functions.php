@@ -10,9 +10,7 @@ include_once('../lib/connection.php');
  */
 function retrieve_user($usr, $psw): array
 {
-    if (!$usr || !$psw) {
-        throw new Exception("User and password are required");
-    }
+    if (!$usr || !$psw) throw new Exception("User and password are required");
 
     $sql =
         "SELECT * FROM library.user
@@ -26,15 +24,11 @@ function retrieve_user($usr, $psw): array
 
     $user = pg_fetch_all($result);
 
-    if (empty($user)) {
-        throw new Exception("User not found!");
-    }
+    if (empty($user)) throw new Exception("User not found!");
 
     $user = $user[0];
 
-    if ($psw != $user['password']) {
-        throw new Exception("Password is incorrect!");
-    }
+    if ($psw != $user['password']) throw new Exception("Password is incorrect!");
 
     unset($user['password']);
 
@@ -50,14 +44,14 @@ function retrieve_user($usr, $psw): array
 function get_user_with_email($email)
 {
 
-
-    $db = open_connection();
+    if (!$email) throw new Exception("Email is required");
 
     $sql =
         "SELECT * FROM library.user
          WHERE email = '$email'
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'user-info', $sql);
     $result = pg_execute($db, 'user-info', array());
 
@@ -65,9 +59,7 @@ function get_user_with_email($email)
 
     $user = pg_fetch_all($result);
 
-    if (empty($user)) {
-        throw new Exception("No user with such email!");
-    }
+    if (empty($user)) throw new Exception("No user with such email");
 
     $user = $user[0];
 
@@ -78,7 +70,6 @@ function get_user_with_email($email)
     }
 
     unset($user['password']);
-
     return $user;
 }
 
