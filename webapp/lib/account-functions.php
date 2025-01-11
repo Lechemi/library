@@ -81,23 +81,19 @@ function get_user_with_email($email)
  */
 function get_patron($userId): array
 {
-    if (!$userId) {
-        throw new Exception("User id required");
-    }
+    if (!$userId) throw new Exception("User id required");
 
-    $db = open_connection();
     $sql = "
         SELECT *
         FROM library.patron
         WHERE patron.user = '$userId'
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'patron', $sql);
     $result = pg_execute($db, 'patron', array());
 
-    if (!$result) {
-        throw new Exception("Failed to retrieve patron with id $userId");
-    }
+    if (!$result) throw new Exception("Failed to retrieve patron with id $userId");
 
     close_connection($db);
     return pg_fetch_all($result);
