@@ -166,11 +166,14 @@ function reset_delays($patronId): void
  */
 function add_user($email, $firstName, $lastName, $type, $taxCode): void
 {
-    $db = open_connection();
+    if (!$email || !$firstName || !$lastName || !$type)
+        throw new Exception("Missing required fields");
 
+    $db = open_connection();
     setSearchPath($db);
 
     if ($type == 'patron') {
+        if (!$taxCode) throw new Exception("Tax code is required");
         $sql = "
             CALL library.create_patron('$email', '$email', '$firstName', '$lastName', '$taxCode', 'base')
         ";
@@ -184,9 +187,7 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
     pg_prepare($db, 'add-user', $sql);
     @ $result = pg_execute($db, 'add-user', array());
 
-    if (!$result) {
-        throw new Exception('Cannot insert user! ' . pg_last_error($db));
-    }
+    if (!$result) throw new Exception('Error inserting user');
 
     close_connection($db);
 }
