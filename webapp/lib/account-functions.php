@@ -17,7 +17,7 @@ function retrieve_user($usr, $psw): array
 
     $sql =
         "SELECT * FROM library.user
-         WHERE email = '$usr'";
+         WHERE email = '$usr' AND removed = false";
 
     pg_prepare($db, 'login', $sql);
     $result = pg_execute($db, 'login', array());
