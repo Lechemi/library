@@ -107,26 +107,25 @@ function get_patron($userId): array
  */
 function change_password($userID, $currentPassword, $newPassword): void
 {
+    if (!$userID || !$currentPassword || !$newPassword)
+        throw new Exception("All fields are required");
+
     if ($newPassword == $currentPassword)
         throw new Exception("New and current password are identical.");
 
-    $db = open_connection();
     $sql = "
         UPDATE library.user u
         SET password = '$newPassword'
         WHERE id = '$userID' and password = '$currentPassword'
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'change-password', $sql);
     @ $result = pg_execute($db, 'change-password', array());
 
-    if (!$result) {
-        throw new Exception('New password is too simple.');
-    }
+    if (!$result) throw new Exception('New password is too simple.');
 
-    if (pg_affected_rows($result) != 1) {
-        throw new Exception('Current password is incorrect.');
-    }
+    if (pg_affected_rows($result) != 1) throw new Exception('Current password is incorrect.');
 
     close_connection($db);
 }
