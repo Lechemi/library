@@ -1,8 +1,5 @@
 <?php
 
-use PgSql\Connection;
-use PgSql\Result;
-
 include_once('../lib/connection.php');
 
 /*
@@ -13,12 +10,15 @@ include_once('../lib/connection.php');
  */
 function retrieve_user($usr, $psw): array
 {
-    $db = open_connection();
+    if (!$usr || !$psw) {
+        throw new Exception("User and password are required");
+    }
 
     $sql =
         "SELECT * FROM library.user
          WHERE email = '$usr' AND removed = false";
 
+    $db = open_connection();
     pg_prepare($db, 'login', $sql);
     $result = pg_execute($db, 'login', array());
 
@@ -49,6 +49,8 @@ function retrieve_user($usr, $psw): array
  */
 function get_user_with_email($email)
 {
+
+
     $db = open_connection();
 
     $sql =
