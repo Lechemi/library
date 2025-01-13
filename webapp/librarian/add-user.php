@@ -61,9 +61,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Buttons -->
     <div class="mb-4">
-        <a href="?form=librarian" class="btn btn-primary me-2">Add Librarian</a>
-        <a href="?form=patron" class="btn btn-secondary">Add Patron</a>
+        <a href="?form=librarian"
+           class="btn <?php echo (isset($_GET['form']) && $_GET['form'] === 'librarian') ? 'btn-secondary' : 'btn-primary'; ?> me-2">
+            Add Librarian
+        </a>
+        <a href="?form=patron"
+           class="btn <?php echo (isset($_GET['form']) && $_GET['form'] === 'patron') ? 'btn-secondary' : 'btn-primary'; ?> me-2">
+            Add Patron
+        </a>
     </div>
+
 
     <?php if (isset($_GET['form']) && $_GET['form'] === 'librarian'): ?>
         <!-- Add Librarian Form -->
