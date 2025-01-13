@@ -52,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = ['ok' => false, 'msg' => $e->getMessage()];
     }
 
-    $alertClass = $result['ok'] ? 'alert-success' : 'alert-danger';
+    if (isset($result))
+        $alertClass = $result['ok'] ? 'alert-success' : 'alert-danger';
 }
 
 $email = $_SESSION['userEmail'] ?? null;
