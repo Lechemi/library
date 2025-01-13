@@ -9,28 +9,50 @@ session_start();
 if (!isset($_SESSION['user'])) redirect('../index.php');
 if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
-$errorMessage = null;
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['userEmail'])) {
         $_SESSION['userEmail'] = $_POST['userEmail'];
     }
 
     try {
-        if (isset($_POST['removeUser'])) remove_user($_POST['removeUser']);
-        if (isset($_POST['restoreUser'])) restore_user($_POST['restoreUser']);
-        if (isset($_POST['resetDelays'])) reset_delays($_POST['resetDelays']);
-        if (isset($_POST['returnCopy'])) return_copy($_POST['returnCopy']);
-        if (isset($_POST['selectedCategory'])) change_patron_category($_POST['changingPatron'], $_POST['selectedCategory']);
+        if (isset($_POST['removeUser'])) {
+            remove_user($_POST['removeUser']);
+            $result = ['ok' => true, 'msg' => 'User has been removed successfully.'];
+        }
+
+        if (isset($_POST['restoreUser'])) {
+            restore_user($_POST['restoreUser']);
+            $result = ['ok' => true, 'msg' => 'User has been restored successfully.'];
+        }
+
+        if (isset($_POST['resetDelays'])) {
+            reset_delays($_POST['resetDelays']);
+            $result = ['ok' => true, 'msg' => 'Reset delays successfully.'];
+        }
+
+        if (isset($_POST['returnCopy'])) {
+            return_copy($_POST['returnCopy']);
+            $result = ['ok' => true, 'msg' => 'Returned copy successfully.'];
+        }
+
+        if (isset($_POST['selectedCategory'])) {
+            change_patron_category($_POST['changingPatron'], $_POST['selectedCategory']);
+            $result = ['ok' => true, 'msg' => 'Patron\'s category was changed successfully.'];
+        }
 
         if (isset($_POST['postponeDue'])) {
             $loanId = $_POST['postponeDue'];
             $days = $_POST['postponeDays'];
             postpone_due($loanId, $days);
+            $result = ['ok' => true, 'msg' => 'Due date was postponed successfully.'];
         }
 
     } catch (Exception $e) {
-        $errorMessage = $e->getMessage();
+        $result = ['ok' => false, 'msg' => $e->getMessage()];
     }
+
+    $alertClass = $result['ok'] ? 'alert-success' : 'alert-danger';
 }
 
 $email = $_SESSION['userEmail'] ?? null;
@@ -102,9 +124,9 @@ $email = $_SESSION['userEmail'] ?? null;
         </div>
     </div>
 
-    <?php if ($errorMessage): ?>
-        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-            <?php echo htmlspecialchars($errorMessage); ?>
+    <?php if ($result): ?>
+        <div class="alert <?= $alertClass ?> alert-dismissible fade show mt-3" role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -114,7 +136,8 @@ $email = $_SESSION['userEmail'] ?? null;
         $userInfo = null;
         try {
             $userInfo = get_user_with_email($email);
-        } catch (Exception) {}
+        } catch (Exception) {
+        }
 
         if ($userInfo) {
 
