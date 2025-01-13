@@ -2,10 +2,8 @@
 
 include_once('../lib/connection.php');
 
-/*
- * Retrieves the user with email $usr and password $psw.
- */
 /**
+ * Retrieves the user with email $usr and password $psw.
  * @throws Exception
  */
 function retrieve_user($usr, $psw): array
@@ -35,10 +33,8 @@ function retrieve_user($usr, $psw): array
     return $user;
 }
 
-/*
- * Retrieves info about the user with email $email, even if they're removed.
- */
 /**
+ * Retrieves info about the user with email $email, even if they're removed.
  * @throws Exception
  */
 function get_user_with_email($email)
@@ -73,10 +69,8 @@ function get_user_with_email($email)
     return $user;
 }
 
-/*
- * Retrieves the patron associated with userId.
- */
 /**
+ * Retrieves the patron associated with userId.
  * @throws Exception
  */
 function get_patron($userId): array
@@ -99,10 +93,8 @@ function get_patron($userId): array
     return pg_fetch_all($result);
 }
 
-/*
- * Sets password to newPassword for user with id of userID.
- */
 /**
+ * Sets password to newPassword for user with id of userID.
  * @throws Exception
  */
 function change_password($userID, $currentPassword, $newPassword): void
@@ -130,10 +122,8 @@ function change_password($userID, $currentPassword, $newPassword): void
     close_connection($db);
 }
 
-/*
- * Resets the delay counter of the patron with id $patronId.
- */
 /**
+ * Resets the delay counter of the patron with id $patronId.
  * @throws Exception
  */
 function reset_delays($patronId): void
@@ -150,18 +140,18 @@ function reset_delays($patronId): void
     pg_prepare($db, 'reset-delays', $sql);
     @ $result = pg_execute($db, 'reset-delays', array());
 
-    if (!$result) throw new Exception('Cannot reset number of delays.');
+    if (!$result)
+        throw new Exception('Cannot reset number of delays.');
 
-    if (pg_affected_rows($result) != 1) throw new Exception('Invalid patron id: ' . $patronId);
+    if (pg_affected_rows($result) != 1)
+        throw new Exception('Invalid patron id: ' . $patronId);
 
     close_connection($db);
 }
 
-/*
+/**
  * Adds a new user with the specified fields.
  * Automatically sets the password to be identical to the email.
- */
-/**
  * @throws Exception
  */
 function add_user($email, $firstName, $lastName, $type, $taxCode): void
@@ -192,10 +182,8 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
     close_connection($db);
 }
 
-/*
- * Removes the user with the specified id.
- */
 /**
+ * Removes the user with the specified id.
  * @throws Exception
  */
 function remove_user($id): void
@@ -223,10 +211,8 @@ function remove_user($id): void
     close_connection($db);
 }
 
-/*
- * Restores the user with the specified email.
- */
 /**
+ * Restores the user with the specified email.
  * @throws Exception
  */
 function restore_user($id): void
@@ -254,10 +240,8 @@ function restore_user($id): void
     close_connection($db);
 }
 
-/*
- * Changes the category of the patron with the specified id.
- */
 /**
+ * Changes the category of the patron with the specified id.
  * @throws Exception
  */
 function change_patron_category($patronId, $newCategory): void
@@ -286,7 +270,7 @@ function change_patron_category($patronId, $newCategory): void
     close_connection($db);
 }
 
-/*
+/**
  * Returns the names of all possible patron categories.
  */
 function get_category_names(): array
