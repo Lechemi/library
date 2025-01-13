@@ -289,17 +289,15 @@ function change_patron_category($patronId, $newCategory): void
  */
 function get_category_names(): array
 {
-    $db = open_connection();
-
     $sql = "
         SELECT name
         FROM library.patron_category
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'categories', $sql);
     $result = pg_execute($db, 'categories', array());
 
     close_connection($db);
-
     return pg_fetch_all($result);
 }
