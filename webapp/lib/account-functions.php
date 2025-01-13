@@ -260,8 +260,10 @@ function restore_user($id): void
  */
 function change_patron_category($patronId, $newCategory): void
 {
-    $db = open_connection();
+    if (!$patronId || !$newCategory)
+        throw new Exception("Missing required fields");
 
+    $db = open_connection();
     setSearchPath($db);
 
     $sql = "
@@ -273,13 +275,11 @@ function change_patron_category($patronId, $newCategory): void
     pg_prepare($db, 'change-patron-category', $sql);
     @ $result = pg_execute($db, 'change-patron-category', array());
 
-    if (!$result) {
+    if (!$result)
         throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
-    }
 
-    if (pg_affected_rows($result) != 1) {
+    if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid patron id: ' . $patronId);
-    }
 
     close_connection($db);
 }
