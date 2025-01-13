@@ -12,7 +12,7 @@ function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $dea
 {
 
     if (!$firstName || !$lastName || !$bio || !isset($alive))
-        throw new InvalidArgumentException('Missing required fields.');
+        throw new Exception('Missing required fields.');
 
     $alive = $alive ? 1 : 0;
 
@@ -54,12 +54,10 @@ function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $dea
  */
 function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate, $alive): void
 {
-    // Validate ID
-    if (!$id) {
-        throw new InvalidArgumentException('Missing author ID.');
-    }
 
-    // Check for at least one non-falsy field
+    if (!$id)
+        throw new InvalidArgumentException('Missing author ID.');
+
     $fields = [
         'first_name' => $firstName,
         'last_name' => $lastName,
@@ -69,16 +67,13 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
         'alive' => $alive ? 1 : 0,
     ];
 
-    // Filter out falsy fields
     $validFields = array_filter($fields, fn($value) => $value !== null && $value !== '');
-    if (empty($validFields)) {
-        throw new InvalidArgumentException('At least one field must be provided for update.');
-    }
+    if (empty($validFields))
+        throw new Exception('At least one field must be provided for update.');
 
-    // Build the SET clause dynamically
     $setParts = [];
     $params = [];
-    $paramIndex = 1; // PostgreSQL parameter indexing starts at 1
+    $paramIndex = 1;
 
     foreach ($validFields as $field => $value) {
         $setParts[] = "$field = $" . $paramIndex;
@@ -87,23 +82,19 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
     }
 
     $setClause = implode(', ', $setParts);
-    $params[] = $id; // Add the ID as the last parameter
+    $params[] = $id;
 
     $sql = "UPDATE library.author SET $setClause WHERE id = $" . $paramIndex;
 
     $db = open_connection();
-
-    // Prepare and execute the parameterized query
     pg_prepare($db, 'update-author', $sql);
     $result = pg_execute($db, 'update-author', $params);
 
-    if (!$result) {
-        throw new Exception('Cannot update author\'s info. ' . pg_last_error($db));
-    }
+    if (!$result)
+        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
 
-    if (pg_affected_rows($result) != 1) {
+    if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid author ID: ' . $id);
-    }
 
     close_connection($db);
 }
