@@ -2,7 +2,7 @@
 
 use PgSql\Connection;
 
-/*
+/**
  * Opens a connection with the database.
  */
 function open_connection(): false|Connection
@@ -12,7 +12,7 @@ function open_connection(): false|Connection
     return pg_connect($conn);
 }
 
-/*
+/**
  * Closes the specified connection.
  */
 function close_connection($db): true
@@ -20,7 +20,7 @@ function close_connection($db): true
     return pg_close($db);
 }
 
-/*
+/**
  * Sets the search path to library.
  */
 function setSearchPath(false|Connection $db): void
@@ -30,6 +30,9 @@ function setSearchPath(false|Connection $db): void
     pg_execute($db, 'set-sp', array());
 }
 
+/*
+ * Utility function.
+ */
 function prettifyErrorMessages($exceptionMessage): string
 {
     $pattern = '/ERROR:\s(.*?)\sCONTEXT:/';
