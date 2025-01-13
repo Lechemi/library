@@ -204,11 +204,11 @@ $email = $_SESSION['userEmail'] ?? null;
                             echo "<h4>{$titleWithIsbn}</h4>";
 
                             if (!$returned) {
-                                echo '<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Return Copy</button>';
+                                echo '<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '"><i class="bi bi-box-arrow-in-down-left"></i> Return copy</button>';
                             }
 
                             if (!$returned) {
-                                echo '<button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '">Postpone Due</button>';
+                                echo '<button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '"><i class="bi bi-clock"></i> Postpone due</button>';
                             }
 
                             echo '</div>';
