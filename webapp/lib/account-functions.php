@@ -39,7 +39,6 @@ function retrieve_user($usr, $psw): array
  */
 function get_user_with_email($email)
 {
-
     if (!$email) throw new Exception("Email is required");
 
     $sql =

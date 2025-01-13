@@ -114,8 +114,7 @@ $email = $_SESSION['userEmail'] ?? null;
         $userInfo = null;
         try {
             $userInfo = get_user_with_email($email);
-        } catch (Exception $e) {
-        }
+        } catch (Exception) {}
 
         if ($userInfo) {
 
@@ -124,7 +123,8 @@ $email = $_SESSION['userEmail'] ?? null;
 
                 echo '<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">';
                 echo htmlspecialchars($userInfo['email']);
-                echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove User</button>';
+                if ($_SESSION['user']['id'] != $userInfo['id'])
+                    echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove User</button>';
                 echo '</div>';
                 echo '<div class="card-body">';
 
