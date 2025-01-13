@@ -115,7 +115,7 @@ $email = $_SESSION['userEmail'] ?? null;
                 <div class="mb-3">
                     <label for="userEmail" class="form-label d-block">
                         Search for a user or
-                        <a href="add-user.php" class="text-primary">add a new one</a>
+                        <a href="add-user.php?form=patron" class="text-primary">add a new one</a>
                     </label>
                     <input type="email" class="form-control" name="userEmail" id="userEmail"
                            placeholder="Enter user's email" required>
