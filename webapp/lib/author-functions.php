@@ -108,6 +108,9 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
  */
 function get_authors($searchInput): array
 {
+    if (!$searchInput)
+        throw new Exception('Missing search input.');
+
     $searchInput = trim($searchInput);
     $whereConditions = '';
     if (!empty($searchInput)) {
@@ -121,19 +124,18 @@ function get_authors($searchInput): array
         }
     }
 
-    $db = open_connection();
     $sql = "
         SELECT *
         FROM library.author
         $whereConditions
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'get-authors', $sql);
     $result = pg_execute($db, 'get-authors', array());
 
-    if (!$result) {
-        throw new Exception('Cannot get authors: ' . pg_last_error($db));
-    }
+    if (!$result)
+        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
 
     close_connection($db);
 
