@@ -3,7 +3,7 @@
 use PgSql\Result;
 
 include_once('../lib/connection.php');
-include_once('../lib/book-functions.php');
+include_once('../lib/catalog-functions.php');
 
 /*
  * Retrieves all branches.

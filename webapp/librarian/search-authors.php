@@ -3,7 +3,7 @@ ini_set('display_errors', 'On');
 ini_set('error_reporting', E_ALL);
 include_once('../lib/redirect.php');
 include_once('../lib/account-functions.php');
-include_once('../lib/book-functions.php');
+include_once('../lib/catalog-functions.php');
 include_once('../lib/author-functions.php');
 session_start();
 
@@ -57,11 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .book-author {
             font-size: 0.9rem;
             color: #555;
-        }
-
-        .book-isbn {
-            font-size: 0.8rem;
-            color: #888;
         }
     </style>
 </head>
