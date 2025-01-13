@@ -40,11 +40,13 @@ function get_books($searchInput): array
     $result = pg_execute($db, 'get-books', array());
     close_connection($db);
 
-    return pg_fetch_all($result);
+    return group_authors(pg_fetch_all($result));
 }
 
 /*
- * TODO missing specs
+ * Utility function that takes in the list of all books, in which multi-authored
+ * books appear more than once, and returns the set of unique books, with each book
+ * having its list of authors.
  */
 function group_authors($queryResults): array
 {

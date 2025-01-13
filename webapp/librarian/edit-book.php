@@ -18,7 +18,7 @@ if (!empty($_GET['isbn'])) {
         echo 'Some error occurred';
     }
 
-    $bookDetails = group_authors($result)[$isbn];
+    $bookDetails = $result[$isbn];
     $authorString = '';
     $authorList = [];
     foreach ($bookDetails['authors'] as $author) {

@@ -99,7 +99,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
         if (empty($result)) echo 'No books found';
 
-        foreach (group_authors($result) as $isbn => $details):
+        foreach ($result as $isbn => $details):
             $title_link = '../catalog/book.php' . '?isbn=' . $isbn;
             ?>
 

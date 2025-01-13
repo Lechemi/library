@@ -11,7 +11,7 @@ if (!empty($_GET['isbn'])) {
     $isbn = $_GET['isbn'];
 
     try {
-        $bookDetails = group_authors(get_books($isbn))[$isbn];
+        $bookDetails = get_books($isbn)[$isbn];
     } catch (Exception $e) {
         echo 'Some error occurred';
     }
