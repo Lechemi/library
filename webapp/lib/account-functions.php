@@ -162,21 +162,25 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
     setSearchPathToLibrary($db);
 
     if ($type == 'patron') {
-        if (!$taxCode) throw new Exception("Tax code is required");
+        $taxCode = trim($taxCode);
+        $pattern = '/^[a-zA-Z0-9]{16}$/';
+        if (!preg_match($pattern, $taxCode)) throw new Exception("Invalid tax code");
         $sql = "
             CALL library.create_patron('$email', '$email', '$firstName', '$lastName', '$taxCode', 'base')
         ";
+        $exceptionMsg = "A user with email $email or tax code $taxCode already exists.";
     } else {
         $sql = "
         INSERT INTO library.user (email, password, first_name, last_name, type)
         VALUES ('$email', '$email', '$firstName', '$lastName', '$type')
     ";
+        $exceptionMsg = "A user with email $email already exists.";
     }
 
     pg_prepare($db, 'add-user', $sql);
     @ $result = pg_execute($db, 'add-user', array());
 
-    if (!$result) throw new Exception('Error inserting user.');
+    if (!$result) throw new Exception($exceptionMsg);
 
     close_connection($db);
 }

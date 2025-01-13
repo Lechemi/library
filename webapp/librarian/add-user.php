@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $alertMessage = "User added successfully!";
         $alertType = "success";
     } catch (Exception $e) {
-        $alertMessage = "Error: " . $e->getMessage();
+        $alertMessage = $e->getMessage();
         $alertType = "danger";
     }
 }
