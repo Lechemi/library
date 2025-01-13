@@ -80,26 +80,24 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <div class="container">
 
     <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
-        <a href="../librarian/add-book.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Add a new book</a>
-        <a href="../librarian/search-authors.php" class="btn btn-primary"> <i class="bi bi-person-vcard"></i> Search and add authors</a>
+        <a href="../librarian/add-book.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Add a new
+            book</a>
+        <a href="../librarian/search-authors.php" class="btn btn-primary"> <i class="bi bi-person-vcard"></i> Search and
+            add authors</a>
     <?php endif; ?>
 
     <!-- Displayed book(s) -->
     <ul class="list-group list-group-flush rounded-4">
         <?php
 
-        if (isset($_GET['searchInput'])) {
-            $result = get_books($_GET['searchInput']);
-        } else {
-            $result = get_books('');
+        $searchInput = $_GET['searchInput'] ?? '';
+        try {
+            $result = get_books($searchInput);
+        } catch (Exception $e) {
+            echo 'Some error occurred';
         }
 
-        if ($result === false) {
-            echo "Error in query execution.";
-            exit;
-        }
-
-        if (pg_num_rows($result) == 0) echo 'No books found';
+        if (empty($result)) echo 'No books found';
 
         foreach (group_authors($result) as $isbn => $details):
             $title_link = '../catalog/book.php' . '?isbn=' . $isbn;

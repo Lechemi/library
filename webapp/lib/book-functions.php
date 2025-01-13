@@ -7,9 +7,14 @@ include_once('../lib/connection.php');
 
 
 /*
- * TODO missing specs
+ * Retrieves the book with the specified id, or the books
+ * whose title/authors match the search input.
+ * If the search input is null or empty, retrieves all books in the catalog.
  */
-function get_books($searchInput): false|Result
+/**
+ * @throws Exception
+ */
+function get_books($searchInput): array
 {
     $searchInput = trim($searchInput);
     $whereConditions = '';
@@ -22,7 +27,6 @@ function get_books($searchInput): false|Result
                 OR concat(first_name, ' ', last_name) ILIKE '$searchInput'";
     }
 
-    $db = open_connection();
     $sql = "SELECT b.isbn, b.title, CONCAT(a.first_name, ' ', a.last_name) as author, a.id AS author_id, p.name AS publisher, blurb
     FROM library.book b 
         INNER JOIN library.credits c ON b.isbn = c.book 
@@ -31,10 +35,12 @@ function get_books($searchInput): false|Result
     $whereConditions
     ";
 
-    pg_prepare($db, 'book', $sql);
-    $result = pg_execute($db, 'book', array());
+    $db = open_connection();
+    pg_prepare($db, 'get-books', $sql);
+    $result = pg_execute($db, 'get-books', array());
     close_connection($db);
-    return $result;
+
+    return pg_fetch_all($result);
 }
 
 /*
@@ -44,7 +50,7 @@ function group_authors($queryResults): array
 {
     $books = [];
 
-    foreach (pg_fetch_all($queryResults) as $row) {
+    foreach ($queryResults as $row) {
         $isbn = $row['isbn'];
         $title = $row['title'];
         $author = $row['author'];

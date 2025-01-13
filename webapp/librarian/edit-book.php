@@ -11,11 +11,11 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
 if (!empty($_GET['isbn'])) {
     $isbn = $_GET['isbn'];
-    $result = get_books($isbn);
 
-    if (!$result) {
-        echo "Error in query execution.";
-        exit;
+    try {
+        $result = get_books($isbn);
+    } catch (Exception $e) {
+        echo 'Some error occurred';
     }
 
     $bookDetails = group_authors($result)[$isbn];
