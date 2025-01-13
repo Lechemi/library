@@ -30,7 +30,7 @@ function setSearchPath(false|Connection $db): void
     pg_execute($db, 'set-sp', array());
 }
 
-function prettifyExceptionMessages($exceptionMessage): string
+function prettifyErrorMessages($exceptionMessage): string
 {
     $pattern = '/ERROR:\s(.*?)\sCONTEXT:/';
     if (preg_match($pattern, $exceptionMessage, $matches)) {

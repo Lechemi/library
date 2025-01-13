@@ -215,7 +215,7 @@ function remove_user($id): void
     @ $result = pg_execute($db, 'remove-user', array());
 
     if (!$result)
-        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
     if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid user id: ' . $id);
@@ -246,7 +246,7 @@ function restore_user($id): void
     @ $result = pg_execute($db, 'restore-user', array());
 
     if (!$result)
-        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
     if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid user id: ' . $id);
@@ -278,7 +278,7 @@ function change_patron_category($patronId, $newCategory): void
     @ $result = pg_execute($db, 'change-patron-category', array());
 
     if (!$result)
-        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
     if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid patron id: ' . $patronId);

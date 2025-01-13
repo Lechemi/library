@@ -1,17 +1,11 @@
 <?php
-
 use PgSql\Connection;
-use PgSql\Result;
-
 include_once('../lib/connection.php');
 
-
-/*
+/**
  * Retrieves the book with the specified id, or the books
  * whose title/authors match the search input.
  * If the search input is null or empty, retrieves all books in the catalog.
- */
-/**
  * @throws Exception
  */
 function get_books($searchInput): array
@@ -43,7 +37,7 @@ function get_books($searchInput): array
     return group_authors(pg_fetch_all($result));
 }
 
-/*
+/**
  * Utility function that takes in the list of all books, in which multi-authored
  * books appear more than once, and returns the set of unique books, with each book
  * having its list of authors.
@@ -77,12 +71,10 @@ function group_authors($queryResults): array
     return $books;
 }
 
-/*
+/**
  * If a branch is specified, returns the id's of all available copies for
  * the specified book that are kept in the specified branch.
  * Otherwise, returns the id's of all available copies for the specified book.
- */
-/**
  * @throws Exception
  */
 function get_available_copies($isbn, $branch): array
@@ -110,7 +102,7 @@ function get_available_copies($isbn, $branch): array
     return pg_fetch_all($result);
 }
 
-/*
+/**
  * Retrieves the list of all publishers.
  */
 function get_publishers(): array
@@ -129,11 +121,19 @@ function get_publishers(): array
     return pg_fetch_all($result);
 }
 
-/*
- * TODO specs
+/**
+ * Attempts to make a loan for the specified patron and book.
+ * If preferred branches are specified, the loan is attempted in all of them.
+ * Returns the outcome of the attempt, along with:
+ * - the loaned copy and respective branch in case of success;
+ * - an error message in case of failure.
+ * @throws Exception
  */
 function make_loan($isbn, $patron, $preferredBranches): array
 {
+    if (!$isbn || !$patron)
+        throw new Exception("ISBN and patron id must be provided");
+
     if ($preferredBranches) {
         $preferredBranches = '{' . implode(',', $preferredBranches) . '}';
     }
@@ -141,10 +141,7 @@ function make_loan($isbn, $patron, $preferredBranches): array
     $params = array($isbn, $patron, $preferredBranches);
 
     $db = open_connection();
-
-    $sql = "SET search_path TO library;";
-    pg_prepare($db, 'set-sp', $sql);
-    pg_execute($db, 'set-sp', array());
+    setSearchPath($db);
 
     $sql = "
         SELECT * FROM library.make_loan($1, $2, $3);
@@ -157,18 +154,22 @@ function make_loan($isbn, $patron, $preferredBranches): array
         $loan = pg_fetch_all($result)[0];
         $result = ['ok' => true, 'copy' => $loan['_loaned_copy'], 'branch' => $loan['_loan_branch']];
     } else {
-        $result = ['ok' => false, 'error' => pg_last_error($db)];
+        $result = ['ok' => false, 'error' => prettifyErrorMessages(pg_last_error($db))];
     }
 
     close_connection($db);
     return $result;
 }
 
-/*
- * TODO specs
+/**
+ * Retrieves all active and ended loans for the specified patron.
+ * @throws Exception
  */
-function get_loans($patron): Result|false
+function get_loans($patron): array
 {
+    if (!$patron)
+        throw new Exception("Patron id must be provided");
+
     $db = open_connection();
     $sql = "
         SELECT loan.start, loan.copy, loan.due, loan.returned, loan.id, book.isbn, book.title, branch.address, branch.city
@@ -183,22 +184,20 @@ function get_loans($patron): Result|false
     pg_prepare($db, 'loans', $sql);
     $result = pg_execute($db, 'loans', array());
     close_connection($db);
-    return $result;
+    return pg_fetch_all($result);
 }
 
-/*
- * TODO specs
- */
 /**
+ * Ends the specified loan by returning the respective copy.
  * @throws Exception
  */
 function return_copy($loanId): void
 {
-    $db = open_connection();
+    if (!$loanId)
+        throw new Exception("Loan id must be provided");
 
-    $sql = "SET search_path TO library;";
-    pg_prepare($db, 'set-sp', $sql);
-    pg_execute($db, 'set-sp', array());
+    $db = open_connection();
+    setSearchPath($db);
 
     $sql = "
         UPDATE library.loan l
@@ -209,26 +208,23 @@ function return_copy($loanId): void
     pg_prepare($db, 'return-copy', $sql);
     @ $result = pg_execute($db, 'return-copy', array());
 
-    if (!$result) {
-        throw new Exception(pg_last_error($db));
-    }
+    if (!$result)
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
-    if (pg_affected_rows($result) != 1) {
+    if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid loan id: ' . $loanId);
-    }
 
     close_connection($db);
 }
 
-/*
- * Postpones the due for loan with id $loanId by $days days.
- */
 /**
+ * Postpones the due for loan with id $loanId by $days days.
  * @throws Exception
  */
 function postpone_due($loanId, $days): void
 {
-    $db = open_connection();
+    if (!$loanId || !$days)
+        throw new Exception("Loan id and number of days must be provided");
 
     $sql = "
         UPDATE library.loan l
@@ -236,24 +232,21 @@ function postpone_due($loanId, $days): void
         WHERE l.id = '$loanId'
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'postpone-due', $sql);
     @ $result = pg_execute($db, 'postpone-due', array());
 
-    if (!$result) {
-        throw new Exception(pg_last_error($db));
-    }
+    if (!$result)
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
-    if (pg_affected_rows($result) != 1) {
+    if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid loan id: ' . $loanId);
-    }
 
     close_connection($db);
 }
 
-/*
- * Utility function to add credits to a book.
- */
 /**
+ * Utility function to add credits to a book.
  * @throws Exception
  */
 function add_credits($authors, $isbn, false|Connection $db): void
@@ -268,20 +261,19 @@ function add_credits($authors, $isbn, false|Connection $db): void
     }
 }
 
-/*
- * Adds a book to the catalog with the specified fields, assigning the credits to the
- * author(s) in $authors.
- */
 /**
+ * Adds a book to the catalog with the specified fields, assigning the credits
+ * to the author(s) in $authors.
  * @throws Exception
  */
 function add_book($isbn, $title, $blurb, $publisher, $authors): void
 {
+    if (!$isbn || !$title || !$blurb || !$publisher || !$authors)
+        throw new Exception("All fields must be provided");
 
     $db = open_connection();
 
     try {
-
         pg_query($db, "BEGIN");
 
         $sql = "
@@ -292,14 +284,11 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
         pg_prepare($db, 'add-book', $sql);
         $result = pg_execute($db, 'add-book', array($isbn, $title, $blurb, $publisher));
 
-        if (!$result) {
-            throw new Exception(pg_last_error($db));
-        }
+        if (!$result)
+            throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
         add_credits($authors, $isbn, $db);
-
         pg_query($db, "COMMIT");
-
     } catch (Exception $e) {
         pg_query($db, "ROLLBACK");
         throw new Exception('Error inserting book. ' . $e->getMessage());
@@ -309,31 +298,27 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
 }
 
 /**
+ * Updates title, blurb or publisher of the specified book.
  * @throws Exception
  */
 function update_book($isbn, $title, $blurb, $publisher): void
 {
-    if (!$isbn) {
-        throw new InvalidArgumentException('Missing isbn.');
-    }
+    if (!$isbn)
+        throw new InvalidArgumentException('ISBN is required');
 
-    // Check for at least one non-falsy field
     $fields = [
         'title' => $title,
         'blurb' => $blurb,
         'publisher' => $publisher,
     ];
 
-    // Filter out falsy fields
     $validFields = array_filter($fields, fn($value) => $value !== null && $value !== '');
-    if (empty($validFields)) {
+    if (empty($validFields))
         throw new InvalidArgumentException('At least one field must be provided for update.');
-    }
 
-    // Build the SET clause dynamically
     $setParts = [];
     $params = [];
-    $paramIndex = 1; // PostgreSQL parameter indexing starts at 1
+    $paramIndex = 1;
 
     foreach ($validFields as $field => $value) {
         $setParts[] = "$field = $" . $paramIndex;
@@ -342,43 +327,35 @@ function update_book($isbn, $title, $blurb, $publisher): void
     }
 
     $setClause = implode(', ', $setParts);
-    $params[] = $isbn; // Add the ISBN as the last parameter
+    $params[] = $isbn;
 
     $sql = "UPDATE library.book SET $setClause WHERE isbn = $" . $paramIndex;
 
     $db = open_connection();
-
-    // Prepare and execute the parameterized query
     pg_prepare($db, 'update-book', $sql);
     $result = pg_execute($db, 'update-book', $params);
 
-    if (!$result) {
-        throw new Exception('Cannot update book\'s info. ' . pg_last_error($db));
-    }
+    if (!$result)
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
-    if (pg_affected_rows($result) != 1) {
+    if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid book isbn: ' . $isbn);
-    }
 
     close_connection($db);
 }
 
-/*
- * Replaces the current writer(s) for the specified book with the one(s) in $authors.
- */
 /**
+ * Replaces the current writer(s) for the specified book with the one(s) in $authors.
  * @throws Exception
  */
 function update_authors($isbn, $authors): void
 {
+    if (!$isbn || !$authors)
+        throw new Exception("All fields must be provided");
+
     $db = open_connection();
 
-    if (empty($authors)) {
-        throw new InvalidArgumentException('Authors list is empty');
-    }
-
     try {
-
         pg_query($db, "BEGIN");
 
         $sql = "
@@ -389,14 +366,11 @@ function update_authors($isbn, $authors): void
         pg_prepare($db, 'reset-credits', $sql);
         $result = pg_execute($db, 'reset-credits', array());
 
-        if (!$result) {
-            throw new Exception(pg_last_error($db));
-        }
+        if (!$result)
+            throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
         add_credits($authors, $isbn, $db);
-
         pg_query($db, "COMMIT");
-
     } catch (Exception $e) {
         pg_query($db, "ROLLBACK");
         throw new Exception('Error updating credits. ' . $e->getMessage());

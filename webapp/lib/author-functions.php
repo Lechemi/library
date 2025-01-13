@@ -41,7 +41,7 @@ function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $dea
     pg_prepare($db, 'add-author', $sql);
     $result = pg_execute($db, 'add-author', $params);
 
-    if (!$result) throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
+    if (!$result) throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
     close_connection($db);
 }
@@ -91,7 +91,7 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
     $result = pg_execute($db, 'update-author', $params);
 
     if (!$result)
-        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
     if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid author ID: ' . $id);
@@ -135,7 +135,7 @@ function get_authors($searchInput): array
     $result = pg_execute($db, 'get-authors', array());
 
     if (!$result)
-        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
     close_connection($db);
 
