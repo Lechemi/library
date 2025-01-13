@@ -229,8 +229,9 @@ function remove_user($id): void
  */
 function restore_user($id): void
 {
-    $db = open_connection();
+    if (!$id) throw new Exception("User id required");
 
+    $db = open_connection();
     setSearchPath($db);
 
     $sql = "
@@ -242,13 +243,11 @@ function restore_user($id): void
     pg_prepare($db, 'restore-user', $sql);
     @ $result = pg_execute($db, 'restore-user', array());
 
-    if (!$result) {
-        throw new Exception('Cannot restore this user. ' . pg_last_error($db));
-    }
+    if (!$result)
+        throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
 
-    if (pg_affected_rows($result) != 1) {
+    if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid user id: ' . $id);
-    }
 
     close_connection($db);
 }
