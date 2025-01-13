@@ -141,7 +141,7 @@ function make_loan($isbn, $patron, $preferredBranches): array
     $params = array($isbn, $patron, $preferredBranches);
 
     $db = open_connection();
-    setSearchPath($db);
+    setSearchPathToLibrary($db);
 
     $sql = "
         SELECT * FROM library.make_loan($1, $2, $3);
@@ -197,7 +197,7 @@ function return_copy($loanId): void
         throw new Exception("Loan id must be provided");
 
     $db = open_connection();
-    setSearchPath($db);
+    setSearchPathToLibrary($db);
 
     $sql = "
         UPDATE library.loan l

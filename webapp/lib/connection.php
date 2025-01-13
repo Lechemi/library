@@ -23,7 +23,7 @@ function close_connection($db): true
 /**
  * Sets the search path to library.
  */
-function setSearchPath(false|Connection $db): void
+function setSearchPathToLibrary(false|Connection $db): void
 {
     $sql = "SET search_path TO library;";
     pg_prepare($db, 'set-sp', $sql);

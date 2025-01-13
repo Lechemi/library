@@ -160,7 +160,7 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
         throw new Exception("Missing required fields");
 
     $db = open_connection();
-    setSearchPath($db);
+    setSearchPathToLibrary($db);
 
     if ($type == 'patron') {
         if (!$taxCode) throw new Exception("Tax code is required");
@@ -191,7 +191,7 @@ function remove_user($id): void
     if (!$id) throw new Exception("User id required");
 
     $db = open_connection();
-    setSearchPath($db);
+    setSearchPathToLibrary($db);
 
     $sql = "
         UPDATE library.user u
@@ -220,7 +220,7 @@ function restore_user($id): void
     if (!$id) throw new Exception("User id required");
 
     $db = open_connection();
-    setSearchPath($db);
+    setSearchPathToLibrary($db);
 
     $sql = "
         UPDATE library.user u
@@ -250,7 +250,7 @@ function change_patron_category($patronId, $newCategory): void
         throw new Exception("Missing required fields");
 
     $db = open_connection();
-    setSearchPath($db);
+    setSearchPathToLibrary($db);
 
     $sql = "
         UPDATE library.patron p
