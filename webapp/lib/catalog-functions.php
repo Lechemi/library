@@ -427,7 +427,6 @@ function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $dea
  */
 function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate, $alive): void
 {
-
     if (!$id)
         throw new InvalidArgumentException('Missing author ID.');
 

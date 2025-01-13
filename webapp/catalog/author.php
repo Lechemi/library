@@ -1,6 +1,6 @@
 <?php
 
-include_once('../lib/author-functions.php');
+include_once('../lib/catalog-functions.php');
 include_once('../lib/redirect.php');
 
 session_start();
