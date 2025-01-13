@@ -82,9 +82,14 @@ function group_authors($queryResults): array
  * the specified book that are kept in the specified branch.
  * Otherwise, returns the id's of all available copies for the specified book.
  */
+/**
+ * @throws Exception
+ */
 function get_available_copies($isbn, $branch): array
 {
-    $db = open_connection();
+    if (!$isbn)
+        throw new Exception("ISBN must be provided");
+
     $sql = "
         SELECT id
         FROM library.book_copy
@@ -97,6 +102,7 @@ function get_available_copies($isbn, $branch): array
         $sql .= " AND branch = $branch";
     }
 
+    $db = open_connection();
     pg_prepare($db, 'available_copies', $sql);
     $result = pg_execute($db, 'available_copies', array());
     close_connection($db);
