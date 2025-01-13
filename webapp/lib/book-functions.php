@@ -110,15 +110,18 @@ function get_available_copies($isbn, $branch): array
     return pg_fetch_all($result);
 }
 
+/*
+ * Retrieves the list of all publishers.
+ */
 function get_publishers(): array
 {
-    $db = open_connection();
     $sql = "
         SELECT name
         FROM library.publisher
         order by name
     ";
 
+    $db = open_connection();
     pg_prepare($db, 'publishers', $sql);
     $result = pg_execute($db, 'publishers', array());
     close_connection($db);
