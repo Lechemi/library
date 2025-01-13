@@ -200,6 +200,8 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
  */
 function remove_user($id): void
 {
+    if (!$id) throw new Exception("User id required");
+
     $db = open_connection();
     setSearchPath($db);
 
