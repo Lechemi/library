@@ -187,7 +187,7 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
     pg_prepare($db, 'add-user', $sql);
     @ $result = pg_execute($db, 'add-user', array());
 
-    if (!$result) throw new Exception('Error inserting user');
+    if (!$result) throw new Exception('Error inserting user.');
 
     close_connection($db);
 }
@@ -201,7 +201,6 @@ function add_user($email, $firstName, $lastName, $type, $taxCode): void
 function remove_user($id): void
 {
     $db = open_connection();
-
     setSearchPath($db);
 
     $sql = "
@@ -213,13 +212,11 @@ function remove_user($id): void
     pg_prepare($db, 'remove-user', $sql);
     @ $result = pg_execute($db, 'remove-user', array());
 
-    if (!$result) {
+    if (!$result)
         throw new Exception(prettifyExceptionMessages(pg_last_error($db)));
-    }
 
-    if (pg_affected_rows($result) != 1) {
+    if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid user id: ' . $id);
-    }
 
     close_connection($db);
 }
