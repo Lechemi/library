@@ -42,7 +42,14 @@ if (!empty($_GET['isbn'])) {
             background-color: #f8f9fa; /* Very light grey background */
             border: none; /* No border */
             border-radius: 0.75rem; /* Rounded corners */
-            padding: 1.5rem; /* Padding for content */
+            padding: 1rem; /* Padding for content */
+            position: relative; /* Relative positioning for the button */
+        }
+
+        .edit-button {
+            position: absolute; /* Position the button */
+            top: 1rem; /* Distance from the top */
+            right: 1rem; /* Distance from the right */
         }
     </style>
 </head>
@@ -61,15 +68,15 @@ if (!empty($_GET['isbn'])) {
 
 <div class="container my-4">
     <div class="custom-card">
-        <h2 class="mb-2"><strong><?php echo htmlspecialchars($bookDetails['title']); ?></strong></h2>
+        <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
+            <a href="../librarian/edit-book.php?isbn=<?php echo $isbn; ?>" class="btn btn-primary edit-button">
+                <i class="bi bi-pencil"></i> Edit book details
+            </a>
+        <?php endif; ?>
+
+        <h2><strong><?php echo htmlspecialchars($bookDetails['title']); ?></strong></h2>
 
         <div class="card-body compact-info">
-            <?php if ($_SESSION['user']['type'] == 'librarian'): ?>
-                <a href="../librarian/edit-book.php?isbn=<?php echo $isbn; ?>" class="btn btn-primary mb-3">
-                    <i class="bi bi-pencil"></i> Edit book details
-                </a>
-            <?php endif; ?>
-
             <p class="text-muted"><?php echo htmlspecialchars($isbn); ?></p>
 
             <p><?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
@@ -115,3 +122,4 @@ if (!empty($_GET['isbn'])) {
         crossorigin="anonymous"></script>
 </body>
 </html>
+
