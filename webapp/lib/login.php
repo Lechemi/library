@@ -23,11 +23,7 @@ if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
     }
 
     if (!isset($_SESSION['login_error'])) {
-        if ($user['type'] == 'patron') {
-            redirect('../catalog/catalog.php');
-        } else {
-            redirect('../catalog/catalog.php');
-        }
+        redirect('../catalog/catalog.php');
     }
 }
 

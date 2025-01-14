@@ -10,25 +10,20 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
 $user = $_SESSION['user'];
 
-$message = '';
-$messageType = '';
-
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $currentPassword = $_POST['current_password'] ?? '';
     $newPassword = $_POST['new_password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
 
     if ($newPassword !== $confirmPassword) {
-        $message = "Failed to confirm new password.";
-        $messageType = "danger";
+        $result = ['ok' => false, 'message' => 'Failed to confirm new password.'];
     } else {
         try {
             change_password($user['id'], $currentPassword, $newPassword);
-            $message = "Password changed successfully!";
-            $messageType = "success";
+            $result = ['ok' => true, 'message' => 'Password changed successfully.'];
         } catch (Exception $e) {
-            $message = $e->getMessage();
-            $messageType = "danger";
+            $result = ['ok' => false, 'message' => $e->getMessage()];
         }
     }
 }
@@ -136,14 +131,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <!-- Placeholder for bottom alert -->
-    <div class="mt-4">
-        <?php if (!empty($message)): ?>
-            <div class="alert alert-<?= htmlspecialchars($messageType) ?> mt-5 alert-dismissible fade show">
-                <?= htmlspecialchars($message) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
-    </div>
+    <?php if ($result): ?>
+        <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+             role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
 </div>
 

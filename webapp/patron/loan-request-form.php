@@ -7,14 +7,13 @@ include_once('../lib/redirect.php');
 if (!empty($_GET['isbn'])) {
     $isbn = $_GET['isbn'];
 } else {
-    echo "Error, no book.";
-    exit;
+    redirect('../lib/error.php');
 }
 
 try {
     $branches = get_branches();
 } catch (Exception $e) {
-
+    redirect('../lib/error.php');
 }
 
 $result = null;
@@ -54,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
                 try {
                     $branches = get_branches();
                 } catch (Exception $e) {
-                    echo 'Error fetching branches: ' . $e->getMessage();
+                    redirect('../lib/error.php');
                 }
 
                 foreach ($branches as $branch) {

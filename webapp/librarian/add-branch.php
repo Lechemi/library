@@ -6,6 +6,7 @@ include_once('../lib/branch-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
+// todo check the user is a librarian
 
 $result = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

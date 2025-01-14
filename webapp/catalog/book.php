@@ -13,14 +13,13 @@ if (!empty($_GET['isbn'])) {
     try {
         $bookDetails = get_books($isbn)[$isbn];
     } catch (Exception $e) {
-        echo 'Some error occurred';
+        redirect('../lib/error.php');
     }
 
     if ($_SESSION['user']['type'] == 'patron')
         $bookDetails['available_copies'] = get_available_copies($isbn, null);
 } else {
-    echo "Error, no book.";
-    exit;
+    redirect('../lib/error.php');
 }
 
 ?>

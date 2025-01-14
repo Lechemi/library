@@ -6,20 +6,17 @@ include_once('../lib/account-functions.php');
 include_once('../lib/catalog-functions.php');
 session_start();
 
-// Redirect if no user is logged in
 if (!isset($_SESSION['user'])) redirect('../index.php');
 $searchResults = null;
 
-// Handle form submission and reset delays logic
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['searchInput'])) {
         try {
             $searchResults = get_authors($_POST['searchInput']);
         } catch (Exception $e) {
-            echo 'error: ' . $e->getMessage();
+            redirect('../lib/error.php');
         }
     }
-
 }
 
 ?>

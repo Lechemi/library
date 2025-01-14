@@ -7,8 +7,7 @@ include_once('../lib/redirect.php');
 if (!empty($_GET['isbn'])) {
     $isbn = $_GET['isbn'];
 } else {
-    echo "Error, no book.";
-    exit;
+    redirect('../lib/error.php');
 }
 
 $result = null;
@@ -18,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $branchInfo = get_branch($branch)[0];
     } catch (Exception) {
+
     }
     $location = $branchInfo['city'] . ' - ' . $branchInfo['address'];
 
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         echo '<option value="' . $branch['id'] . '">' . $branchString . '</option>';
                     }
                 } catch (Exception $e) {
-                    echo 'Error fetching branches: ' . $e->getMessage();
+                    redirect('../lib/error.php');
                 }
 
                 ?>

@@ -13,15 +13,13 @@ if (!empty($_GET['id'])) {
     try {
         $stats = get_branch_stats($branch);
     } catch (Exception $e) {
-        echo 'An error occurred: ' . $e->getMessage();
+        redirect('../lib/error.php');
     }
 
 } else {
-    echo "Error, no branch.";
-    exit;
+    redirect('../lib/error.php');
 }
 
-// Handle branch removal if form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
     try {
         remove_branch($branch);
@@ -107,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
                             try {
                                 $due = new DateTime($delay['due']);
                             } catch (DateMalformedStringException $e) {
-                                echo 'Some error occurred';
+                                redirect('../lib/error.php');
                             }
                             $due = $due->format('Y-m-d H:i:s');
                             ?>

@@ -11,9 +11,9 @@ if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
 $result = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['userEmail'])) {
+
+    if (isset($_POST['userEmail']))
         $_SESSION['userEmail'] = $_POST['userEmail'];
-    }
 
     try {
         if (isset($_POST['removeUser'])) {
@@ -136,6 +136,7 @@ $email = $_SESSION['userEmail'] ?? null;
         try {
             $userInfo = get_user_with_email($email);
         } catch (Exception) {
+            redirect('../lib/error.php');
         }
 
         if ($userInfo) {
@@ -158,7 +159,7 @@ $email = $_SESSION['userEmail'] ?? null;
                     try {
                         $loans = get_loans($userInfo['id']);
                     } catch (Exception $e) {
-                        echo $e->getMessage();
+                        redirect('../lib/error.php');
                     }
 
                     echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';

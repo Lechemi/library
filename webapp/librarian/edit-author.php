@@ -31,12 +31,11 @@ if (!empty($_GET['author'])) {
     try {
         $authorDetails = get_authors($_GET['author'])[0];
     } catch (Exception $e) {
-        echo 'Error: ' . $e->getMessage();
+        redirect('../lib/error.php');
     }
 
 } else {
-    echo "Error, no author.";
-    exit;
+    redirect('../lib/error.php');
 }
 
 $result = null;

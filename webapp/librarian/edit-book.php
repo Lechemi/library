@@ -15,7 +15,7 @@ if (!empty($_GET['isbn'])) {
     try {
         $result = get_books($isbn);
     } catch (Exception $e) {
-        echo 'Some error occurred';
+        redirect('../lib/error.php');
     }
 
     $bookDetails = $result[$isbn];
@@ -27,11 +27,9 @@ if (!empty($_GET['isbn'])) {
     }
 
     $authorString = substr($authorString, 0, -2);
-
     $publishers = get_publishers();
 } else {
-    echo "Error, no book.";
-    exit;
+    redirect('../lib/error.php');
 }
 
 $result = null;

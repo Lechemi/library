@@ -94,7 +94,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
         try {
             $result = get_books($searchInput);
         } catch (Exception $e) {
-            echo 'Some error occurred';
+            redirect('../lib/error.php');
         }
 
         if (empty($result)) echo 'No books found';

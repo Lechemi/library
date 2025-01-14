@@ -11,7 +11,7 @@ if (!empty($_GET['author'])) {
     try {
         $authorDetails = get_authors($_GET['author'])[0];
     } catch (Exception $e) {
-        echo 'Error: ' . $e->getMessage();
+        redirect('../lib/error.php');
     }
 
     $authorDetails['full_name'] = $authorDetails['first_name'] . ' ' . $authorDetails['last_name'];

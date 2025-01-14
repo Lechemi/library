@@ -10,7 +10,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 try {
     $activeLoans = get_loans($_SESSION['user']['id']);
 } catch (Exception $e) {
-    echo $e->getMessage();
+    redirect('../lib/error.php');
 }
 
 ?>
@@ -88,7 +88,7 @@ try {
                 }
 
             } catch (DateMalformedStringException $e) {
-                echo 'Some error occurred';
+                redirect('../lib/error.php');
             }
 
             $branch = $loan['address'] . ' - ' . $loan['city'];

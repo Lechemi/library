@@ -72,8 +72,6 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
 <div class="container my-4">
 
-
-
     <!-- Displayed branches -->
     <div class="container">
         <a href="add-branch.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Insert a new branch</a>
@@ -84,7 +82,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             try {
                 $branches = get_branches();
             } catch (Exception $e) {
-                echo 'An error occurred...';
+                redirect('../lib/error.php');
             }
 
             foreach ($branches as $branch => $details):
