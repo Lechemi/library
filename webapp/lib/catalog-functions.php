@@ -393,7 +393,6 @@ function update_authors($isbn, $authors): void
  */
 function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $deathDate = null): void
 {
-
     if (!$firstName || !$lastName || !$bio || !isset($alive))
         throw new Exception('Missing required fields.');
 
@@ -413,6 +412,12 @@ function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $dea
         $columns[] = 'death_date';
         $values[] = '$' . $paramIndex++;
         $params[] = $deathDate;
+
+        if ($alive)
+            throw new Exception("If a death date is specified, the author cannot be alive.");
+
+        if ($birthDate && isDateAfter($birthDate, $deathDate))
+            throw new Exception("Death date must follow the birth date.");
     }
 
     $sql = "
@@ -422,11 +427,19 @@ function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $dea
 
     $db = open_connection();
     pg_prepare($db, 'add-author', $sql);
-    $result = pg_execute($db, 'add-author', $params);
+    @ $result = pg_execute($db, 'add-author', $params);
 
-    if (!$result) throw new Exception(prettifyErrorMessages(pg_last_error($db)));
+    if (!$result)
+        throw new Exception("An author named $firstName $lastName already exists.");
 
     close_connection($db);
+}
+
+function isDateAfter($date1, $date2): bool
+{
+    $d1 = new DateTime($date1);
+    $d2 = new DateTime($date2);
+    return $d1 > $d2;
 }
 
 /**
