@@ -6,29 +6,24 @@ include_once('../lib/account-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
+// todo check the user is a librarian
 
-$alertMessage = "";
-$alertType = "";
-
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle form submissions
     $email = $_POST['email'] ?? '';
     $firstName = $_POST['firstName'] ?? '';
     $lastName = $_POST['lastName'] ?? '';
     $type = $_POST['type'] ?? '';
-    $taxCode = $_POST['taxCode'] ?? null; // Optional
+    $taxCode = $_POST['taxCode'] ?? null;
 
-    if ($type === 'librarian') {
+    if ($type === 'librarian')
         $email = $email . '@librarian.com';
-    }
 
     try {
         add_user($email, $firstName, $lastName, $type, $taxCode);
-        $alertMessage = "User added successfully!";
-        $alertType = "success";
+        $result = ['ok' => true, 'msg' => 'User was added successfully.'];
     } catch (Exception $e) {
-        $alertMessage = $e->getMessage();
-        $alertType = "danger";
+        $result = ['ok' => false, 'msg' => $e->getMessage()];
     }
 }
 ?>
@@ -52,9 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="container my-4">
 
-    <?php if (!empty($alertMessage)): ?>
-        <div class="alert alert-<?php echo $alertType; ?> alert-dismissible fade show" role="alert">
-            <?php echo htmlspecialchars($alertMessage); ?>
+    <?php if ($result): ?>
+        <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+             role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
