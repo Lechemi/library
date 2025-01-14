@@ -126,15 +126,13 @@ function get_publishers(): array
 /**
  * Attempts to make a loan for the specified patron and book.
  * If preferred branches are specified, the loan is attempted in all of them.
- * Returns the outcome of the attempt, along with:
- * - the loaned copy and respective branch in case of success;
- * - an error message in case of failure.
+ * Returns the loaned copy and respective branch in case of success.
  * @throws Exception
  */
 function make_loan($isbn, $patron, $preferredBranches): array
 {
     if (!$isbn || !$patron)
-        throw new Exception("ISBN and patron id must be provided");
+        throw new Exception("ISBN and patron id must be provided.");
 
     if ($preferredBranches) {
         $preferredBranches = '{' . implode(',', $preferredBranches) . '}';
@@ -152,15 +150,13 @@ function make_loan($isbn, $patron, $preferredBranches): array
     pg_prepare($db, 'make-loan', $sql);
     @ $result = pg_execute($db, 'make-loan', $params);
 
-    if ($result) {
-        $loan = pg_fetch_all($result)[0];
-        $result = ['ok' => true, 'copy' => $loan['_loaned_copy'], 'branch' => $loan['_loan_branch']];
-    } else {
-        $result = ['ok' => false, 'error' => prettifyErrorMessages(pg_last_error($db))];
-    }
+    if (!$result)
+        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
 
     close_connection($db);
-    return $result;
+
+    $loan = pg_fetch_all($result)[0];
+    return ['copy' => $loan['_loaned_copy'], 'branch' => $loan['_loan_branch']];
 }
 
 /**

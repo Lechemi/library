@@ -85,14 +85,16 @@ if (!empty($_GET['isbn'])) {
                     echo '<p><strong>There are no available copies.</strong></p>';
                 } else if ($copyCount == 1) {
                     echo '<p><strong>There\'s one available copy.</strong></p>';
+                    if ($_SESSION['user']['type'] == 'patron')
+                        include '../patron/loan-request-form.php';
                 } else {
                     echo '<p><strong>There are ' . htmlspecialchars($copyCount) . ' available copies.</strong></p>';
+                    if ($_SESSION['user']['type'] == 'patron')
+                        include '../patron/loan-request-form.php';
                 }
 
             }
             ?>
-
-            <?php if ($_SESSION['user']['type'] == 'patron') include '../patron/loan-request-form.php' ?>
 
             <?php if ($_SESSION['user']['type'] == 'librarian') include '../librarian/manage-copies-form.php' ?>
 

@@ -19,11 +19,18 @@ try {
 $result = null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
     $isbn = trim($_POST['isbn']);
-    if ($_POST['branch'] !== 'noPreference' and $_POST['branch']) {
-        $preferredBranch = array($_POST['branch']);
-        $result = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
-    } else {
-        $result = make_loan($isbn, $_SESSION['user']['id'], null);
+    $preferredBranch = ($_POST['branch'] !== 'noPreference' and $_POST['branch'])
+        ? array($_POST['branch']) : null;
+
+    try {
+        $loaned = make_loan($isbn, $_SESSION['user']['id'], $preferredBranch);
+        $copy = $loaned['copy'];
+        $branch = $loaned['branch'];
+        $branchInfo = get_branch($branch)[0];
+        $location = $branchInfo['city'] . ' - ' . $branchInfo['address'];
+        $result = ['ok' => true, 'msg' => "Successfully loaned copy with id $copy from branch in $location."];
+    } catch (Exception $e) {
+        $result = ['ok' => false, 'msg' => "Loan was denied. " . $e->getMessage()];
     }
 }
 
@@ -37,6 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+
+
+<h5>Request a loan</h5>
 
 <form method="POST" action="">
     <div class="mb-3">
@@ -73,18 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
     <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
 
     <?php if ($result): ?>
-        <?php if ($result['ok']): ?>
-            <div class="alert alert-success mt-4 alert-dismissible fade show" role="alert">
-                <?php print_r($result); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php else: ?>
-            <div class="alert alert-danger mt-4  alert-dismissible fade show" role="alert">
-                Something went wrong with your loan request.
-                <?php print($result['error']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
+        <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+             role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     <?php endif; ?>
 </form>
 
