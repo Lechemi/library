@@ -4,7 +4,6 @@ ini_set('error_reporting', E_ALL);
 include_once('../lib/redirect.php');
 include_once('../lib/account-functions.php');
 include_once('../lib/catalog-functions.php');
-include_once('../lib/author-functions.php');
 session_start();
 
 // Redirect if no user is logged in

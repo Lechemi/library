@@ -3,7 +3,6 @@
 include_once('../lib/catalog-functions.php');
 include_once('../lib/redirect.php');
 include_once('../lib/branch-functions.php');
-include_once('../lib/author-functions.php');
 
 session_start();
 
