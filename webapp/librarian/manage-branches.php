@@ -76,7 +76,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 
     <!-- Displayed branches -->
     <div class="container">
-        <a href="insert-branch.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Insert a new branch</a>
+        <a href="add-branch.php" class="btn btn-primary"> <i class="bi bi-plus-square"></i> Insert a new branch</a>
 
         <ul class="list-group list-group-flush rounded-4">
             <?php

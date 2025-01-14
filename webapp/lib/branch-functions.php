@@ -92,7 +92,7 @@ function add_branch($city, $address, $name): void
     @ $result = pg_execute($db, 'add-branch', array());
 
     if (!$result)
-        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
+        throw new Exception("A branch in $city - $address already exists.");
 
     close_connection($db);
 }
