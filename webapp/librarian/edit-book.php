@@ -55,8 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } catch (Exception $e) {
         $result = ['ok' => false, 'msg' => $e->getMessage()];
     }
-
-    $alertClass = $result['ok'] ? 'alert-success' : 'alert-danger';
 }
 
 ?>
@@ -83,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="container my-4">
 
     <?php if ($result): ?>
-        <div class="alert <?= $alertClass ?> alert-dismissible fade show mt-3" role="alert">
+        <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+             role="alert">
             <?php echo htmlspecialchars($result['msg']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
