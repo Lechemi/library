@@ -6,6 +6,23 @@ include_once('../lib/branch-functions.php');
 
 session_start();
 
+function has_changes($oldData, $newData, $fieldMapping): bool {
+    foreach ($fieldMapping as $oldKey => $newKey) {
+        $oldValue = $oldData[$oldKey] ?? null;
+        $newValue = $newData[$newKey] ?? null;
+
+        if ($oldKey === 'alive') {
+            $oldValue = !($oldValue === 'f');
+            $newValue = (bool)$newValue;
+        }
+
+        if ($oldValue != $newValue) {
+            return true;
+        }
+    }
+    return false;
+}
+
 if (!isset($_SESSION['user'])) redirect('../index.php');
 if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
@@ -22,17 +39,40 @@ if (!empty($_GET['author'])) {
     exit;
 }
 
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $dead = isset($_POST['dead']);
+    $alive = !isset($_POST['dead']);
+    unset($_POST['dead']);
+    $_POST['alive'] = $alive;
 
-    try {
-        update_author($_GET['author'], $_POST['firstName'], $_POST['lastName'], $_POST['bio'], $_POST['birthdate'], $_POST['deathDate'], !$dead);
-        header("Refresh:0");
-    } catch (Exception $e) {
-        echo $e->getMessage();
+    $fieldMapping = [
+        'first_name' => 'firstName',
+        'last_name' => 'lastName',
+        'bio' => 'bio',
+        'birth_date' => 'birthdate',
+        'death_date' => 'deathDate',
+        'alive' => 'alive'
+    ];
+
+    if (has_changes($authorDetails, $_POST, $fieldMapping)) {
+        try {
+            update_author(
+                $_GET['author'],
+                $_POST['firstName'],
+                $_POST['lastName'],
+                $_POST['bio'],
+                $_POST['birthdate'],
+                $_POST['deathDate'],
+                $alive
+            );
+            $result = ['ok' => true, 'msg' => 'Author\'s info correctly updated. Refresh this page or go back to the catalog to see it.'];
+        } catch (Exception $e) {
+            $result = ['ok' => false, 'msg' => $e->getMessage()];
+        }
     }
 }
+
 
 ?>
 
@@ -56,6 +96,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <div class="container my-4">
+
+    <?php if ($result): ?>
+        <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+             role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <h5 class="mb-4">Editing author</h5>
 
     <form method="POST" action="">
@@ -112,5 +161,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deathDateInput = document.getElementById('deathDate');
+        const deadCheckbox = document.getElementById('dead');
+
+        // Listen for changes on the death date input
+        deathDateInput.addEventListener('input', function () {
+            deadCheckbox.checked = deathDateInput.value.trim() !== '';
+        });
+    });
+</script>
+
 </body>
 </html>

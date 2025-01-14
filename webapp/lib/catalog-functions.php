@@ -341,7 +341,7 @@ function update_book($isbn, $title, $blurb, $publisher): void
 
     $db = open_connection();
     pg_prepare($db, 'update-book', $sql);
-    $result = pg_execute($db, 'update-book', $params);
+    @ $result = pg_execute($db, 'update-book', $params);
 
     if (!$result)
         throw new Exception(prettifyErrorMessages(pg_last_error($db)));
@@ -458,6 +458,12 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
     if (!$id)
         throw new InvalidArgumentException('Missing author ID.');
 
+    if ($birthDate and $deathDate and isDateAfter($birthDate, $deathDate))
+        throw new Exception("Death date must follow the birth date.");
+
+    if ($alive and $deathDate)
+        throw new Exception("If a death date is specified, the author cannot be alive.");
+
     $fields = [
         'first_name' => $firstName,
         'last_name' => $lastName,
@@ -467,31 +473,30 @@ function update_author($id, $firstName, $lastName, $bio, $birthDate, $deathDate,
         'alive' => $alive ? 1 : 0,
     ];
 
-    $validFields = array_filter($fields, fn($value) => $value !== null && $value !== '');
-    if (empty($validFields))
-        throw new Exception('At least one field must be provided for update.');
-
     $setParts = [];
     $params = [];
     $paramIndex = 1;
 
-    foreach ($validFields as $field => $value) {
-        $setParts[] = "$field = $" . $paramIndex;
-        $params[] = $value;
-        $paramIndex++;
+    foreach ($fields as $field => $value) {
+        if ($field != 'alive' and !$value) {
+            $setParts[] = "$field = NULL";
+        } else {
+            $setParts[] = "$field = $" . $paramIndex;
+            $params[] = $value;
+            $paramIndex++;
+        }
     }
 
     $setClause = implode(', ', $setParts);
-    $params[] = $id;
 
-    $sql = "UPDATE library.author SET $setClause WHERE id = $" . $paramIndex;
+    $sql = "UPDATE library.author SET $setClause WHERE id = $id";
 
     $db = open_connection();
     pg_prepare($db, 'update-author', $sql);
-    $result = pg_execute($db, 'update-author', $params);
+    @ $result = pg_execute($db, 'update-author', $params);
 
     if (!$result)
-        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
+        throw new Exception("An author named $firstName $lastName already exists.");
 
     if (pg_affected_rows($result) != 1)
         throw new Exception('Invalid author ID: ' . $id);
