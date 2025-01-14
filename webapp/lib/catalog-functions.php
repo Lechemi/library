@@ -1,5 +1,7 @@
 <?php
+
 use PgSql\Connection;
+
 include_once('../lib/connection.php');
 
 /**
@@ -254,9 +256,9 @@ function add_credits($authors, $isbn, false|Connection $db): void
     foreach ($authors as $author) {
         $sql = "INSERT INTO library.credits (author, book) VALUES ($author, '$isbn');";
         pg_prepare($db, 'add-credits' . $author, $sql);
-        $result = pg_execute($db, 'add-credits' . $author, array());
+        @ $result = pg_execute($db, 'add-credits' . $author, array());
         if (!$result) {
-            throw new Exception(pg_last_error($db));
+            throw new Exception('List of author id\'s was not valid.');
         }
     }
 }
@@ -268,8 +270,14 @@ function add_credits($authors, $isbn, false|Connection $db): void
  */
 function add_book($isbn, $title, $blurb, $publisher, $authors): void
 {
-    if (!$isbn || !$title || !$blurb || !$publisher || !$authors)
+    if (!$isbn || !$title || !$blurb || !$publisher)
         throw new Exception("All fields must be provided");
+
+    if (!$authors)
+        throw new Exception("List of author id's was not valid or empty.");
+
+    if (!ctype_digit($isbn) || strlen($isbn) !== 13)
+        throw new Exception("Not a valid ISBN.");
 
     $db = open_connection();
 
@@ -282,16 +290,16 @@ function add_book($isbn, $title, $blurb, $publisher, $authors): void
         ";
 
         pg_prepare($db, 'add-book', $sql);
-        $result = pg_execute($db, 'add-book', array($isbn, $title, $blurb, $publisher));
+        @ $result = pg_execute($db, 'add-book', array($isbn, $title, $blurb, $publisher));
 
         if (!$result)
-            throw new Exception(prettifyErrorMessages(pg_last_error($db)));
+            throw new Exception("A book with ISBN $isbn is already in the catalog.");
 
         add_credits($authors, $isbn, $db);
         pg_query($db, "COMMIT");
     } catch (Exception $e) {
         pg_query($db, "ROLLBACK");
-        throw new Exception('Error inserting book. ' . $e->getMessage());
+        throw new Exception($e->getMessage());
     }
 
     close_connection($db);
