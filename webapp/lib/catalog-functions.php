@@ -435,6 +435,10 @@ function add_author($firstName, $lastName, $alive, $bio, $birthDate = null, $dea
     close_connection($db);
 }
 
+/**
+ * Utility function. Returns true if $date1 is after $date2; false otherwise.
+ * @throws DateMalformedStringException
+ */
 function isDateAfter($date1, $date2): bool
 {
     $d1 = new DateTime($date1);
