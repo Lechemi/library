@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Title -->
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input type="text" name="title" class="form-control" id="title" value="<?php echo $bookDetails['title'] ?>">
+            <input required type="text" name="title" class="form-control" id="title" value="<?php echo $bookDetails['title'] ?>">
         </div>
 
         <!-- Publisher -->
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Author(s) -->
         <div class="mb-3">
             <label for="authors" class="form-label">Author(s)</label>
-            <input type="text" name="authors" class="form-control" id="authors" value="<?php echo $authorString ?>"
+            <input required type="text" name="authors" class="form-control" id="authors" value="<?php echo $authorString ?>"
                    aria-describedby="authorsHelp">
             <div id="authorsHelp" class="form-text">
                 Insert author id's separated by commas (e.g. 123, 456, 789). Spaces are ignored.
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Blurb -->
         <div class="mb-3">
             <label for="blurb" class="form-label">Blurb</label>
-            <textarea id="blurb" name="blurb" class="form-control"><?php echo $bookDetails['blurb'] ?></textarea>
+            <textarea required id="blurb" name="blurb" class="form-control"><?php echo $bookDetails['blurb'] ?></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
