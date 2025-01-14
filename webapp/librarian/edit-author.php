@@ -63,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- First name -->
         <div class="mb-3">
             <label for="firstName" class="form-label">First name</label>
-            <input type="text" name="firstName" class="form-control" id="firstName"
+            <input required type="text" name="firstName" class="form-control" id="firstName"
                    value="<?php echo $authorDetails['first_name'] ?>">
         </div>
 
         <!-- Last name -->
         <div class="mb-3">
             <label for="lastName" class="form-label">Last name</label>
-            <input type="text" name="lastName" class="form-control" id="lastName"
+            <input required type="text" name="lastName" class="form-control" id="lastName"
                    value="<?php echo $authorDetails['last_name'] ?>">
         </div>
 
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Bio -->
         <div class="mb-3">
             <label for="bio" class="form-label">Bio</label>
-            <textarea id="bio" name="bio" class="form-control"><?php echo $authorDetails['bio'] ?></textarea>
+            <textarea required id="bio" name="bio" class="form-control"><?php echo $authorDetails['bio'] ?></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
