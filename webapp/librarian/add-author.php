@@ -9,15 +9,19 @@ session_start();
 if (!isset($_SESSION['user'])) redirect('../index.php');
 // todo check that the user is a librarian
 
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $dead = isset($_POST['dead']);
 
     try {
         add_author($_POST['firstName'], $_POST['lastName'], !$dead, $_POST['bio'], $_POST['birthdate'], $_POST['deathDate']);
+        $result = ['ok' => true, 'msg' => 'Author successfully added to the catalog.'];
     } catch (Exception $e) {
-        echo $e->getMessage();
+        $result = ['ok' => false, 'msg' => $e->getMessage()];
     }
+
+    $alertClass = $result['ok'] ? 'alert-success' : 'alert-danger';
 }
 
 ?>
@@ -42,6 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <div class="container my-4">
+
+    <?php if ($result): ?>
+        <div class="alert <?= $alertClass ?> alert-dismissible fade show mt-3" role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <h5 class="mb-4">Adding author</h5>
 
     <form method="POST" action="">
@@ -49,13 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- First name -->
         <div class="mb-3">
             <label for="firstName" class="form-label">First name</label>
-            <input type="text" name="firstName" class="form-control" id="firstName"
+            <input required type="text" name="firstName" class="form-control" id="firstName"
         </div>
 
         <!-- Last name -->
         <div class="mb-3">
             <label for="lastName" class="form-label">Last name</label>
-            <input type="text" name="lastName" class="form-control" id="lastName"
+            <input required type="text" name="lastName" class="form-control" id="lastName"
         </div>
 
         <!-- Birthdate -->
@@ -72,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <!-- Alive -->
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="dead" name="dead" >
+            <input class="form-check-input" type="checkbox" value="" id="dead" name="dead">
             <label class="form-check-label" for="dead">
                 This author is dead
             </label>
@@ -81,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Bio -->
         <div class="mb-3">
             <label for="bio" class="form-label">Bio</label>
-            <textarea id="bio" name="bio" class="form-control"></textarea>
+            <textarea required id="bio" name="bio" class="form-control"></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -93,5 +105,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deathDateInput = document.getElementById('deathDate');
+        const deadCheckbox = document.getElementById('dead');
+
+        // Listen for changes on the death date input
+        deathDateInput.addEventListener('input', function () {
+            deadCheckbox.checked = deathDateInput.value.trim() !== '';
+        });
+    });
+</script>
+
 </body>
 </html>
