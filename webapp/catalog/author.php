@@ -30,12 +30,19 @@ if (!empty($_GET['author'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
-<!-- Back Button -->
-<button onclick="history.back()" class="btn btn-outline-secondary mb-4">
-    &larr; Back
-</button>
 
-<div class="container profile-container">
+<!-- Navbar -->
+<div class="container mt-3">
+    <?php
+    if ($_SESSION['user']['type'] == 'patron') {
+        include '../patron/navbar.php';
+    } else {
+        include '../librarian/navbar.php';
+    }
+    ?>
+</div>
+
+<div class="container profile-container mt-3">
     <div class="card">
         <div class="card-body">
             <h1 class="author-title">
