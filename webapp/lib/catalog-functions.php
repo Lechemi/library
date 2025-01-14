@@ -358,8 +358,11 @@ function update_book($isbn, $title, $blurb, $publisher): void
  */
 function update_authors($isbn, $authors): void
 {
-    if (!$isbn || !$authors)
-        throw new Exception("All fields must be provided");
+    if (!$isbn)
+        throw new Exception("ISBN must be provided.");
+
+    if (!$authors)
+        throw new Exception("List of authors was empty or not valid.");
 
     $db = open_connection();
 
