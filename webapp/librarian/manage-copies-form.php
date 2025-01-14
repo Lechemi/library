@@ -11,24 +11,29 @@ if (!empty($_GET['isbn'])) {
     exit;
 }
 
-$feedback = '';
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $branch = $_POST['branch'];
     $quantity = $_POST['quantity'];
+    try {
+        $branchInfo = get_branch($branch)[0];
+    } catch (Exception) {
+    }
+    $location = $branchInfo['city'] . ' - ' . $branchInfo['address'];
 
     if ($_POST['action'] == 'remove') {
         try {
             remove_copies($branch, $isbn, $quantity);
-            $feedback = 'Correctly removed ' . $quantity . ' copies.';
+            $result = ['ok' => true, 'msg' => "Correctly removed $quantity copies from the branch in $location."];
         } catch (Exception $e) {
-            $feedback = $e->getMessage();
+            $result = ['ok' => false, 'msg' => $e->getMessage()];
         }
     } elseif ($_POST['action'] == 'add') {
         try {
             add_copies($branch, $isbn, $quantity);
-            $feedback = 'Correctly added ' . $quantity . ' copies.';
+            $result = ['ok' => true, 'msg' => "Correctly added $quantity copies to the branch in $location."];
         } catch (Exception $e) {
-            $feedback = $e->getMessage();
+            $result = ['ok' => false, 'msg' => $e->getMessage()];
         }
     }
 }
@@ -46,8 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <h4>Manage copies for this book</h4>
 
-<!-- todo display feedback in a more decent manner -->
-<p> <?php echo $feedback ?> </p>
+<?php if ($result): ?>
+    <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+         role="alert">
+        <?php echo htmlspecialchars($result['msg']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
 
 <form method="POST" action="">
     <div class="mb-3">

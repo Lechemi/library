@@ -133,6 +133,9 @@ function add_copies($branchId, $isbn, $toAdd): void
     if ($toAdd <= 0)
         throw new Exception("Number of copies must be positive.");
 
+    $branchInfo = get_branch($branchId)[0];
+    $location = $branchInfo['city'] . ' - ' . $branchInfo['address'];
+
     $db = open_connection();
     setSearchPathToLibrary($db);
 
@@ -152,10 +155,32 @@ function add_copies($branchId, $isbn, $toAdd): void
         pg_query($db, "COMMIT");
     } catch (Exception $e) {
         pg_query($db, "ROLLBACK");
-        throw new Exception('Error while inserting new copies. ' . $e->getMessage());
+        throw new Exception("Error while inserting new copies in $location. " . $e->getMessage());
     }
 
     close_connection($db);
+}
+
+/**
+ * Retrieves address, city and name of the branch with the specified id.
+ * @throws Exception
+ */
+function get_branch($id): array
+{
+    $sql = "
+        SELECT *
+        FROM library.branch
+        WHERE id = $id
+    ";
+
+    $db = open_connection();
+    pg_prepare($db, 'get-branch', $sql);
+    $result = pg_execute($db, 'get-branch', array());
+    close_connection($db);
+
+    if ($result) return pg_fetch_all($result);
+
+    throw new Exception(pg_last_error($db));
 }
 
 /**
@@ -174,9 +199,12 @@ function remove_copies($branchId, $isbn, $toRemove): void
     // I can only remove copies that are not currently loaned
     $copies = get_available_copies($isbn, $branchId);
 
+    $branchInfo = get_branch($branchId)[0];
+    $location = $branchInfo['city'] . ' - ' . $branchInfo['address'];
+
     $available = sizeof($copies);
     if ($available < $toRemove)
-        throw new Exception("There are only $available available copies. You tried to remove $toRemove.");
+        throw new Exception("There are only $available available copies inside the branch in $location. You tried to remove $toRemove.");
 
     $db = open_connection();
     setSearchPathToLibrary($db);
