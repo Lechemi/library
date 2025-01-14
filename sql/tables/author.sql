@@ -1,3 +1,4 @@
+-- auto-generated definition
 create table author
 (
     id         serial
@@ -14,8 +15,8 @@ create table author
     birth_date date,
     death_date date,
     alive      boolean      not null,
-    constraint unique_author_identity
-        unique (first_name, last_name, birth_date),
+    constraint unique_author_name
+        unique (first_name, last_name),
     constraint check_death_date_after_birth_date
         check ((death_date IS NULL) OR (birth_date IS NULL) OR (death_date > birth_date)),
     constraint check_alive_false_if_dead
