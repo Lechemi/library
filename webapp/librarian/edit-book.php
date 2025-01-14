@@ -34,31 +34,29 @@ if (!empty($_GET['isbn'])) {
     exit;
 }
 
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $title = $_POST['title'] != $bookDetails['title'] ? $_POST['title'] : null;
     $publisher = $_POST['publisher'] != $bookDetails['publisher'] ? $_POST['publisher'] : null;
     $blurb = $_POST['blurb'] != $bookDetails['blurb'] ? $_POST['blurb'] : null;
 
-    if ($title != null or $publisher != null or $blurb != null) {
-        try {
-            update_book($isbn, $title, $blurb, $publisher);
-        } catch (Exception $e) {
-            print $e->getMessage();
-        }
-    }
-
     $authors = array_map('trim', explode(',', $_POST['authors']));
     $authors = array_filter($authors, 'is_numeric');
 
-    if (array_diff($authors, $authorList) || array_diff($authorList, $authors)) {
-        try {
+    try {
+        if (array_diff($authors, $authorList) or array_diff($authorList, $authors))
             update_authors($isbn, $authors);
-        } catch (Exception $e) {
-            print $e->getMessage();
-        }
+
+        if ($title or $publisher or $blurb)
+            update_book($isbn, $title, $blurb, $publisher);
+
+        $result = ['ok' => true, 'msg' => 'Book\'s info correctly updated. Refresh this page or go back to the catalog to see it.'];
+    } catch (Exception $e) {
+        $result = ['ok' => false, 'msg' => $e->getMessage()];
     }
 
+    $alertClass = $result['ok'] ? 'alert-success' : 'alert-danger';
 }
 
 ?>
@@ -83,6 +81,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <div class="container my-4">
+
+    <?php if ($result): ?>
+        <div class="alert <?= $alertClass ?> alert-dismissible fade show mt-3" role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <h5 class="mb-4"> Editing book <?php echo $isbn ?></h5>
 
     <form method="POST" action="">
@@ -90,7 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Title -->
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input required type="text" name="title" class="form-control" id="title" value="<?php echo $bookDetails['title'] ?>">
+            <input required type="text" name="title" class="form-control" id="title"
+                   value="<?php echo $bookDetails['title'] ?>">
         </div>
 
         <!-- Publisher -->
@@ -117,7 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Author(s) -->
         <div class="mb-3">
             <label for="authors" class="form-label">Author(s)</label>
-            <input required type="text" name="authors" class="form-control" id="authors" value="<?php echo $authorString ?>"
+            <input required type="text" name="authors" class="form-control" id="authors"
+                   value="<?php echo $authorString ?>"
                    aria-describedby="authorsHelp">
             <div id="authorsHelp" class="form-text">
                 Insert author id's separated by commas (e.g. 123, 456, 789). Spaces are ignored.
@@ -127,7 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Blurb -->
         <div class="mb-3">
             <label for="blurb" class="form-label">Blurb</label>
-            <textarea required id="blurb" name="blurb" class="form-control"><?php echo $bookDetails['blurb'] ?></textarea>
+            <textarea required id="blurb" name="blurb"
+                      class="form-control"><?php echo $bookDetails['blurb'] ?></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
