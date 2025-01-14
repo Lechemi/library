@@ -9,17 +9,20 @@ session_start();
 if (!isset($_SESSION['user'])) redirect('../index.php');
 // todo check that the user is a librarian
 
+$result = null;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $authors = array_map('trim', explode(',', $_POST['authors']));
     $authors = array_filter($authors, 'is_numeric');
 
     try {
-        add_book($_POST['isbn'], $_POST['title'], $_POST['blurb'],$_POST['publisher'], $authors);
+        add_book($_POST['isbn'], $_POST['title'], $_POST['blurb'], $_POST['publisher'], $authors);
+        $result = ['ok' => true, 'msg' => 'Book successfully added to the catalog.'];
     } catch (Exception $e) {
-        echo $e->getMessage();
+        $result = ['ok' => false, 'msg' => $e->getMessage()];
     }
 
+    $alertClass = $result['ok'] ? 'alert-success' : 'alert-danger';
 }
 
 ?>
@@ -44,6 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <div class="container my-4">
+
+    <?php if ($result): ?>
+        <div class="alert <?= $alertClass ?> alert-dismissible fade show mt-3" role="alert">
+            <?php echo htmlspecialchars($result['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <h5 class="mb-4">Add a new book to the catalog</h5>
 
     <form method="POST" action="">
