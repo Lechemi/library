@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- ISBN -->
         <div class="mb-3">
             <label for="isbn" class="form-label">ISBN</label>
-            <input type="text" name="isbn" class="form-control" id="isbn" aria-describedby="isbnHelp">
+            <input required type="text" name="isbn" class="form-control" id="isbn" aria-describedby="isbnHelp">
             <div id="isbnHelp" class="form-text">
                 Be careful with this field, it cannot be modified once the book is inserted.
             </div>
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Title -->
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input type="text" name="title" class="form-control" id="title">
+            <input required type="text" name="title" class="form-control" id="title">
         </div>
 
         <!-- Publisher -->
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Author(s) -->
         <div class="mb-3">
             <label for="authors" class="form-label">Author(s)</label>
-            <input type="text" name="authors" class="form-control" id="authors"
+            <input required type="text" name="authors" class="form-control" id="authors"
                    aria-describedby="authorsHelp">
             <div id="authorsHelp" class="form-text">
                 Insert author id's separated by commas (e.g. 123, 456, 789). Spaces are ignored.
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <!-- Blurb -->
         <div class="mb-3">
             <label for="blurb" class="form-label">Blurb</label>
-            <textarea id="blurb" name="blurb" class="form-control"></textarea>
+            <textarea required id="blurb" name="blurb" class="form-control"></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
