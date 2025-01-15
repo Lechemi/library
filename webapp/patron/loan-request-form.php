@@ -11,7 +11,7 @@ if (!empty($_GET['isbn'])) {
 }
 
 try {
-    $branches = get_branches();
+    $branches = branches_with_book($isbn);
 } catch (Exception $e) {
     redirect('../lib/error.php');
 }
@@ -60,12 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
             <select name="branch" id="branch" class="form-select" aria-label="Default select example">
                 <option selected value="noPreference">No preference</option>
                 <?php
-                try {
-                    $branches = get_branches();
-                } catch (Exception $e) {
-                    redirect('../lib/error.php');
-                }
-
                 foreach ($branches as $branch) {
                     $branchString = $branch['city'] . ' - ' . $branch['address'];
                     echo '<option value="' . $branch['id'] . '">' . $branchString . '</option>';
@@ -80,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
         </div>
     </div>
 
-    <div class="form-text mt-1">If no preference is specified, a copy can be provided from any branch.</div>
+    <div class="form-text mt-1">If no preference is specified, a copy can be provided from any branch. Only available branches are shown.</div>
 
     <!-- Alert Message -->
     <?php if ($result): ?>
