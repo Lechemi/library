@@ -93,20 +93,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <strong><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></strong></h2>
             <p class="text-muted"><?= htmlspecialchars($user['email']) ?></p>
 
-            <div>
-                <?php if ($userType === 'patron'): ?>
-                    <p><strong><i class="bi bi-person-bounding-box"></i> <?= $categoryString; ?></strong></p>
-                    <p><strong>
-                            <i class="bi bi-card-text"></i>
-                            Tax Code:</strong> <?= $taxCode; ?></p>
-                    <p class="mb-0"><strong><i class="bi bi-hourglass-bottom"></i> Number of late returns:</strong> <?= $nDelays; ?></p>
-                    <p class="form-text mt-0">
-                        A loan can be granted only if the requesting patron has fewer than 5 late returns on record.
-                    </p>
-                <?php else: ?>
-                    <p><strong><i class="bi bi-person-bounding-box"></i> Librarian</strong></p>
-                <?php endif; ?>
-            </div>
+            <?php if ($userType === 'patron'): ?>
+                <p><strong><i class="bi bi-person-bounding-box"></i> <?= $categoryString; ?></strong></p>
+                <p><strong>
+                        <i class="bi bi-card-text"></i>
+                        Tax Code:</strong> <?= $taxCode; ?></p>
+                <p class="mb-0"><strong><i class="bi bi-hourglass-bottom"></i> Number of late returns:</strong> <?= $nDelays; ?></p>
+                <p class="form-text mt-0">
+                    A loan can be granted only if the requesting patron has fewer than 5 late returns on record.
+                </p>
+            <?php else: ?>
+                <p><strong><i class="bi bi-person-bounding-box"></i> Librarian</strong></p>
+            <?php endif; ?>
+            
         </div>
 
         <div class="card-footer mt-3">
