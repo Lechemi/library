@@ -54,6 +54,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $email = $_SESSION['userEmail'] ?? null;
+
+if ($email) {
+    $userInfo = null;
+    try {
+        $userInfo = get_user_with_email($email);
+    } catch (Exception) {
+        redirect('../lib/error.php');
+    }
+
+    if ($userInfo) {
+        // Prepare user data
+        $isRemoved = $userInfo['removed'] === 't';
+        $email = htmlspecialchars($userInfo['email']);
+        $name = htmlspecialchars($userInfo['first_name'] . ' ' . $userInfo['last_name']);
+        $type = htmlspecialchars($userInfo['type']);
+        $patronInfo = $userInfo['patronInfo'] ?? null;
+
+        if (!$isRemoved) {
+            $taxCode = $patronInfo ? htmlspecialchars($patronInfo['tax_code']) : null;
+            $nDelays = $patronInfo ? htmlspecialchars($patronInfo['n_delays']) : 0;
+            $category = $patronInfo ? htmlspecialchars($patronInfo['category']) : null;
+            $categoryString = $category === 'premium' ? 'Premium patron' : 'Patron';
+
+            try {
+                $loans = $patronInfo ? get_loans($userInfo['id']) : [];
+            } catch (Exception $e) {
+                redirect('../lib/error.php');
+            }
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -93,10 +124,17 @@ $email = $_SESSION['userEmail'] ?? null;
             padding: 0.5rem;
         }
 
-        .card-body p {
-            margin-bottom: 0.3rem;
+        .compact-info p {
+            margin-bottom: 0.3rem; /* Reduced spacing */
         }
 
+        .custom-card {
+            background-color: #f8f9fa; /* Very light grey background */
+            border: none; /* No border */
+            border-radius: 0.75rem; /* Rounded corners */
+            padding: 1rem; /* Padding for content */
+            position: relative; /* Relative positioning for the button */
+        }
     </style>
 </head>
 <body>
@@ -106,22 +144,31 @@ $email = $_SESSION['userEmail'] ?? null;
 
 <div class="container my-4">
 
+    <!-- Search bar -->
     <div class="container d-flex justify-content-center">
         <div class="w-50">
-            <form method="post" action="">
-                <div class="mb-3">
-                    <label for="userEmail" class="form-label d-block">
-                        Search for a user or
-                        <a href="add-user.php?form=patron" class="text-primary">add a new one</a>
-                    </label>
-                    <input type="email" class="form-control" name="userEmail" id="userEmail"
-                           placeholder="Enter user's email" required>
+            <form method="post" class="row g-3" action="">
+                <div class="row align-items-end">
+                    <!-- Email Input -->
+                    <div class="col-md-9">
+                        <label for="userEmail" class="form-label d-block">
+                            Search for a user or
+                            <a href="add-user.php?form=patron" class="text-primary">add a new one</a>
+                        </label>
+                        <input type="email" class="form-control" name="userEmail" id="userEmail"
+                               placeholder="Enter user's email" required>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
     </div>
 
+    <!-- Feedback alert -->
     <?php if ($result): ?>
         <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
              role="alert">
@@ -130,118 +177,123 @@ $email = $_SESSION['userEmail'] ?? null;
         </div>
     <?php endif; ?>
 
-    <?php
-    if ($email) {
-        $userInfo = null;
-        try {
-            $userInfo = get_user_with_email($email);
-        } catch (Exception) {
-            redirect('../lib/error.php');
-        }
+    <?php if ($userInfo): ?>
+        <div class="custom-card mt-4">
+            <?php if (!$isRemoved): ?>
 
-        if ($userInfo) {
+                <div class="card-body compact-info">
 
-            echo '<div class="card mt-4">';
-            if ($userInfo['removed'] == 'f') {
+                    <h2 class="card-title">
+                        <strong><?= htmlspecialchars($name) ?></strong></h2>
+                    <p class="text-muted"><?= htmlspecialchars($email) ?></p>
 
-                echo '<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">';
-                echo htmlspecialchars($userInfo['email']);
-                if ($_SESSION['user']['id'] != $userInfo['id'])
-                    echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove User</button>';
-                echo '</div>';
-                echo '<div class="card-body">';
+                    <?php if ($patronInfo): ?>
+                        <p><strong><i class="bi bi-person-bounding-box"></i> <?= $categoryString; ?></strong></p>
+                        <p><strong>
+                                <i class="bi bi-card-text"></i>
+                                Tax Code:</strong> <?= $taxCode; ?></p>
+                        <p><strong><i class="bi bi-hourglass-bottom"></i>
+                                Number of delays:</strong> <?= $nDelays; ?></p>
 
-                echo '<p><strong>Name:</strong> ' . htmlspecialchars($userInfo['first_name']) . ' ' . htmlspecialchars($userInfo['last_name']) . '</p>';
-                echo '<p><strong>Type:</strong> ' . htmlspecialchars($userInfo['type']) . '</p>';
+                        <!-- Change category button -->
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#changeCategoryModal">
+                            Change Category
+                        </button>
 
-                if (isset($userInfo['patronInfo'])) {
+                        <!-- Reset delays button -->
+                        <?php if ($nDelays > 0): ?>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">
+                                Reset Delays
+                            </button>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <p><strong><i class="bi bi-person-bounding-box"></i> Librarian</strong></p>
+                    <?php endif; ?>
 
-                    try {
-                        $loans = get_loans($userInfo['id']);
-                    } catch (Exception $e) {
-                        redirect('../lib/error.php');
-                    }
+                    <!-- User removal button -->
+                    <?php if ($_SESSION['user']['id'] != $userInfo['id']): ?>
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">
+                            Remove User
+                        </button>
+                    <?php endif; ?>
 
-                    echo '<p><strong>Tax Code:</strong> ' . htmlspecialchars($userInfo['patronInfo']['tax_code']) . '</p>';
+                </div>
 
-                    echo '<div class="d-flex justify-content-between align-items-center">';
-                    echo '<p><strong>Number of Delays:</strong> ' . htmlspecialchars($userInfo['patronInfo']['n_delays']) . '</p>';
-                    if ($userInfo['patronInfo']['n_delays'] > 0) {
-                        echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">Reset Delays</button>';
-                    }
-                    echo '</div>';
+                <div class="compact-info">
+                    <?php if ($patronInfo): ?>
+                        <!-- All loans -->
+                        <?php if (!empty($loans)): ?>
+                            <h5 class="mt-3">Loans</h5>
+                            <div class="list-group scrollable-loans">
+                                <?php foreach ($loans as $loan): ?>
+                                    <?php
+                                    try {
+                                        $start = (new DateTime($loan['start']))->format('Y-m-d H:i:s');
+                                        $due = (new DateTime($loan['due']))->format('Y-m-d H:i:s');
+                                        $returned = $loan['returned']
+                                            ? (new DateTime($loan['returned']))->format('Y-m-d H:i:s')
+                                            : null;
+                                    } catch (Exception $e) {
+                                        $start = $due = $returned = 'Error parsing date';
+                                    }
+                                    ?>
+                                    <div class="list-group-item">
+                                        <div class="loan-card-header">
+                                            <h4>
+                                                <?= htmlspecialchars($loan['title']) ?>
+                                                <span class="isbn"><?= htmlspecialchars($loan['isbn']) ?></span>
+                                            </h4>
+                                            <?php if (!$returned): ?>
+                                                <button class="btn btn-success btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#returnCopyModal"
+                                                        data-loan-id="<?= htmlspecialchars($loan['id']) ?>">
+                                                    <i class="bi bi-box-arrow-in-down-left"></i> Return copy
+                                                </button>
+                                                <button class="btn btn-warning btn-sm ms-2"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#postponeDueModal"
+                                                        data-loan-id="<?= htmlspecialchars($loan['id']) ?>">
+                                                    <i class="bi bi-clock"></i> Postpone due
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="loan-card-body">
+                                            <p>
+                                                <strong>Branch:</strong> <?= htmlspecialchars($loan['address'] . ' - ' . $loan['city']) ?>
+                                            </p>
+                                            <p><strong>Start Date:</strong> <?= $start ?></p>
+                                            <p><strong>Due Date:</strong> <?= $due ?></p>
+                                            <?php if ($returned): ?>
+                                                <p><strong>Returned on:</strong> <?= $returned ?></p>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <p>No loans.</p>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
 
-                    echo '<div class="d-flex justify-content-between align-items-center">';
-                    echo '<p><strong>Category:</strong> ' . htmlspecialchars($userInfo['patronInfo']['category']) . '</p>';
-                    echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#changeCategoryModal">Change Category</button>';
-                    echo '</div>';
-
-                    if (!empty($loans)) {
-                        echo '<h5 class="mt-3">Loans</h5>';
-                        echo '<div class="list-group scrollable-loans">';
-                        foreach ($loans as $loan) {
-                            try {
-                                $start = new DateTime($loan['start']);
-                                $due = new DateTime($loan['due']);
-                                $start = $start->format('Y-m-d H:i:s');
-                                $due = $due->format('Y-m-d H:i:s');
-                                $returned = null;
-                                if ($loan['returned'] != null) {
-                                    $returned = new DateTime($loan['returned']);
-                                    $returned = $returned->format('Y-m-d H:i:s');
-                                }
-                            } catch (Exception $e) {
-                                echo 'Some error occurred with the dates.';
-                            }
-
-                            $branch = $loan['address'] . ' - ' . $loan['city'];
-                            $isbn = $loan['isbn'];
-                            $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
-
-                            echo '<div class="list-group-item">';
-                            echo '<div class="loan-card-header">';
-                            echo "<h4>{$titleWithIsbn}</h4>";
-
-                            if (!$returned) {
-                                echo '<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#returnCopyModal" data-loan-id="' . htmlspecialchars($loan['id']) . '"><i class="bi bi-box-arrow-in-down-left"></i> Return copy</button>';
-                            }
-
-                            if (!$returned) {
-                                echo '<button class="btn btn-warning btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#postponeDueModal" data-loan-id="' . htmlspecialchars($loan['id']) . '"><i class="bi bi-clock"></i> Postpone due</button>';
-                            }
-
-                            echo '</div>';
-                            echo '<div class="loan-card-body">';
-                            echo '<p><strong>Branch:</strong> ' . $branch . '</p>';
-                            echo '<p><strong>Start Date:</strong> ' . $start . '</p>';
-                            echo '<p><strong>Due Date:</strong> ' . $due . '</p>';
-                            if ($returned) {
-                                echo '<p><strong>Returned on:</strong> ' . $returned . '</p>';
-                            }
-                            echo '</div>';
-                            echo '</div>';
-                        }
-                        echo '</div>';
-                    } else {
-                        echo '<p>No loans.</p>';
-                    }
-
-                }
-                echo '</div>';
-                echo '</div>';
-
-            } else {
-
-                echo '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#restoreUserModal">Restore this user</button>';
-                echo '<div class="card-header bg-primary text-white">User ' . htmlspecialchars($userInfo['email']) . '</div>';
-                echo '<div class="card-body">';
-                echo '<p>This user has been removed</p>';
-            }
-        } else {
-            echo '<div class="mt-4 alert alert-danger">No user found with the given email address.</div>';
-        }
-    }
-    ?>
+            <?php else: ?>
+                <!-- Removed user -->
+                <div class="">
+                    <h5>User <?= $email ?> has been removed.</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#restoreUserModal">
+                        Restore this user
+                    </button>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
+        <div class="mt-4 alert alert-danger">
+            No user found with the given email address.
+        </div>
+    <?php endif; ?>
 
 </div>
 
