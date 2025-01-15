@@ -1,6 +1,7 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
 $user_type = $_SESSION['user']['type'];
+$bookCatalogPages = ['catalog.php', 'book.php']
 ?>
 
 <head>
@@ -27,7 +28,7 @@ $user_type = $_SESSION['user']['type'];
             <!-- Left-aligned links -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'catalog.php') ? 'active' : ''; ?>"
+                    <a class="nav-link <?php echo (in_array($current_page, $bookCatalogPages)) ? 'active' : ''; ?>"
                        href="../catalog/catalog.php">Book catalog</a>
                 </li>
                 <li class="nav-item">
