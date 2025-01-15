@@ -46,20 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
 </head>
 
 
-<h5>Request a loan</h5>
+<h5 class="mb-1">Request a loan</h5>
 
-<form method="POST" action="">
-    <div class="mb-3">
-        <input type="hidden" name="isbn" value=" <?php echo htmlspecialchars($isbn); ?> ">
+<form method="POST" action="" class="row g-3 mt-1">
+    <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($isbn); ?>">
 
-        <!-- Branch selection -->
-        <div>
-            <label for="branch" class="form-label">Do you have a preferred branch?</label>
-            <select name="branch" id="branch" class="form-select"
-                    aria-label="Default select example">
+    <!-- Form Row -->
+    <div class="row align-items-end">
+
+        <!-- Branch Selection -->
+        <div class="col-md-4">
+            <label for="branch" class="form-label mb-1">Do you have a preferred branch?</label>
+            <select name="branch" id="branch" class="form-select" aria-label="Default select example">
                 <option selected value="noPreference">No preference</option>
                 <?php
-
                 try {
                     $branches = get_branches();
                 } catch (Exception $e) {
@@ -70,18 +70,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['isbn'])) {
                     $branchString = $branch['city'] . ' - ' . $branch['address'];
                     echo '<option value="' . $branch['id'] . '">' . $branchString . '</option>';
                 }
-
                 ?>
             </select>
         </div>
 
-        <div class="form-text">If no preference is specified, a copy can be
-            provided from any branch.
+        <!-- Submit Button -->
+        <div class="col-md-2 text-end">
+            <button type="submit" name="submitButton" class="btn btn-primary w-100">Request</button>
         </div>
-
     </div>
-    <button type="submit" name="submitButton" class="btn btn-primary">Request</button>
 
+    <div class="form-text mt-1">If no preference is specified, a copy can be provided from any branch.</div>
+
+    <!-- Alert Message -->
     <?php if ($result): ?>
         <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
              role="alert">
