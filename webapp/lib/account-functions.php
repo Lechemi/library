@@ -3,10 +3,10 @@
 include_once('../lib/connection.php');
 
 /**
- * Retrieves the user with email $usr and password $psw.
+ * Authenticates user with email $usr and password $psw.
  * @throws Exception
  */
-function retrieve_user($usr, $psw): array
+function authenticate($usr, $psw): array
 {
     if (!$usr || !$psw) throw new Exception("User and password are required");
 
@@ -22,11 +22,13 @@ function retrieve_user($usr, $psw): array
 
     $user = pg_fetch_all($result);
 
-    if (empty($user)) throw new Exception("User not found!");
+    if (empty($user))
+        throw new Exception("User not found!");
 
     $user = $user[0];
 
-    if ($psw != $user['password']) throw new Exception("Password is incorrect!");
+    if ($psw != $user['password'])
+        throw new Exception("Password is incorrect!");
 
     unset($user['password']);
 

@@ -16,7 +16,7 @@ if (isset($_POST) && !empty($_POST['usr']) && !empty($_POST['psw'])) {
     unset($_SESSION['login_error']);
 
     try {
-        $user = retrieve_user($email, $psw);
+        $user = authenticate($email, $psw);
         $_SESSION['user'] = $user;
     } catch (Exception $e) {
         $_SESSION['login_error'] = $e->getMessage();
