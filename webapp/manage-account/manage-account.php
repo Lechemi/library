@@ -13,7 +13,6 @@ $userType = $user['type'];
 $categoryString = '';
 $taxCode = '';
 $nDelays = '';
-
 if ($userType === 'patron') {
     try {
         $patronInfo = get_patron($user['id'])[0];
