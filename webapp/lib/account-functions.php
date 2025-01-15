@@ -37,7 +37,7 @@ function retrieve_user($usr, $psw): array
  * Retrieves info about the user with email $email, even if they're removed.
  * @throws Exception
  */
-function get_user_with_email($email)
+function get_user_with_email($email): array
 {
     if (!$email) throw new Exception("Email is required");
 
@@ -48,13 +48,14 @@ function get_user_with_email($email)
 
     $db = open_connection();
     pg_prepare($db, 'user-info', $sql);
-    $result = pg_execute($db, 'user-info', array());
+    @ $result = pg_execute($db, 'user-info', array());
+    if (!$result)
+        throw new Exception("Error while fetching user.");
 
     close_connection($db);
 
     $user = pg_fetch_all($result);
-
-    if (empty($user)) throw new Exception("No user with such email");
+    if (empty($user)) return [];
 
     $user = $user[0];
 
