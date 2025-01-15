@@ -47,9 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .compact-info p {
+            margin-bottom: 0.3rem; /* Reduced spacing */
+        }
+    </style>
 </head>
 
-<h4>Manage copies for this book</h4>
+<h5 class="mb-1">Manage copies for this book</h5>
 
 <?php if ($result): ?>
     <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
@@ -59,17 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 <?php endif; ?>
 
-<form method="POST" action="">
-    <div class="mb-3">
-        <input type="hidden" name="isbn" value=" <?php echo htmlspecialchars($isbn); ?> ">
+<form class="row g-3 mt-2" method="POST" action="">
+    <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($isbn); ?>">
+
+    <!-- Form Row -->
+    <div class="row">
 
         <!-- Branch selection -->
-        <div class="mb-3">
-            <label for="branch" class="form-label">Select the desired branch</label>
-            <select name="branch" id="branch" class="form-select"
-                    aria-label="Default select example">
+        <div class="col-md-4">
+            <label for="branch" class="form-label mb-1">Select the desired branch</label>
+            <select name="branch" id="branch" class="form-select" aria-label="Default select example">
                 <?php
-
                 try {
                     $branches = get_branches();
                     foreach ($branches as $branch) {
@@ -79,33 +84,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } catch (Exception $e) {
                     redirect('../lib/error.php');
                 }
-
                 ?>
             </select>
         </div>
 
         <!-- Quantity of copies -->
-        <div class="mb-3">
-            <label for="quantity" class="form-label">Enter the number of copies</label>
+        <div class="col-md-4">
+            <label for="quantity" class="form-label mb-1">Enter the number of copies</label>
             <input type="number" name="quantity" id="quantity" class="form-control" min="1" placeholder="Enter quantity"
                    required>
         </div>
 
         <!-- Action (Add/Remove) -->
-        <div class="mb-3">
-            <div class="btn-group" role="group" aria-label="Action toggle">
+        <div class="col-md-4">
+            <label class="form-label mb-1">Action</label>
+            <div class="btn-group w-100" role="group" aria-label="Action toggle">
                 <input type="radio" class="btn-check" id="add" name="action" value="add" required>
                 <label class="btn btn-outline-primary" for="add">Add</label>
 
                 <input type="radio" class="btn-check" id="remove" name="action" value="remove" required>
-                <label class="btn btn-outline-danger" for="remove">Remove</label>
+                <label class="btn btn-outline-primary" for="remove">Remove</label>
             </div>
         </div>
-
-        <div class="form-text">You can only remove copies that are not being loaned.</div>
     </div>
-    <button type="submit" name="submitButton" class="btn btn-primary">Apply</button>
+
+    <div class="form-text mt-1">You can only remove copies that are not being loaned.</div>
+    <div class="col-12 mt-0">
+        <button type="submit" name="submitButton" class="btn btn-primary mt-3">Apply</button>
+    </div>
 </form>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
