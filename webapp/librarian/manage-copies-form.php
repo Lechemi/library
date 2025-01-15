@@ -56,23 +56,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <h5 class="mb-1">Manage copies for this book</h5>
 
-<?php if ($result): ?>
-    <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
-         role="alert">
-        <?php echo htmlspecialchars($result['msg']); ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-<?php endif; ?>
-
 <form class="row g-3 mt-2" method="POST" action="">
     <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($isbn); ?>">
 
     <!-- Form Row -->
-    <div class="row">
+    <div class="row align-items-end">
 
         <!-- Branch selection -->
-        <div class="col-md-4">
-            <label for="branch" class="form-label mb-1">Select the desired branch</label>
+        <div class="col-md-3">
+            <label for="branch" class="form-label mb-1">Branch</label>
             <select name="branch" id="branch" class="form-select" aria-label="Default select example">
                 <?php
                 try {
@@ -89,14 +81,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <!-- Quantity of copies -->
-        <div class="col-md-4">
-            <label for="quantity" class="form-label mb-1">Enter the number of copies</label>
+        <div class="col-md-2">
+            <label for="quantity" class="form-label mb-1">Number of copies</label>
             <input type="number" name="quantity" id="quantity" class="form-control" min="1" placeholder="Enter quantity"
                    required>
         </div>
 
         <!-- Action (Add/Remove) -->
-        <div class="col-md-4">
+        <div class="col-md-2">
             <label class="form-label mb-1">Action</label>
             <div class="btn-group w-100" role="group" aria-label="Action toggle">
                 <input type="radio" class="btn-check" id="add" name="action" value="add" required>
@@ -106,14 +98,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label class="btn btn-outline-primary" for="remove">Remove</label>
             </div>
         </div>
+
+        <!-- Submit Button -->
+        <div class="col-md-1 text-end">
+            <button type="submit" name="submitButton" class="btn btn-primary w-100">Apply</button>
+        </div>
     </div>
 
-    <div class="form-text mt-1">You can only remove copies that are not being loaned.</div>
-    <div class="col-12 mt-0">
-        <button type="submit" name="submitButton" class="btn btn-primary mt-3">Apply</button>
-    </div>
+    <div class="form-text mt-1">Keep in mind you can only remove copies that are not being loaned.</div>
 </form>
 
+<?php if ($result): ?>
+    <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+         role="alert">
+        <?php echo htmlspecialchars($result['msg']); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
