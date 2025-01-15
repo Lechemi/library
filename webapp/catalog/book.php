@@ -81,7 +81,7 @@ if (!empty($_GET['isbn'])) {
 
             <p><?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
 
-            <p><strong><i class="bi bi-vector-pen"></i> Author:</strong>
+            <p><i class="bi bi-vector-pen"></i> Written by
                 <?php
                 foreach ($bookDetails['authors'] as $author) {
                     echo htmlspecialchars($author['name']);
@@ -91,8 +91,8 @@ if (!empty($_GET['isbn'])) {
                 }
                 ?>
             </p>
-            <p><strong><i class="bi bi-bank"></i>
-                    Publisher:</strong> <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
+            <p><i class="bi bi-bank"></i>
+                    Published by <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
         </div>
 
         <?php
