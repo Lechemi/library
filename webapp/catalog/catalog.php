@@ -67,15 +67,19 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <div class="container my-3">
     <form class="d-flex justify-content-center" method="GET" action="">
         <div class="input-group rounded-4" style="max-width: 400px;">
-            <input class="form-control rounded-4" type="search" placeholder="Enter a title, an ISBN code or an author"
-                   aria-label="Search" name="searchInput">
-            <button class="btn rounded-4" type="submit">Search</button>
+            <input
+                    class="form-control rounded-4"
+                    type="search"
+                    placeholder="Enter a title, an ISBN code or an author"
+                    aria-label="Search"
+                    name="searchInput"
+                    value="<?= htmlspecialchars($_GET['searchInput'] ?? '') ?>"
+            >
+            <button class="btn btn-primary rounded-4" type="submit">Search</button>
+            <a href="?" class="btn btn-secondary rounded-4">Clear</a>
         </div>
     </form>
-
-    <!-- TODO: clear search button -->
 </div>
-
 
 <div class="container">
 
