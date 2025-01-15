@@ -16,8 +16,7 @@ if (!empty($_GET['isbn'])) {
         redirect('../lib/error.php');
     }
 
-    if ($_SESSION['user']['type'] == 'patron')
-        $bookDetails['available_copies'] = get_available_copies($isbn, null);
+    $bookDetails['available_copies'] = get_available_copies($isbn, null);
 } else {
     redirect('../lib/error.php');
 }
@@ -102,7 +101,7 @@ if (!empty($_GET['isbn'])) {
             if ($copyCount == 0) {
                 echo '<p><strong>There are no available copies.</strong></p>';
             } else if ($copyCount == 1) {
-                echo '<p><strong>There\'s one available copy.</strong></p>';
+                echo '<p class="text-success"><strong>There\'s one available copy.</strong></p>';
                 if ($_SESSION['user']['type'] == 'patron')
                     include '../patron/loan-request-form.php';
             } else {
