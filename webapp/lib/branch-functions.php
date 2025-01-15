@@ -24,6 +24,34 @@ function get_branches(): array
 }
 
 /**
+ * Retrieves all branches that have copies for the specified
+ * book, ordered by city, address.
+ * @throws Exception
+ */
+function branches_with_book($isbn): array
+{
+    if (!$isbn)
+        throw new Exception("ISBN is required.");
+
+    $sql = "
+        SELECT DISTINCT b.id, b.address, b.city, b.name
+        FROM library.branch b 
+            INNER JOIN library.book_copy bc ON b.id = bc.branch
+        WHERE bc.book = '$isbn'
+        ORDER BY b.city, b.address
+    ";
+
+    $db = open_connection();
+    pg_prepare($db, 'branches-with-book', $sql);
+    $result = pg_execute($db, 'branches-with-book', array());
+    close_connection($db);
+
+    if ($result) return pg_fetch_all($result);
+
+    throw new Exception("Error while fetching branches.");
+}
+
+/**
  * Retrieves stats about the specified branch.
  * - number of managed books
  * - number of managed copies
