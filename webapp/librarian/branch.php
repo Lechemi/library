@@ -82,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
 
                 <div>
                     <?php if (!empty($stats['delays'])): ?>
-                        <div class="table-responsive">
-                            <table class="table">
+                        <div class="table-responsive rounded-3">
+                            <table class="table table-borderless">
                                 <thead>
                                 <tr>
                                     <th>ISBN</th>
