@@ -112,7 +112,7 @@ if ($email) {
             top: 0;
             background-color: #ffffff; /* Match the table's background */
             z-index: 1; /* Ensure the header stays above other content */
-            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for better visibility */
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for better visibility */
         }
 
         .compact-info p {
@@ -147,7 +147,8 @@ if ($email) {
                             <a href="add-user.php?form=patron" class="text-primary">add a new one</a>
                         </label>
                         <input type="email" class="form-control" name="userEmail" id="userEmail"
-                               placeholder="Enter user's email" required>
+                               placeholder="Enter user's email"
+                               value="<?= htmlspecialchars($email ?? ($_POST['userEmail'] ?? '')) ?>" required>
                     </div>
 
                     <!-- Submit Button -->
@@ -168,7 +169,7 @@ if ($email) {
         </div>
     <?php endif; ?>
 
-    <?php if ($userInfo): ?>
+    <?php if (isset($userInfo) and $userInfo): ?>
         <div class="custom-card mt-4">
             <?php if (!$isRemoved): ?>
 
@@ -187,13 +188,15 @@ if ($email) {
                                 Number of delays:</strong> <?= $nDelays; ?></p>
 
                         <!-- Change category button -->
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#changeCategoryModal">
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#changeCategoryModal">
                             Change Category
                         </button>
 
                         <!-- Reset delays button -->
                         <?php if ($nDelays > 0): ?>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#resetDelaysModal">
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#resetDelaysModal">
                                 Reset Delays
                             </button>
                         <?php endif; ?>
@@ -271,7 +274,7 @@ if ($email) {
                                 </table>
                             </div>
                         <?php else: ?>
-                            <p>No loans.</p>
+                            <p><strong>This patron has yet to make a loan.</strong></p>
                         <?php endif; ?>
 
                     <?php endif; ?>
@@ -289,9 +292,9 @@ if ($email) {
                 </div>
             <?php endif; ?>
         </div>
-    <?php else: ?>
-        <div class="mt-4 alert alert-danger">
-            No user found with the given email address.
+    <?php elseif (isset($email)): ?>
+        <div class="custom-card mt-4">
+            <h6>No user was found with the given email address.</h6>
         </div>
     <?php endif; ?>
 
