@@ -83,7 +83,6 @@ if (!empty($_GET['author'])) {
 <div class="container my-4">
     <div class="custom-card">
         <div class="card-body compact-info">
-
             <h2 class="card-title mb-1">
                 <strong><?= htmlspecialchars($fullName) ?></strong>
             </h2>
