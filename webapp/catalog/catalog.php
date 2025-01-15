@@ -66,7 +66,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <!-- Search bar -->
 <div class="container my-3">
     <form class="d-flex justify-content-center" method="GET" action="">
-        <div class="input-group rounded-4" style="max-width: 400px;">
+        <div class="input-group rounded-4" style="max-width: 500px;">
             <input
                     class="form-control rounded-4"
                     type="search"
@@ -75,8 +75,8 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
                     name="searchInput"
                     value="<?= htmlspecialchars($_GET['searchInput'] ?? '') ?>"
             >
-            <button class="btn btn-primary rounded-4" type="submit">Search</button>
-            <a href="?" class="btn btn-secondary rounded-4">Clear</a>
+            <button class="btn btn-primary" type="submit">Search</button>
+            <a href="?" class="btn btn-secondary">Clear</a>
         </div>
     </form>
 </div>
