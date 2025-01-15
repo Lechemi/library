@@ -5,6 +5,8 @@ include_once('../lib/redirect.php');
 include_once('../lib/branch-functions.php');
 
 session_start();
+if (!isset($_SESSION['user'])) redirect('../index.php');
+if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
 function has_changes($oldData, $newData, $fieldMapping): bool {
     foreach ($fieldMapping as $oldKey => $newKey) {
@@ -22,9 +24,6 @@ function has_changes($oldData, $newData, $fieldMapping): bool {
     }
     return false;
 }
-
-if (!isset($_SESSION['user'])) redirect('../index.php');
-if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
 if (!empty($_GET['author'])) {
 

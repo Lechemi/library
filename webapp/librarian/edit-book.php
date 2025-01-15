@@ -7,7 +7,7 @@ include_once('../lib/branch-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
-// todo check that the user is a librarian
+if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
 if (!empty($_GET['isbn'])) {
     $isbn = $_GET['isbn'];

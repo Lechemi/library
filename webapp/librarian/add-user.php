@@ -6,7 +6,7 @@ include_once('../lib/account-functions.php');
 session_start();
 
 if (!isset($_SESSION['user'])) redirect('../index.php');
-// todo check the user is a librarian
+if ($_SESSION['user']['type'] != 'librarian') redirect('../index.php');
 
 $result = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
