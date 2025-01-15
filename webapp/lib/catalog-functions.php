@@ -540,3 +540,27 @@ function get_authors($searchInput): array
 
     return pg_fetch_all($result);
 }
+
+/**
+ * Adds a new publisher.
+ * @throws Exception
+ */
+function add_publisher($name): void
+{
+    if (!$name)
+        throw new Exception('You must provide a name.');
+
+    $sql = "
+        INSERT INTO library.publisher (name)
+        VALUES ('$name')
+    ";
+
+    $db = open_connection();
+    pg_prepare($db, 'add-publisher', $sql);
+    @ $result = pg_execute($db, 'add-publisher', array());
+
+    if (!$result)
+        throw new Exception("Publisher $name already exists.");
+
+    close_connection($db);
+}
