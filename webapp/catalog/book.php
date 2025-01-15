@@ -79,7 +79,7 @@ if (!empty($_GET['isbn'])) {
         <div class="card-body compact-info">
             <p class="text-muted"><?php echo htmlspecialchars($isbn); ?></p>
 
-            <p><?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
+            <p><i class="bi bi-book"></i> <?php echo htmlspecialchars($bookDetails['blurb']); ?></p>
 
             <p><i class="bi bi-vector-pen"></i> Written by
                 <?php
@@ -92,7 +92,7 @@ if (!empty($_GET['isbn'])) {
                 ?>
             </p>
             <p><i class="bi bi-bank"></i>
-                    Published by <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
+                Published by <?php echo htmlspecialchars($bookDetails['publisher']); ?></p>
         </div>
 
         <?php
@@ -106,7 +106,7 @@ if (!empty($_GET['isbn'])) {
                 if ($_SESSION['user']['type'] == 'patron')
                     include '../patron/loan-request-form.php';
             } else {
-                echo '<p><strong>There are ' . htmlspecialchars($copyCount) . ' available copies.</strong></p>';
+                echo '<p class="text-success"><strong>There are ' . htmlspecialchars($copyCount) . ' available copies.</strong></p>';
                 if ($_SESSION['user']['type'] == 'patron')
                     include '../patron/loan-request-form.php';
             }
