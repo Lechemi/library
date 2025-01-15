@@ -84,6 +84,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             book</a>
         <a href="../librarian/search-authors.php" class="btn btn-primary"> <i class="bi bi-person-vcard"></i> Search and
             add authors</a>
+        <a href="../librarian/add-publisher.php" class="btn btn-primary"> <i class="bi bi-book"></i> Add a new publisher</a>
     <?php endif; ?>
 
     <!-- Displayed book(s) -->
