@@ -96,8 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div>
                 <?php if ($userType === 'patron'): ?>
                     <p><strong><i class="bi bi-person-bounding-box"></i> <?= $categoryString; ?></strong></p>
-                    <p><strong>Tax Code:</strong> <?= $taxCode; ?></p>
-                    <p class="mb-0"><strong>Number of late returns:</strong> <?= $nDelays; ?></p>
+                    <p><strong>
+                            <i class="bi bi-card-text"></i>
+                            Tax Code:</strong> <?= $taxCode; ?></p>
+                    <p class="mb-0"><strong><i class="bi bi-hourglass-bottom"></i> Number of late returns:</strong> <?= $nDelays; ?></p>
                     <p class="form-text mt-0">
                         A loan can be granted only if the requesting patron has fewer than 5 late returns on record.
                     </p>
