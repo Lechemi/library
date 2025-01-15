@@ -140,8 +140,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
             </div>
             <div class="modal-body">
                 Are you sure you want to remove this branch? This action cannot be undone.
-                <!-- todo make this next sentence more visible -->
-                If the operation is successful, you will be taken back to the 'Branches' page.
+                <!-- Updated to make the next sentence more visible -->
+                <p class="mt-3 p-2 text bg-light border rounded">
+                    If the operation is successful, you will be taken back to the 'Branches' page.
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -153,6 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
         </div>
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
