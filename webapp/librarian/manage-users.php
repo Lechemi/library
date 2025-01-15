@@ -98,30 +98,21 @@ if ($email) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        .list-group-item {
-            font-size: 0.9rem;
-            padding: 0.4rem 0.8rem;
-            margin-bottom: 0.4rem;
-            border: 1px solid #ddd;
-            border-radius: 0.25rem;
-        }
-
-        .loan-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.4rem;
-        }
-
         .loan-card-header button {
             margin-left: auto;
         }
 
         .scrollable-loans {
-            max-height: 300px;
+            max-height: 400px; /* Set the desired height for the scrollable area */
             overflow-y: auto;
-            border: 1px solid #ddd;
-            padding: 0.5rem;
+        }
+
+        .scrollable-loans table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #ffffff; /* Match the table's background */
+            z-index: 1; /* Ensure the header stays above other content */
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for better visibility */
         }
 
         .compact-info p {
@@ -219,61 +210,70 @@ if ($email) {
 
                 </div>
 
-                <div class="compact-info">
+                <div class="card-footer compact-info mt-3">
                     <?php if ($patronInfo): ?>
+
                         <!-- All loans -->
                         <?php if (!empty($loans)): ?>
-                            <h5 class="mt-3">Loans</h5>
-                            <div class="list-group scrollable-loans">
-                                <?php foreach ($loans as $loan): ?>
-                                    <?php
-                                    try {
-                                        $start = (new DateTime($loan['start']))->format('Y-m-d H:i:s');
-                                        $due = (new DateTime($loan['due']))->format('Y-m-d H:i:s');
-                                        $returned = $loan['returned']
-                                            ? (new DateTime($loan['returned']))->format('Y-m-d H:i:s')
-                                            : null;
-                                    } catch (Exception $e) {
-                                        $start = $due = $returned = 'Error parsing date';
-                                    }
-                                    ?>
-                                    <div class="list-group-item">
-                                        <div class="loan-card-header">
-                                            <h4>
-                                                <?= htmlspecialchars($loan['title']) ?>
-                                                <span class="isbn"><?= htmlspecialchars($loan['isbn']) ?></span>
-                                            </h4>
-                                            <?php if (!$returned): ?>
-                                                <button class="btn btn-success btn-sm"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#returnCopyModal"
-                                                        data-loan-id="<?= htmlspecialchars($loan['id']) ?>">
-                                                    <i class="bi bi-box-arrow-in-down-left"></i> Return copy
-                                                </button>
-                                                <button class="btn btn-warning btn-sm ms-2"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#postponeDueModal"
-                                                        data-loan-id="<?= htmlspecialchars($loan['id']) ?>">
-                                                    <i class="bi bi-clock"></i> Postpone due
-                                                </button>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="loan-card-body">
-                                            <p>
-                                                <strong>Branch:</strong> <?= htmlspecialchars($loan['address'] . ' - ' . $loan['city']) ?>
-                                            </p>
-                                            <p><strong>Start Date:</strong> <?= $start ?></p>
-                                            <p><strong>Due Date:</strong> <?= $due ?></p>
-                                            <?php if ($returned): ?>
-                                                <p><strong>Returned on:</strong> <?= $returned ?></p>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
+                            <h4>Loans</h4>
+                            <div class="table-responsive scrollable-loans rounded-4">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>ISBN</th>
+                                        <th>Branch</th>
+                                        <th>Start Date</th>
+                                        <th>Due Date</th>
+                                        <th>Returned On</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach ($loans as $loan): ?>
+                                        <?php
+                                        try {
+                                            $start = (new DateTime($loan['start']))->format('Y-m-d H:i:s');
+                                            $due = (new DateTime($loan['due']))->format('Y-m-d H:i:s');
+                                            $returned = $loan['returned']
+                                                ? (new DateTime($loan['returned']))->format('Y-m-d H:i:s')
+                                                : null;
+                                        } catch (Exception $e) {
+                                            $start = $due = $returned = 'Error parsing date';
+                                        }
+                                        ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($loan['title']) ?></td>
+                                            <td class="isbn"><?= htmlspecialchars($loan['isbn']) ?></td>
+                                            <td><?= htmlspecialchars($loan['address'] . ' - ' . $loan['city']) ?></td>
+                                            <td><?= $start ?></td>
+                                            <td><?= $due ?></td>
+                                            <td><?= $returned ?? 'Not Returned' ?></td>
+                                            <td>
+                                                <?php if (!$returned): ?>
+                                                    <button class="btn btn-success btn-sm"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#returnCopyModal"
+                                                            data-loan-id="<?= htmlspecialchars($loan['id']) ?>">
+                                                        <i class="bi bi-box-arrow-in-down-left"></i> Return
+                                                    </button>
+                                                    <button class="btn btn-warning btn-sm ms-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#postponeDueModal"
+                                                            data-loan-id="<?= htmlspecialchars($loan['id']) ?>">
+                                                        <i class="bi bi-clock"></i> Postpone
+                                                    </button>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         <?php else: ?>
                             <p>No loans.</p>
                         <?php endif; ?>
+
                     <?php endif; ?>
                 </div>
 
