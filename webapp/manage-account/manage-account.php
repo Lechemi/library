@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php else: ?>
                 <p><strong><i class="bi bi-person-bounding-box"></i> Librarian</strong></p>
             <?php endif; ?>
-            
+
         </div>
 
         <div class="card-footer mt-3">
