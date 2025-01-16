@@ -44,6 +44,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             font-size: 0.8rem;
             color: #888;
         }
+
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -66,20 +67,21 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
 <!-- Search bar -->
 <div class="container my-3">
     <form class="d-flex justify-content-center" method="GET" action="">
-        <div class="input-group rounded-4" style="max-width: 500px;">
+        <div class="input-group" style="max-width: 500px;">
             <input
-                    class="form-control rounded-4"
+                    class="form-control rounded-3 me-2"
                     type="search"
-                    placeholder="Enter a title, an ISBN code or an author"
+                    placeholder="Enter a title, an ISBN code, or an author"
                     aria-label="Search"
                     name="searchInput"
                     value="<?= htmlspecialchars($_GET['searchInput'] ?? '') ?>"
             >
-            <button class="btn btn-primary" type="submit">Search</button>
-            <a href="?" class="btn btn-secondary">Clear</a>
+            <button class="btn btn-primary rounded-3 me-2" type="submit"><i class="bi bi-search"></i></button>
+            <a href="?" class="btn btn-secondary rounded-3">Clear</a>
         </div>
     </form>
 </div>
+
 
 <div class="container">
 
