@@ -1,4 +1,3 @@
--- auto-generated definition
 create table author
 (
     id         serial
