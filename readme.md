@@ -1,16 +1,13 @@
 # Library management system
 
-This project is a Library management system that integrates a PostgreSQL database and a PHP-based web application designed for both librarians and patrons.
+This project is a library management system that integrates a PostgreSQL database and a PHP-based web application designed for both librarians and patrons.
 
-## Requirements
+## Running locally
 
+### 0. Requirements
 1. **PHP**: version 8.3 or higher.
 2. **PostgreSQL**: version 17 or higher.
 3. **Web Server** of choice (PHP 5.4 and later have a built-in web server).
-
----
-
-## Getting started
 
 ### 1. Clone the repository
 ```zsh
