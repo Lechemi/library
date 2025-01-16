@@ -27,8 +27,8 @@ CREATE OR REPLACE FUNCTION set_default_loan_values() RETURNS TRIGGER
 AS
 $$
 BEGIN
-    new.start := NOW();
-    new.due := NOW() + INTERVAL '30 days';
+    new.start := CURRENT_DATE;
+    new.due := (CURRENT_DATE + INTERVAL '30 days');
     new.returned := NULL;
 
     RETURN new;
@@ -243,33 +243,28 @@ CREATE TRIGGER bu_loan_enforce_due_policy
     FOR EACH ROW
 EXECUTE PROCEDURE enforce_due_policy();
 
+-- this is just for testing, delete this!!!!
+drop trigger bu_loan_enforce_due_policy on loan;
 
-
--- Cannot return the catalog in a past or future date.
-CREATE OR REPLACE FUNCTION check_return_timestamp() RETURNS TRIGGER
+-- Cannot return the copy in a past or future date.
+CREATE OR REPLACE FUNCTION check_return_date() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
 $$
-DECLARE
-    _precision INTERVAL;
 BEGIN
-    _precision := INTERVAL '5 seconds';
-    IF new.returned != old.returned AND
-       new.returned NOT BETWEEN NOW() - _precision AND NOW() + _precision THEN
-        RAISE EXCEPTION 'Cannot return the catalog in a past or future date.';
+    IF new.returned IS DISTINCT FROM old.returned AND new.returned != CURRENT_DATE THEN
+        RAISE EXCEPTION 'Cannot return the copy in a past or future date.';
     END IF;
 
     RETURN new;
 END;
 $$;
 
-CREATE TRIGGER bu_loan_check_return_timestamp
+CREATE TRIGGER bu_loan_check_return_date
     BEFORE UPDATE
     ON loan
     FOR EACH ROW
-EXECUTE PROCEDURE check_return_timestamp();
-
-
+EXECUTE PROCEDURE check_return_date();
 
 /*
     If the loan has expired, the patron's delay counter will be

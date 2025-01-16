@@ -20,6 +20,6 @@ BEGIN
                  INNER JOIN library.book_copy bc ON bc.id = loan.copy
         WHERE returned IS NULL
           AND bc.branch = my_branch
-          AND NOW() > loan.due;
+          AND CURRENT_DATE > loan.due;
 END;
 $$;
