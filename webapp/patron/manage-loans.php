@@ -27,43 +27,42 @@ try {
 
     <style>
         table {
-            font-size: 0.9em; /* Make all text smaller */
-            width: 100%; /* Ensure the table takes up available space */
-            table-layout: fixed; /* Makes sure the columns obey the defined widths */
+            font-size: 0.9em;
+            width: 100%;
+            table-layout: fixed;
         }
 
         th, td {
-            padding: 8px; /* Add some padding for readability */
+            padding: 8px;
             text-align: left;
-            word-wrap: break-word; /* Break long words to prevent overflow */
+            word-wrap: break-word;
         }
 
         th {
-            background-color: #f2f2f2; /* Optional: Light background for header */
+            background-color: #f2f2f2;
         }
 
         .book-column {
-            width: 40%; /* Limit the width of the 'Book' column */
+            width: 40%;
             white-space: nowrap;
             overflow: scroll;
         }
 
-        /* Reduce the width for the 'Started', 'Due', and 'Returned' columns */
         .date-column {
-            width: 10%; /* Allocate less space to the date columns */
+            width: 10%;
         }
 
         .isbn {
-            font-size: 0.8em; /* Smaller font size */
-            color: #888; /* Lighter color */
+            font-size: 0.8em;
+            color: #888;
         }
 
         .custom-card {
-            background-color: #f8f9fa; /* Very light grey background */
-            border: none; /* No border */
-            border-radius: 0.75rem; /* Rounded corners */
-            padding: 1rem; /* Padding for content */
-            position: relative; /* Relative positioning for the button */
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
         }
     </style>
 
@@ -110,7 +109,6 @@ try {
 
                 $branch = $loan['address'] . ' - ' . $loan['city'];
 
-                // Include ISBN next to the title
                 $isbn = $loan['isbn'];
                 $titleWithIsbn = "{$loan['title']} • <span class='isbn'>{$isbn}</span>";
 

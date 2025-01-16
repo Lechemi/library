@@ -165,7 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         const deathDateInput = document.getElementById('deathDate');
         const deadCheckbox = document.getElementById('dead');
 
-        // Listen for changes on the death date input
         deathDateInput.addEventListener('input', function () {
             deadCheckbox.checked = deathDateInput.value.trim() !== '';
         });

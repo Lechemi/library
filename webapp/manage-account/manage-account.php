@@ -57,15 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <style>
         .custom-card {
-            background-color: #f8f9fa; /* Very light grey background */
-            border: none; /* No border */
-            border-radius: 0.75rem; /* Rounded corners */
-            padding: 1rem; /* Padding for content */
-            position: relative; /* Relative positioning for the button */
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
         }
 
         .compact-info p {
-            margin-bottom: 0.3rem; /* Reduced spacing */
+            margin-bottom: 0.3rem;
         }
     </style>
 </head>

@@ -34,21 +34,21 @@ if (!empty($_GET['isbn'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         .compact-info p {
-            margin-bottom: 0.3rem; /* Reduced spacing */
+            margin-bottom: 0.3rem;
         }
 
         .custom-card {
-            background-color: #f8f9fa; /* Very light grey background */
-            border: none; /* No border */
-            border-radius: 0.75rem; /* Rounded corners */
-            padding: 1rem; /* Padding for content */
-            position: relative; /* Relative positioning for the button */
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
         }
 
         .edit-button {
-            position: absolute; /* Position the button */
-            top: 1rem; /* Distance from the top */
-            right: 1rem; /* Distance from the right */
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
         }
     </style>
 </head>

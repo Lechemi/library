@@ -64,7 +64,6 @@ if ($email) {
     }
 
     if ($userInfo) {
-        // Prepare user data
         $isRemoved = $userInfo['removed'] === 't';
         $email = htmlspecialchars($userInfo['email']);
         $name = htmlspecialchars($userInfo['first_name'] . ' ' . $userInfo['last_name']);
@@ -103,50 +102,50 @@ if ($email) {
         }
 
         .small-text {
-            font-size: 0.85rem; /* Adjust as needed */
+            font-size: 0.85rem;
         }
 
         .scrollable-loans {
-            max-height: 400px; /* Set the desired height for the scrollable area */
+            max-height: 400px;
             overflow-y: auto;
         }
 
         .scrollable-loans table thead th {
             position: sticky;
             top: 0;
-            background-color: #ffffff; /* Match the table's background */
-            z-index: 1; /* Ensure the header stays above other content */
-            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for better visibility */
+            background-color: #ffffff;
+            z-index: 1;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
         }
 
         .compact-info p {
-            margin-bottom: 0.3rem; /* Reduced spacing */
+            margin-bottom: 0.3rem;
         }
 
         .custom-card {
-            background-color: #f8f9fa; /* Very light grey background */
-            border: none; /* No border */
-            border-radius: 0.75rem; /* Rounded corners */
-            padding: 1rem; /* Padding for content */
-            position: relative; /* Relative positioning for the button */
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
         }
 
         .hover-lighten {
-            color: #000; /* Default color: black */
+            color: #000;
             transition: color 0.2s ease-in-out;
-            text-decoration: none; /* Ensure no underline by default */
+            text-decoration: none;
         }
 
         .hover-lighten:hover {
-            color: #555; /* Lighter shade on hover */
-            text-decoration: none; /* Ensure no underline on hover */
+            color: #555;
+            text-decoration: none;
         }
 
         .title-column {
-            max-width: 180px; /* Set your desired maximum width */
-            white-space: nowrap; /* Prevent text from wrapping to a new line */
-            overflow: hidden; /* Hide overflow text */
-            text-overflow: ellipsis; /* Add ellipsis (...) for overflowing text */
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
     </style>

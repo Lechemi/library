@@ -17,19 +17,18 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
     <title>Book catalog</title>
 
     <style>
-        /* Step 2: Custom CSS for Hover Effect */
+
         .hover-lighten {
-            color: #000; /* Default color: black */
+            color: #000;
             transition: color 0.2s ease-in-out;
-            text-decoration: none; /* Ensure no underline by default */
+            text-decoration: none;
         }
 
         .hover-lighten:hover {
-            color: #555; /* Lighter shade on hover */
-            text-decoration: none; /* Ensure no underline on hover */
+            color: #555;
+            text-decoration: none;
         }
 
-        /* Custom styles for book list */
         .book-title {
             font-weight: bold;
             font-size: 1.1rem;

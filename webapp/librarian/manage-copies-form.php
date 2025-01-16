@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         .compact-info p {
-            margin-bottom: 0.3rem; /* Reduced spacing */
+            margin-bottom: 0.3rem;
         }
     </style>
 </head>

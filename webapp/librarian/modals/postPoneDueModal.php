@@ -27,10 +27,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         const postponeDueModal = document.getElementById('postponeDueModal');
         postponeDueModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget; // Button that triggered the modal
-            const loanId = button.getAttribute('data-loan-id'); // Extract loan ID
-            const input = document.getElementById('postponeDueInput'); // Hidden input field
-            input.value = loanId; // Set the value to the loan ID
+            const button = event.relatedTarget;
+            const loanId = button.getAttribute('data-loan-id');
+            const input = document.getElementById('postponeDueInput');
+            input.value = loanId;
         });
     });
 </script>
