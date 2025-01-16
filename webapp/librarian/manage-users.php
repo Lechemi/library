@@ -236,10 +236,10 @@ if ($email) {
                                     <?php foreach ($loans as $loan): ?>
                                         <?php
                                         try {
-                                            $start = (new DateTime($loan['start']))->format('Y-m-d H:i:s');
-                                            $due = (new DateTime($loan['due']))->format('Y-m-d H:i:s');
+                                            $start = (new DateTime($loan['start']))->format('Y-m-d');
+                                            $due = (new DateTime($loan['due']))->format('Y-m-d');
                                             $returned = $loan['returned']
-                                                ? (new DateTime($loan['returned']))->format('Y-m-d H:i:s')
+                                                ? (new DateTime($loan['returned']))->format('Y-m-d')
                                                 : null;
                                         } catch (Exception $e) {
                                             $start = $due = $returned = 'Error parsing date';
