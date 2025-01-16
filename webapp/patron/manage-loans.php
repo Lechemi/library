@@ -73,18 +73,18 @@ try {
         </thead>
         <tbody>
         <?php
-        // Loop through each row of data
+
         foreach ($activeLoans as $loan) {
             try {
                 $start = new DateTime($loan['start']);
                 $due = new DateTime($loan['due']);
-                $start = $start->format('Y-m-d H:i:s');
-                $due = $due->format('Y-m-d H:i:s');
+                $start = $start->format('Y-m-d');
+                $due = $due->format('Y-m-d');
 
                 $returned = 'Not returned';
                 if ($loan['returned'] != null) {
                     $returned = new DateTime($loan['returned']);
-                    $returned = $returned->format('Y-m-d H:i:s');
+                    $returned = $returned->format('Y-m-d');
                 }
 
             } catch (DateMalformedStringException $e) {
