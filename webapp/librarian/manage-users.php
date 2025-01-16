@@ -102,6 +102,10 @@ if ($email) {
             margin-left: auto;
         }
 
+        .small-text {
+            font-size: 0.85rem; /* Adjust as needed */
+        }
+
         .scrollable-loans {
             max-height: 400px; /* Set the desired height for the scrollable area */
             overflow-y: auto;
@@ -137,6 +141,14 @@ if ($email) {
             color: #555; /* Lighter shade on hover */
             text-decoration: none; /* Ensure no underline on hover */
         }
+
+        .title-column {
+            max-width: 180px; /* Set your desired maximum width */
+            white-space: nowrap; /* Prevent text from wrapping to a new line */
+            overflow: hidden; /* Hide overflow text */
+            text-overflow: ellipsis; /* Add ellipsis (...) for overflowing text */
+        }
+
     </style>
 </head>
 <body>
@@ -230,11 +242,11 @@ if ($email) {
                         <!-- All loans -->
                         <?php if (!empty($loans)): ?>
                             <h4>Loans</h4>
-                            <div class="table-responsive scrollable-loans rounded-4">
+                            <div class="table-responsive scrollable-loans rounded-4 small-text">
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>Title</th>
+                                        <th class="title-column">Title</th>
                                         <th>ISBN</th>
                                         <th>Branch</th>
                                         <th>Start Date</th>
@@ -257,7 +269,7 @@ if ($email) {
                                         }
                                         ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($loan['title']) ?></td>
+                                            <td class="title-column"><?= htmlspecialchars($loan['title']) ?></td>
                                             <td class="isbn"><?= htmlspecialchars($loan['isbn']) ?></td>
                                             <td><?= htmlspecialchars($loan['address'] . ' - ' . $loan['city']) ?></td>
                                             <td><?= $start ?></td>
@@ -285,8 +297,9 @@ if ($email) {
                                 </table>
                             </div>
                         <?php else: ?>
-                            <p><strong>This patron has yet to make a loan.</strong></p>
+                            <p class="small-text"><strong>This patron has yet to make a loan.</strong></p>
                         <?php endif; ?>
+
 
                     <?php endif; ?>
                 </div>
