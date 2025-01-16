@@ -1,7 +1,7 @@
 /*
     Given a branch, returns a table containing expired loans
     and the corresponding patrons.
- */
+*/
 CREATE OR REPLACE FUNCTION delays(my_branch branch.ID%TYPE)
     RETURNS TABLE
             (
