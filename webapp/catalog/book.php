@@ -50,6 +50,13 @@ if (!empty($_GET['isbn'])) {
             top: 1rem;
             right: 1rem;
         }
+
+        .book-title {
+            word-wrap: break-word;
+            white-space: normal;
+            max-width: 70%;
+        }
+
     </style>
 </head>
 <body>
@@ -73,7 +80,7 @@ if (!empty($_GET['isbn'])) {
             </a>
         <?php endif; ?>
 
-        <h2><strong><?php echo htmlspecialchars($bookDetails['title']); ?></strong></h2>
+        <h2 class="book-title"><strong><?php echo htmlspecialchars($bookDetails['title']); ?></strong></h2>
 
         <div class="card-body compact-info">
             <p class="text-muted"><?php echo htmlspecialchars($isbn); ?></p>
