@@ -36,9 +36,27 @@ CREATE TRIGGER bu_book_copy_deny_update_on_loan
     FOR EACH ROW
 EXECUTE PROCEDURE deny_update_on_loan();
 
--- Deny deletion of records.
-CREATE TRIGGER bd_book_copy_deny_deletion
-    BEFORE DELETE
+-- Deny modification if removed (except for 'removed' field)
+CREATE OR REPLACE FUNCTION book_copy_deny_update_if_removed() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF old.removed IS TRUE THEN
+
+        if old.branch is distinct from new.branch or
+           old.book is distinct from new.book then
+            raise exception 'Cannot modify a removed copy.';
+        end if;
+
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bu_book_copy_deny_update_if_removed
+    BEFORE UPDATE
     ON book_copy
     FOR EACH ROW
-EXECUTE PROCEDURE deny_deletion();
+EXECUTE PROCEDURE book_copy_deny_update_if_removed();
