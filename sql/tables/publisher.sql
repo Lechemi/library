@@ -1,4 +1,7 @@
-CREATE TABLE publisher
+create table publisher
 (
-    "name" VARCHAR(100) PRIMARY KEY CHECK ("name" ~* '^.+$')
+    name varchar(100) not null
+        primary key
+        constraint publisher_name_check
+            check ((name)::text ~* '^.+$'::text)
 );

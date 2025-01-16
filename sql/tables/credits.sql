@@ -1,6 +1,8 @@
-CREATE TABLE credits
+create table credits
 (
-    author INT REFERENCES author (id),
-    book   CHAR(13) REFERENCES book (isbn),
-    PRIMARY KEY (author, book)
+    author integer  not null
+        references author,
+    book   char(13) not null
+        references book,
+    primary key (author, book)
 );

@@ -1,5 +1,8 @@
-CREATE TABLE patron_category
+create table patron_category
 (
-    "name"     VARCHAR(50) PRIMARY KEY CHECK ("name" ~* '^.+$'),
-    loan_limit SMALLINT NOT NULL
+    name       varchar(50) not null
+        primary key
+        constraint patron_category_name_check
+            check ((name)::text ~* '^.+$'::text),
+    loan_limit smallint    not null
 );

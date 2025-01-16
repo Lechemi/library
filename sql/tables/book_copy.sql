@@ -1,10 +1,11 @@
-CREATE TABLE book_copy
+create table book_copy
 (
-    id      SERIAL
-        PRIMARY KEY,
-    branch  INTEGER  NOT NULL
-        REFERENCES branch,
-    book    CHAR(13) NOT NULL
-            REFERENCES book,
-    removed BOOLEAN DEFAULT FALSE
+    id      serial
+        primary key,
+    branch  integer  not null
+        references branch,
+    book    char(13) not null
+        constraint book_reference
+            references book,
+    removed boolean default false
 );
