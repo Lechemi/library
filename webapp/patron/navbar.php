@@ -33,7 +33,7 @@ $bookCatalogPages = ['catalog.php', 'book.php']
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($current_page == 'manage-loans.php') ? 'active' : ''; ?>"
-                       href="../patron/manage-loans.php">Manage loans</a>
+                       href="../patron/manage-loans.php">View loans</a>
                 </li>
             </ul>
         </div>
