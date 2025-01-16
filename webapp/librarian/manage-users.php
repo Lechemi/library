@@ -126,6 +126,17 @@ if ($email) {
             padding: 1rem; /* Padding for content */
             position: relative; /* Relative positioning for the button */
         }
+
+        .hover-lighten {
+            color: #000; /* Default color: black */
+            transition: color 0.2s ease-in-out;
+            text-decoration: none; /* Ensure no underline by default */
+        }
+
+        .hover-lighten:hover {
+            color: #555; /* Lighter shade on hover */
+            text-decoration: none; /* Ensure no underline on hover */
+        }
     </style>
 </head>
 <body>
@@ -137,14 +148,14 @@ if ($email) {
 
     <!-- Search bar -->
     <div class="container d-flex justify-content-center">
-        <div class="w-50">
+        <div class="w-50 custom-card">
             <form method="post" class="row g-3" action="">
                 <div class="row align-items-end">
                     <!-- Email Input -->
-                    <div class="col-md-9">
-                        <label for="userEmail" class="form-label d-block">
+                    <div class="col-md-10">
+                        <label for="userEmail" class="form-label d-block mt-3">
                             Search for a user or
-                            <a href="add-user.php?form=patron" class="text-primary">add a new one</a>
+                            <a href="add-user.php?form=patron" class="link-opacity-100-hover hover-lighten"><strong>add a new one</strong></a>
                         </label>
                         <input type="email" class="form-control" name="userEmail" id="userEmail"
                                placeholder="Enter user's email"
@@ -152,8 +163,8 @@ if ($email) {
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
                     </div>
                 </div>
             </form>
