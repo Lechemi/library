@@ -26,27 +26,44 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        /* Basic table styling */
         table {
-            width: 100%;
-            border-collapse: collapse;
+            font-size: 0.9em; /* Make all text smaller */
+            width: 100%; /* Ensure the table takes up available space */
+            table-layout: fixed; /* Makes sure the columns obey the defined widths */
         }
 
         th, td {
-            padding: 8px;
+            padding: 8px; /* Add some padding for readability */
             text-align: left;
+            word-wrap: break-word; /* Break long words to prevent overflow */
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2; /* Optional: Light background for header */
         }
-    </style>
 
-    <!-- Add some CSS to style the ISBN -->
-    <style>
+        .book-column {
+            width: 40%; /* Limit the width of the 'Book' column */
+            white-space: nowrap;
+            overflow: scroll;
+        }
+
+        /* Reduce the width for the 'Started', 'Due', and 'Returned' columns */
+        .date-column {
+            width: 10%; /* Allocate less space to the date columns */
+        }
+
         .isbn {
             font-size: 0.8em; /* Smaller font size */
             color: #888; /* Lighter color */
+        }
+
+        .custom-card {
+            background-color: #f8f9fa; /* Very light grey background */
+            border: none; /* No border */
+            border-radius: 0.75rem; /* Rounded corners */
+            padding: 1rem; /* Padding for content */
+            position: relative; /* Relative positioning for the button */
         }
     </style>
 
@@ -61,54 +78,54 @@ try {
 
 <div class="container my-4">
 
-    <table>
-        <thead>
-        <tr>
-            <th>Book</th>
-            <th>Branch</th>
-            <th>Started</th>
-            <th>Due</th>
-            <th>Returned</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
+    <div class="custom-card">
+        <table>
+            <thead>
+            <tr>
+                <th class="book-column">Book</th>
+                <th>Branch</th>
+                <th class="date-column">Started</th>
+                <th class="date-column">Due</th>
+                <th class="date-column">Returned</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            foreach ($activeLoans as $loan) {
+                try {
+                    $start = new DateTime($loan['start']);
+                    $due = new DateTime($loan['due']);
+                    $start = $start->format('Y-m-d');
+                    $due = $due->format('Y-m-d');
 
-        foreach ($activeLoans as $loan) {
-            try {
-                $start = new DateTime($loan['start']);
-                $due = new DateTime($loan['due']);
-                $start = $start->format('Y-m-d');
-                $due = $due->format('Y-m-d');
+                    $returned = 'Not returned';
+                    if ($loan['returned'] != null) {
+                        $returned = new DateTime($loan['returned']);
+                        $returned = $returned->format('Y-m-d');
+                    }
 
-                $returned = 'Not returned';
-                if ($loan['returned'] != null) {
-                    $returned = new DateTime($loan['returned']);
-                    $returned = $returned->format('Y-m-d');
+                } catch (DateMalformedStringException $e) {
+                    redirect('../lib/error.php');
                 }
 
-            } catch (DateMalformedStringException $e) {
-                redirect('../lib/error.php');
+                $branch = $loan['address'] . ' - ' . $loan['city'];
+
+                // Include ISBN next to the title
+                $isbn = $loan['isbn'];
+                $titleWithIsbn = "{$loan['title']} • <span class='isbn'>{$isbn}</span>";
+
+                echo "<tr>";
+                echo "<td class='book-column'>{$titleWithIsbn}</td>";
+                echo "<td>{$branch}</td>";
+                echo "<td class='date-column'>{$start}</td>";
+                echo "<td class='date-column'>{$due}</td>";
+                echo "<td class='date-column'>{$returned}</td>";
+                echo "</tr>";
             }
-
-            $branch = $loan['address'] . ' - ' . $loan['city'];
-
-            // Include ISBN next to the title
-            $isbn = $loan['isbn'];
-            $titleWithIsbn = "{$loan['title']} <span class='isbn'>{$isbn}</span>";
-
-            echo "<tr>";
-            echo "<td>{$titleWithIsbn}</td>";
-            echo "<td>{$branch}</td>";
-            echo "<td>{$start}</td>";
-            echo "<td>{$due}</td>";
-            echo "<td>{$returned}</td>";
-            echo "</tr>";
-        }
-        ?>
-        </tbody>
-    </table>
-
+            ?>
+            </tbody>
+        </table>
+    </div>
 
 </div>
 
