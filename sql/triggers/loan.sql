@@ -1,4 +1,4 @@
--- Patrons with more than 5 delays cannot loan books.
+-- Patrons with 5 or more delays cannot loan books.
 CREATE OR REPLACE FUNCTION check_patron_delays() RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -7,7 +7,7 @@ DECLARE
     _delays library.patron.N_DELAYS%TYPE;
 BEGIN
     SELECT n_delays FROM patron WHERE new.patron = patron."user" INTO _delays;
-    IF _delays > 5 THEN
+    IF _delays >= 5 THEN
         RAISE EXCEPTION 'Patrons with more than 5 delays cannot loan books.';
     ELSE
         RETURN new;
