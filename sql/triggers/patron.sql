@@ -90,6 +90,40 @@ CREATE TRIGGER bu_patron_enforce_category_update_policy
     FOR EACH ROW
 EXECUTE PROCEDURE enforce_category_update_policy();
 
+-- Deny modification if referenced user is removed
+CREATE OR REPLACE FUNCTION patron_deny_update_if_removed() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    _user_is_removed BOOLEAN;
+BEGIN
+
+    SELECT removed
+    INTO _user_is_removed
+    FROM "user"
+    WHERE new."user" = id;
+
+    IF _user_is_removed THEN
+
+        if old.tax_code is distinct from new.tax_code or
+           old.n_delays is distinct from new.n_delays or
+           old.category is distinct from new.category then
+            raise exception 'Cannot modify a removed patron.';
+        end if;
+
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bu_patron_deny_update_if_removed
+    BEFORE UPDATE
+    ON patron
+    FOR EACH ROW
+EXECUTE PROCEDURE patron_deny_update_if_removed();
+
 -- Deny deletion of records
 CREATE TRIGGER bd_patron_deny_deletion
     BEFORE DELETE

@@ -58,6 +58,34 @@ CREATE TRIGGER bu_user_deny_unmodifiable_fields_update
     FOR EACH ROW
 EXECUTE PROCEDURE user_deny_unmodifiable_fields_update();
 
+-- Deny modification if removed (except for 'removed' field)
+CREATE OR REPLACE FUNCTION user_deny_update_if_removed() RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF old.removed IS TRUE THEN
+
+        if old.email is distinct from new.email or
+           old.password is distinct from new.password or
+           old.first_name is distinct from new.first_name or
+           old.last_name is distinct from new.last_name then
+            raise exception 'Cannot modify a removed user';
+
+        end if;
+
+    END IF;
+
+    RETURN new;
+END;
+$$;
+
+CREATE TRIGGER bu_user_deny_update_if_removed
+    BEFORE UPDATE
+    ON "user"
+    FOR EACH ROW
+EXECUTE PROCEDURE user_deny_update_if_removed();
+
 
 -- Deny deletion of records.
 CREATE TRIGGER bd_user_deny_deletion
