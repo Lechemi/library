@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="container my-4">
     <div class="custom-card">
-        <h4 class="mb-4"><strong>Edit <?= $authorDetails['first_name'] . ' ' . $authorDetails['last_name'] ?>'s information</strong></h4>
+        <h4 class=""><strong>Edit <?= $authorDetails['first_name'] . ' ' . $authorDetails['last_name'] ?>'s information</strong></h4>
 
         <?php if ($result): ?>
             <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="" class="container mt-4">
+        <form method="POST" action="" class="container">
 
             <!-- Row for First and Last Name -->
             <div class="row mb-3">
