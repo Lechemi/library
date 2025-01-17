@@ -52,6 +52,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
         .compact-info p {
             margin-bottom: 0.3rem;
         }
+
+        .title-column {
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .small-text {
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 
@@ -88,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
                                 <tr>
                                     <th>ISBN</th>
                                     <th>Title</th>
-                                    <th>Copy</th>
-                                    <th>Email</th>
+                                    <th>Copy number</th>
+                                    <th>User</th>
                                     <th>Was due</th>
                                 </tr>
                                 </thead>
@@ -104,11 +115,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
                                     ?>
 
                                     <tr>
-                                        <td><?= $delay['book'] ?></td>
-                                        <td><?= $delay['title'] ?></td>
-                                        <td><?= $delay['copy'] ?></td>
-                                        <td><?= $delay['email'] ?></td>
-                                        <td><?= $due ?></td>
+                                        <td class="small-text"><?= $delay['book'] ?></td>
+                                        <td class="small-text title-column"><?= $delay['title'] ?></td>
+                                        <td class="small-text"><?= $delay['copy'] ?></td>
+                                        <td class="small-text"><?= $delay['email'] ?></td>
+                                        <td class="small-text"><?= $due ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                                 </tbody>
