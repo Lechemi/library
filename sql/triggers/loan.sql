@@ -8,7 +8,7 @@ DECLARE
 BEGIN
     SELECT n_delays FROM patron WHERE new.patron = patron."user" INTO _delays;
     IF _delays >= 5 THEN
-        RAISE EXCEPTION 'Patrons with more than 5 delays cannot loan books.';
+        RAISE EXCEPTION 'Patrons with 5 or more delays cannot loan books.';
     ELSE
         RETURN new;
     END IF;
@@ -243,7 +243,7 @@ CREATE TRIGGER bu_loan_enforce_due_policy
     FOR EACH ROW
 EXECUTE PROCEDURE enforce_due_policy();
 
--- this is just for testing, delete this!!!!
+-- todo this is just for testing, delete this!!!!
 drop trigger bu_loan_enforce_due_policy on loan;
 
 -- Cannot return the copy in a past or future date.
