@@ -241,7 +241,7 @@ if ($email) {
                         <!-- All loans -->
                         <?php if (!empty($loans)): ?>
                             <h4>Loans</h4>
-                            <div class="table-responsive scrollable-loans rounded-4 small-text">
+                            <div class="table-responsive scrollable-loans rounded-4">
                                 <table class="table">
                                     <thead>
                                     <tr>
@@ -268,12 +268,12 @@ if ($email) {
                                         }
                                         ?>
                                         <tr>
-                                            <td class="title-column"><?= htmlspecialchars($loan['title']) ?></td>
-                                            <td class="isbn"><?= htmlspecialchars($loan['isbn']) ?></td>
-                                            <td><?= htmlspecialchars($loan['address'] . ' - ' . $loan['city']) ?></td>
-                                            <td><?= $start ?></td>
-                                            <td><?= $due ?></td>
-                                            <td><?= $returned ?? 'Not Returned' ?></td>
+                                            <td class="title-column  small-text"><?= htmlspecialchars($loan['title']) ?></td>
+                                            <td class="small-text"><?= htmlspecialchars($loan['isbn']) ?></td>
+                                            <td class="small-text"><?= htmlspecialchars($loan['address'] . ' - ' . $loan['city']) ?></td>
+                                            <td class="small-text"><?= $start ?></td>
+                                            <td class="small-text"><?= $due ?></td>
+                                            <td class="small-text"><?= $returned ?? 'Not Returned' ?></td>
                                             <td>
                                                 <?php if (!$returned): ?>
                                                     <button class="btn btn-success btn-sm"
