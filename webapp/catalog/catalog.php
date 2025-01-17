@@ -75,7 +75,7 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
                     name="searchInput"
                     value="<?= htmlspecialchars($_GET['searchInput'] ?? '') ?>"
             >
-            <button class="btn btn-primary rounded-3 me-2" type="submit"><i class="bi bi-search"></i></button>
+            <button class="btn btn-primary rounded-3 me-1" type="submit"><i class="bi bi-search"></i></button>
             <a href="?" class="btn btn-secondary rounded-3">Clear</a>
         </div>
     </form>
