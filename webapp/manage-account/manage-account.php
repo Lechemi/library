@@ -141,12 +141,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="mb-3">
                             <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                            <input type="password" class="form-control" id="newPassword" name="new_password" minlength="6" required>
                         </div>
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label">Confirm New Password</label>
                             <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
-                                   required>
+                                   minlength="6" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Change Password</button>
                     </form>
