@@ -67,16 +67,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Search bar -->
     <div class="container d-flex justify-content-center">
         <div class="w-50">
-            <form method="post" action="">
-                <div class="mb-3">
-                    <label for="searchInput" class="form-label d-block">
-                        Search for an author or
-                        <a href="add-author.php" class="text-primary">add a new one</a>
-                    </label>
-                    <input type="text" class="form-control" name="searchInput" id="searchInput"
-                           placeholder="Enter an author's name or id" required>
+            <form method="post" class="row g-3" action="">
+                <div class="row align-items-end">
+                    <!-- Email Input -->
+                    <div class="col-md-10">
+                        <label for="searchInput" class="form-label d-block mt-3">
+                            Search for an author or
+                            <a href="add-author.php" class="link-opacity-100-hover hover-lighten"><strong>add a new one</strong></a>
+                        </label>
+                        <input type="text" class="form-control" name="searchInput" id="searchInput"
+                               placeholder="Enter author's name"
+                               value="<?= htmlspecialchars(($_POST['searchInput'] ?? '')) ?>" required>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
     </div>

@@ -159,7 +159,7 @@ if ($email) {
 
     <!-- Search bar -->
     <div class="container d-flex justify-content-center">
-        <div class="w-50 custom-card">
+        <div class="w-50">
             <form method="post" class="row g-3" action="">
                 <div class="row align-items-end">
                     <!-- Email Input -->
