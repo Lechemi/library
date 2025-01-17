@@ -34,47 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* Basic table styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        /* Step 2: Custom CSS for Hover Effect */
-        .hover-lighten {
-            color: #000; /* Default color: black */
-            transition: color 0.2s ease-in-out;
-            text-decoration: none; /* Ensure no underline by default */
-        }
-
-        .hover-lighten:hover {
-            color: #555; /* Lighter shade on hover */
-            text-decoration: none; /* Ensure no underline on hover */
-        }
-
-        /* Custom styles for book list */
-        .branch-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .branch-city {
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        .branch-address {
-            font-size: 0.8rem;
-            color: #888;
+        .custom-card {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
         }
     </style>
 </head>
@@ -87,36 +52,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="container my-4">
 
-    <div class="container d-flex justify-content-center">
-        <div class="w-50">
-            <form method="post">
-                <div class="mb-3">
-                    <label for="branchName" class="form-label">Branch name</label>
+    <div class="custom-card">
+        <h2 class="book-title"><strong>Add a new branch</strong></h2>
+
+        <form method="post">
+            <div class="row">
+                <!-- Branch Name -->
+                <div class="col-md-4 mb-3">
+                    <label for="branchName" class="form-label">Branch Name</label>
                     <input type="text" class="form-control" id="branchName" name="branch_name"
                            placeholder="Enter branch name" required>
                 </div>
-                <div class="mb-3">
+                <!-- City -->
+                <div class="col-md-4 mb-3">
                     <label for="branchCity" class="form-label">City</label>
-                    <input type="text" class="form-control" id="branchCity" name="branch_city" placeholder="Enter city"
-                           required>
+                    <input type="text" class="form-control" id="branchCity" name="branch_city" placeholder="Branch city" required>
                 </div>
-                <div class="mb-3">
+                <!-- Address -->
+                <div class="col-md-4 mb-3">
                     <label for="branchAddress" class="form-label">Address</label>
                     <input type="text" class="form-control" id="branchAddress" name="branch_address"
-                           placeholder="Enter address" required>
+                           placeholder="Branch address" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
-    </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a class="btn btn-primary" href="../librarian/manage-branches.php">Cancel</a>
+        </form>
 
-    <?php if ($result): ?>
-        <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
-             role="alert">
-            <?php echo htmlspecialchars($result['msg']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
+        <?php if ($result): ?>
+            <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+                 role="alert">
+                <?php echo htmlspecialchars($result['msg']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+    </div>
 
 </div>
 
