@@ -30,6 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        .custom-card {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
+        }
     </style>
 </head>
 
@@ -41,26 +48,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="container my-4">
 
-    <div class="container d-flex justify-content-center">
-        <div class="w-50">
-            <form method="post">
-                <div class="mb-3">
-                    <label for="publisherName" class="form-label">Publisher name</label>
-                    <input type="text" class="form-control" id="publisherName" name="publisher_name"
-                           placeholder="Enter the publisher's name" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
-    </div>
+    <div class="custom-card">
+        <h2><strong>Add a new publisher</strong></h2>
 
-    <?php if ($result): ?>
-        <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
-             role="alert">
-            <?php echo htmlspecialchars($result['msg']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="container d-flex">
+            <div class="w-50">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="publisherName" class="form-label">Publisher name</label>
+                        <input type="text" class="form-control" id="publisherName" name="publisher_name"
+                               placeholder="Enter the publisher's name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a class="btn btn-primary" href="../catalog/catalog.php">Cancel</a>
+                </form>
+            </div>
         </div>
-    <?php endif; ?>
+
+        <?php if ($result): ?>
+            <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
+                 role="alert">
+                <?php echo htmlspecialchars($result['msg']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+    </div>
 
 </div>
 
