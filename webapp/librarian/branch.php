@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
                                     } catch (DateMalformedStringException $e) {
                                         redirect('../lib/error.php');
                                     }
-                                    $due = $due->format('Y-m-d H:i:s');
+                                    $due = $due->format('Y-m-d');
                                     ?>
 
                                     <tr>
