@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php endif; ?>
 
     <div class="custom-card">
-        <h4 class=""><strong>Add a new author</strong></h4>
+        <h2 class=""><strong>Add a new author</strong></h2>
         <form method="POST" action="" class="container">
 
             <!-- Row for First and Last Name -->

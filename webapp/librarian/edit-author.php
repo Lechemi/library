@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="container my-4">
     <div class="custom-card">
-        <h4 class=""><strong>Edit <?= $authorDetails['first_name'] . ' ' . $authorDetails['last_name'] ?>'s information</strong></h4>
+        <h2 class=""><strong>Edit <?= $authorDetails['first_name'] . ' ' . $authorDetails['last_name'] ?>'s information</strong></h2>
 
         <?php if ($result): ?>
             <div class="alert <?= $result['ok'] ? 'alert-success' : 'alert-danger' ?> alert-dismissible fade show mt-3"
