@@ -1,5 +1,5 @@
 <?php
-
+include_once('/Users/micheleceroni/Documents/Uni/basi/library/webapp/conf/conf.php');
 use PgSql\Connection;
 
 /**
@@ -7,7 +7,6 @@ use PgSql\Connection;
  */
 function open_connection(): false|Connection
 {
-    include_once('../conf/conf.php');
     $conn = "host=" . myhost . " dbname=" . mydb . " user=" . myuser . " password=" . mypassword;
     return pg_connect($conn);
 }
