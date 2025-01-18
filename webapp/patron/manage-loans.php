@@ -111,12 +111,13 @@ try {
 
                 $isbn = $loan['isbn'];
                 $titleWithIsbn = "{$loan['title']} • <span class='isbn'>{$isbn}</span>";
+                $textColor = $start > $due ? 'text-danger' : '';
 
                 echo "<tr>";
                 echo "<td class='book-column'>{$titleWithIsbn}</td>";
                 echo "<td>{$branch}</td>";
                 echo "<td class='date-column'>{$start}</td>";
-                echo "<td class='date-column'>{$due}</td>";
+                echo "<td class='date-column " . $textColor ."'>{$due}</td>";
                 echo "<td class='date-column'>{$returned}</td>";
                 echo "</tr>";
             }
