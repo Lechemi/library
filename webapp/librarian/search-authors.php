@@ -53,6 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.9rem;
             color: #555;
         }
+
+        .custom-card {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
+        }
+
     </style>
 </head>
 
@@ -95,9 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <ul class="list-group list-group-flush rounded-4">
             <?php
 
-            if (empty($searchResults)) {
-                echo 'No results found.';
-            }
+            if (empty($searchResults)) : ?>
+                <div class="custom-card mt-4">
+                    <h6>No authors found.</h6>
+                </div>
+            <?php endif;
 
             foreach ($searchResults as $author):
                 $author_link = '../catalog/author.php' . '?author=' . $author['id'];

@@ -44,6 +44,14 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             color: #888;
         }
 
+        .custom-card {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
+        }
+
     </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -103,7 +111,11 @@ if (!isset($_SESSION['user'])) redirect('../index.php');
             redirect('../lib/error.php');
         }
 
-        if (empty($result)) echo 'No books found';
+        if (empty($result)) : ?>
+            <div class="custom-card mt-4">
+                <h6>No books found.</h6>
+            </div>
+        <?php endif;
 
         foreach ($result as $isbn => $details):
             $title_link = '../catalog/book.php' . '?isbn=' . $isbn;
