@@ -13,12 +13,26 @@ session_start();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .custom-card {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            position: relative;
+        }
+    </style>
+
 </head>
 <body class="d-flex align-items-center min-vh-100">
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form class="p-4 border rounded bg-light" method="POST" action="lib/login.php">
+        <div class="col-md-6 custom-card">
+
+            <h2><strong>Login</strong></h2>
+
+            <form class="" method="POST" action="lib/login.php">
                 <div class="mb-3">
                     <label for="inputEmail" class="form-label">Email</label>
                     <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp"
