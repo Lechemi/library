@@ -208,7 +208,7 @@ if ($email) {
                                 <i class="bi bi-card-text"></i>
                                 Tax Code:</strong> <?= $taxCode; ?></p>
                         <p><strong><i class="bi bi-hourglass-bottom"></i>
-                                Number of delays:</strong> <?= $nDelays; ?></p>
+                                Number of late returns:</strong> <?= $nDelays; ?></p>
 
                         <!-- Change category button -->
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
