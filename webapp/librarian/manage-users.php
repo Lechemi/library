@@ -212,14 +212,14 @@ if ($email) {
                         <!-- Change category button -->
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#changeCategoryModal">
-                            Change Category
+                            <i class="bi bi-person-fill-gear"></i> Change Category
                         </button>
 
                         <!-- Reset delays button -->
                         <?php if ($nDelays > 0): ?>
                             <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#resetDelaysModal">
-                                Reset Delays
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset Delays
                             </button>
                         <?php endif; ?>
                     <?php else: ?>
@@ -229,7 +229,7 @@ if ($email) {
                     <!-- User removal button -->
                     <?php if ($_SESSION['user']['id'] != $userInfo['id']): ?>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#removeUserModal">
-                            Remove User
+                            <i class="bi bi-person-fill-x"></i> Remove User
                         </button>
                     <?php endif; ?>
 
