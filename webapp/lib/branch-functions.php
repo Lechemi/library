@@ -33,15 +33,21 @@ function branches_with_book($isbn): array
     if (!$isbn)
         throw new Exception("ISBN is required.");
 
+    $db = open_connection();
+    setSearchPathToLibrary($db);
+
     $sql = "
         SELECT DISTINCT b.id, b.address, b.city, b.name
         FROM library.branch b 
-            INNER JOIN library.book_copy bc ON b.id = bc.branch
+            INNER JOIN 
+                (select * from library.book_copy 
+                    where id NOT IN (SELECT copy FROM library.loan WHERE returned IS NULL)
+                    AND removed = FALSE)
+                bc ON b.id = bc.branch
         WHERE bc.book = '$isbn'
         ORDER BY b.city, b.address
     ";
 
-    $db = open_connection();
     pg_prepare($db, 'branches-with-book', $sql);
     $result = pg_execute($db, 'branches-with-book', array());
     close_connection($db);
