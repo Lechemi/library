@@ -87,6 +87,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
             <p>This branch manages <?= $stats[0]['n_copies'] ?> copies, for a total of <?= $stats[0]['n_books'] ?>
                 different books.</p>
 
+            <!-- Remove branch button -->
+            <?php if ($stats[0]['n_books'] == 0): ?>
+                <div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#removeBranchModal">
+                        <i class="bi bi-x-circle"></i> Remove this branch
+                    </button>
+                </div>
+            <?php endif; ?>
+
             <!-- List of overdue loans -->
             <div class="mt-3">
                 <h4>Overdue loans</h4>
@@ -133,14 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['removeBranch'])) {
 
         </div>
     </div>
-
-    <!-- Remove branch button -->
-    <?php if ($stats[0]['n_books'] == 0): ?>
-        <div class="mb-4">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#removeBranchModal">Remove this branch
-            </button>
-        </div>
-    <?php endif; ?>
 
     <!-- Display removal-related exceptions -->
     <?php if (isset($removal_error)): ?>
