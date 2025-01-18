@@ -1,5 +1,19 @@
 <?php
 $current_page = basename($_SERVER['PHP_SELF']);
+
+$catalogRelatedPages = [
+    'catalog.php',
+    'book.php',
+    'add-book.php',
+    'add-publisher.php',
+    'edit-author.php',
+    'edit-book.php',
+    'author.php',
+    'add-author.php',
+    'search-authors.php'
+];
+$userRelatedPages = ['manage-users.php', 'add-user.php'];
+$branchRelatedPages = ['manage-branches.php', 'branch.php', 'add-branch.php'];
 ?>
 
 <head>
@@ -25,15 +39,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (in_array($current_page, ['catalog.php', 'book.php'])) ? 'active' : ''; ?>"
+                    <a class="nav-link <?php
+                    echo (in_array($current_page, $catalogRelatedPages)) ? 'active' : ''; ?>"
                        href="../catalog/catalog.php">Catalog</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (in_array($current_page, ['manage-users.php', 'add-user.php'])) ? 'active' : ''; ?>"
+                    <a class="nav-link <?php
+                    echo (in_array($current_page, $userRelatedPages)) ? 'active' : ''; ?>"
                        href="../librarian/manage-users.php">Users</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo (in_array($current_page, ['manage-branches.php', 'branch.php', 'add-branch.php'])) ? 'active' : ''; ?>"
+                    <a class="nav-link <?php
+                    echo (in_array($current_page, $branchRelatedPages)) ? 'active' : ''; ?>"
                        href="../librarian/manage-branches.php">Branches</a>
                 </li>
             </ul>
