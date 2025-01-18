@@ -78,7 +78,7 @@ function get_branch_stats($id): array
     $result = pg_execute($db, 'branch-stats', array());
 
     if (!$result)
-        throw new Exception(prettifyErrorMessages(pg_last_error($db)));
+        throw new Exception(pg_last_error($db));
 
     $stats = pg_fetch_all($result);
 
