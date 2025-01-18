@@ -166,7 +166,8 @@ if ($email) {
                     <div class="col-md-10">
                         <label for="userEmail" class="form-label d-block mt-3">
                             Search for a user or
-                            <a href="add-user.php?form=patron" class="link-opacity-100-hover hover-lighten"><strong>add a new one</strong></a>
+                            <a href="add-user.php?form=patron" class="link-opacity-100-hover hover-lighten"><strong>add
+                                    a new one</strong></a>
                         </label>
                         <input type="email" class="form-control" name="userEmail" id="userEmail"
                                placeholder="Enter user's email"
@@ -258,11 +259,15 @@ if ($email) {
                                     <?php foreach ($loans as $loan): ?>
                                         <?php
                                         try {
-                                            $start = (new DateTime($loan['start']))->format('Y-m-d');
-                                            $due = (new DateTime($loan['due']))->format('Y-m-d');
+                                            $start = new DateTime($loan['start']);
+                                            $due = new DateTime($loan['due']);
                                             $returned = $loan['returned']
-                                                ? (new DateTime($loan['returned']))->format('Y-m-d')
+                                                ? new DateTime($loan['returned'])
                                                 : null;
+                                            $today = new DateTime('today');
+                                            $dueTextColor = (!$returned and $due < $today) ? 'text-danger' : '';
+                                            $returnedTextColor = ($returned and $returned > $due) ? 'text-danger' : '';
+
                                         } catch (Exception $e) {
                                             $start = $due = $returned = 'Error parsing date';
                                         }
@@ -271,9 +276,9 @@ if ($email) {
                                             <td class="title-column  small-text"><?= htmlspecialchars($loan['title']) ?></td>
                                             <td class="small-text"><?= htmlspecialchars($loan['isbn']) ?></td>
                                             <td class="small-text"><?= htmlspecialchars($loan['address'] . ' - ' . $loan['city']) ?></td>
-                                            <td class="small-text"><?= $start ?></td>
-                                            <td class="small-text"><?= $due ?></td>
-                                            <td class="small-text"><?= $returned ?? 'Not Returned' ?></td>
+                                            <td class="small-text"><?= $start->format('Y-m-d') ?></td>
+                                            <td class="small-text <?= $dueTextColor ?>"><?= $due->format('Y-m-d') ?></td>
+                                            <td class="small-text <?= $returnedTextColor ?>"><?= $returned ? $returned->format('Y-m-d') : 'Not Returned' ?></td>
                                             <td>
                                                 <?php if (!$returned): ?>
                                                     <button class="btn btn-success btn-sm"

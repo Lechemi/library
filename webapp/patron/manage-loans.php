@@ -94,13 +94,10 @@ try {
                 try {
                     $start = new DateTime($loan['start']);
                     $due = new DateTime($loan['due']);
-                    $start = $start->format('Y-m-d');
-                    $due = $due->format('Y-m-d');
 
-                    $returned = 'Not returned';
+                    $returned = null;
                     if ($loan['returned'] != null) {
                         $returned = new DateTime($loan['returned']);
-                        $returned = $returned->format('Y-m-d');
                     }
 
                 } catch (DateMalformedStringException $e) {
@@ -111,14 +108,18 @@ try {
 
                 $isbn = $loan['isbn'];
                 $titleWithIsbn = "{$loan['title']} • <span class='isbn'>{$isbn}</span>";
-                $textColor = $start > $due ? 'text-danger' : '';
+
+                $today = new DateTime('today');
+                $dueTextColor = (!$returned and $due < $today) ? 'text-danger' : '';
+                $returnedTextColor = ($returned and $returned > $due) ? 'text-danger' : '';
+                $returned = $returned ? $returned->format('Y-m-d') : 'Not returned';
 
                 echo "<tr>";
                 echo "<td class='book-column'>{$titleWithIsbn}</td>";
                 echo "<td>{$branch}</td>";
-                echo "<td class='date-column'>{$start}</td>";
-                echo "<td class='date-column " . $textColor ."'>{$due}</td>";
-                echo "<td class='date-column'>{$returned}</td>";
+                echo "<td class='date-column'>{$start->format('Y-m-d')}</td>";
+                echo "<td class='date-column " . $dueTextColor . "'>{$due->format('Y-m-d')}</td>";
+                echo "<td class='date-column " . $returnedTextColor . "'>{$returned}</td>";
                 echo "</tr>";
             }
             ?>
