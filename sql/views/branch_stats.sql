@@ -1,10 +1,8 @@
 -- Total number of catalog copies managed by each branch
 CREATE VIEW managed_copies AS
-SELECT branch.id AS branch, COUNT(book_copy.id) AS n_copies
+SELECT branch.id AS branch, COUNT(bc.id) AS n_copies
 FROM branch
-         LEFT JOIN book_copy ON branch.id = book_copy.branch
-WHERE removed IS FALSE
-   OR removed IS NULL
+         LEFT JOIN (select * from book_copy where removed is false) as bc ON branch.id = bc.branch
 GROUP BY branch.id;
 
 -- Total number of different books managed by each branch
