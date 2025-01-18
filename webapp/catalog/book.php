@@ -106,7 +106,7 @@ if (!empty($_GET['isbn'])) {
             $copyCount = count($bookDetails['available_copies']);
 
             if ($copyCount == 0) {
-                echo '<p><strong>There are no available copies.</strong></p>';
+                echo '<p class="text-danger"><strong>There are no available copies.</strong></p>';
             } else if ($copyCount == 1) {
                 echo '<p class="text-success"><strong>There\'s one available copy.</strong></p>';
                 if ($_SESSION['user']['type'] == 'patron')
