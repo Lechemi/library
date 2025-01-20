@@ -2,6 +2,8 @@
 
 This project is a library management system that integrates a PostgreSQL database and a PHP-based web application designed for both librarians and patrons.
 
+The documentation, which includes the project's specifications, is available [here](https://midi-file-e7c.notion.site/Library-management-system-16bc3dc3fb3780d8bf56c92189c1079b).
+
 ## Running locally
 
 ### 0. Requirements
