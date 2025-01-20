@@ -215,8 +215,6 @@ CREATE TRIGGER bu_loan_deny_unmodifiable_fields_update
     FOR EACH ROW
 EXECUTE PROCEDURE deny_unmodifiable_fields_update();
 
-
-
 -- Allow postponement of due only if the loan is not expired.
 CREATE OR REPLACE FUNCTION enforce_due_policy() RETURNS TRIGGER
     LANGUAGE plpgsql
@@ -242,9 +240,6 @@ CREATE TRIGGER bu_loan_enforce_due_policy
     ON loan
     FOR EACH ROW
 EXECUTE PROCEDURE enforce_due_policy();
-
--- todo this is just for testing, delete this!!!!
-drop trigger bu_loan_enforce_due_policy on loan;
 
 -- Cannot return the copy in a past or future date.
 CREATE OR REPLACE FUNCTION check_return_date() RETURNS TRIGGER
