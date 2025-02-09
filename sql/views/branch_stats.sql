@@ -1,4 +1,4 @@
--- Total number of catalog copies managed by each branch
+-- Total number of book copies managed by each branch
 CREATE VIEW managed_copies AS
 SELECT branch.id AS branch, COUNT(bc.id) AS n_copies
 FROM branch
