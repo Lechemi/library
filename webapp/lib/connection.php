@@ -1,6 +1,7 @@
 <?php
-include_once('/Users/micheleceroni/Documents/Uni/basi/library/webapp/conf/conf.php');
 use PgSql\Connection;
+
+include_once(__DIR__ . '/../conf/conf.php');
 
 /**
  * Opens a connection with the database.

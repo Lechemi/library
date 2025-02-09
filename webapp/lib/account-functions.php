@@ -1,6 +1,6 @@
 <?php
 
-include_once('/Users/micheleceroni/Documents/Uni/basi/library/webapp/lib/connection.php');
+include_once(__DIR__ . '/../lib/connection.php');
 
 /**
  * Authenticates user with email $usr and password $psw.
