@@ -25,14 +25,23 @@ cd library
    createdb -U postgres library
    ```
 
-3. Restore the database dump
+3. Restore the database dump:
    ```zsh
    psql -U postgres -d library -f sql/dump/dump.sql
    ```
 
-4. Log into the database to check if the tables and data have been successfully restored:
+4. Log into the database:
    ```zsh
-   psql -U postgres -d library_db
+   psql -U postgres -d library
+   ```
+
+5. Set the search path:
+   ```zsh
+   SET search_path TO library;
+   ```
+
+6. Check if the tables and data have been successfully restored:
+   ```zsh
    \dt
    ```
 
