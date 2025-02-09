@@ -1,5 +1,5 @@
 /*
-    Registers a loan for the given patron with the given catalog.
+    Registers a loan for the given patron with the given book.
     The loaned copy is picked with no criteria.
     If one or more preferred branches are specified, the copy has to belong
     to one of those.
